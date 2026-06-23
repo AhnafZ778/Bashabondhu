@@ -39,6 +39,7 @@ const baseListings: Listing[] = [
     brokerFee: 0,
     serviceCharge: 3000,
     serviceChargeKnown: true,
+    brokerFeeKnown: true,
     gasType: "line",
     lift: true,
     generator: false,
@@ -48,7 +49,10 @@ const baseListings: Listing[] = [
     houseRules: ["No loud noise after 11 PM", "Tenants must pay utility bills by 10th of each month"],
     redFlags: ["Area has significant waterlogging during high monsoons.", "No generator backup for lift."],
     goodPoints: ["Cheap rent for 1050 sqft", "Govt gas line connection", "Direct owner post, no broker fee."],
-    imageUrl: propertyImages[5]
+    missingFields: [],
+    imageUrl: propertyImages[5],
+    isActive: true,
+    isDemo: true
   },
   {
     id: "banasree-2",
@@ -73,6 +77,7 @@ const baseListings: Listing[] = [
     brokerFee: null,
     serviceCharge: null,
     serviceChargeKnown: false,
+    brokerFeeKnown: false,
     gasType: "cylinder",
     lift: true,
     generator: true,
@@ -82,7 +87,10 @@ const baseListings: Listing[] = [
     houseRules: ["Only family allowed", "Night lock at 11:30 PM"],
     redFlags: ["Service charge and broker fee are undisclosed in post.", "Cylinder gas only.", "Block E road floods during heavy rain."],
     goodPoints: ["Spacious 3-bed layout", "Generator backup available for lift and common areas"],
-    imageUrl: propertyImages[3]
+    missingFields: ["Service Charge Details", "Broker Fee status"],
+    imageUrl: propertyImages[3],
+    isActive: true,
+    isDemo: true
   },
   {
     id: "mohakhali-1",
@@ -107,6 +115,7 @@ const baseListings: Listing[] = [
     brokerFee: 0,
     serviceCharge: 4000,
     serviceChargeKnown: true,
+    brokerFeeKnown: true,
     gasType: "line",
     lift: true,
     generator: true,
@@ -116,7 +125,10 @@ const baseListings: Listing[] = [
     houseRules: ["No late entry after 12:00 AM without warning guard"],
     redFlags: ["GP Goli is crowded and noisy"],
     goodPoints: ["Only 1 month advance", "Lift + generator active", "Govt gas line", "Very close to Gulshan-1 and Mohakhali office areas"],
-    imageUrl: propertyImages[0]
+    missingFields: [],
+    imageUrl: propertyImages[0],
+    isActive: true,
+    isDemo: true
   },
   {
     id: "bashundhara-1",
@@ -150,7 +162,10 @@ const baseListings: Listing[] = [
     houseRules: ["No guests allowed overnight", "Strict study environment"],
     redFlags: ["Located on 4th floor, no lift", "Cylinder gas system"],
     goodPoints: ["Super close to NSU/IUB", "Rent includes gas, current, wifi, maid bills", "No broker fee"],
-    imageUrl: propertyImages[1]
+    missingFields: [],
+    imageUrl: propertyImages[1],
+    isActive: true,
+    isDemo: true
   },
   {
     id: "dhanmondi-1",
@@ -184,7 +199,10 @@ const baseListings: Listing[] = [
     houseRules: ["Female only", "Main gate locks at 10 PM. No late entry.", "No male guests allowed."],
     redFlags: ["Strict curfew at 10 PM", "Cylinder gas only"],
     goodPoints: ["Highly secure building with 24/7 CCTV & guard", "Includes all utility bills in rent", "Equipped with lift and full generator backup"],
-    imageUrl: propertyImages[2]
+    missingFields: [],
+    imageUrl: propertyImages[2],
+    isActive: true,
+    isDemo: true
   },
   {
     id: "mirpur-1",
@@ -218,7 +236,10 @@ const baseListings: Listing[] = [
     houseRules: ["Quiet hours after 11 PM"],
     redFlags: ["Ground floor can get waterlogged on road in heavy monsoons", "No generator or lift backup"],
     goodPoints: ["Extremely close to Metro Rail", "Cheap rent for 2 beds", "Bachelor friendly"],
-    imageUrl: propertyImages[4]
+    missingFields: [],
+    imageUrl: propertyImages[4],
+    isActive: true,
+    isDemo: true
   },
   {
     id: "lalmatia-1",
@@ -252,7 +273,10 @@ const baseListings: Listing[] = [
     houseRules: ["Strictly family only", "No pets allowed", "Written tenancy agreement mandatory"],
     redFlags: ["High monthly service charge (৳5,000)"],
     goodPoints: ["Prestigious and safe neighborhood", "Government gas line connection", "Full lift and generator backup for internal points"],
-    imageUrl: propertyImages[6]
+    missingFields: [],
+    imageUrl: propertyImages[6],
+    isActive: true,
+    isDemo: true
   },
   {
     id: "mohammadpur-1",
@@ -286,7 +310,10 @@ const baseListings: Listing[] = [
     houseRules: ["Tenants must verify NID", "Family only"],
     redFlags: ["Tajmahal Road can have traffic jam in school hours"],
     goodPoints: ["Govt gas line active", "Lift and generator included", "Near schools and parks"],
-    imageUrl: propertyImages[7]
+    missingFields: [],
+    imageUrl: propertyImages[7],
+    isActive: true,
+    isDemo: true
   }
 ];
 
@@ -351,6 +378,7 @@ function generateListings(): Listing[] {
         brokerFee,
         serviceCharge,
         serviceChargeKnown: i % 5 !== 0,
+        brokerFeeKnown: source !== "broker" || i % 3 === 0,
         gasType,
         lift,
         generator,
@@ -360,7 +388,10 @@ function generateListings(): Listing[] {
         houseRules: [`Maintain cleanliness`, `Pay rent before 10th`],
         redFlags: area.waterloggingRisk === "high" ? ["High risk of waterlogging during rain."] : [],
         goodPoints: ["Quiet street", "Good ventilation"],
-        imageUrl: propertyImages[imageIndex]
+        missingFields: [],
+        imageUrl: propertyImages[imageIndex],
+        isActive: true,
+        isDemo: true
       });
     }
   });

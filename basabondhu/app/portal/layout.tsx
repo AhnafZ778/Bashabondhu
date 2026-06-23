@@ -2,20 +2,22 @@
 
 import React from "react";
 import Navbar from "@/components/Navbar";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSearch } from "@/context/SearchContext";
-import { Search, Clipboard, GitCompare, PhoneCall } from "lucide-react";
+import { Search, Clipboard, GitCompare, PhoneCall, FileText } from "lucide-react";
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { selectedForCompare } = useSearch();
 
   const navItems = [
-    { href: "/portal", label: "Guided Matcher", icon: Search },
-    { href: "/portal/parser", label: "Messy Ad Parser", icon: Clipboard },
-    { href: "/portal/compare", label: `Compare Shortlist (${selectedForCompare.length})`, icon: GitCompare },
-    { href: "/portal/visit", label: "Call Scripts & Prep", icon: PhoneCall },
+    { href: "/portal", label: "Plan Search", icon: Search },
+    { href: "/portal/parser", label: "Check Listing", icon: Clipboard },
+    { href: "/portal/compare", label: `Compare Homes (${selectedForCompare.length})`, icon: GitCompare },
+    { href: "/portal/visit", label: "Prepare Visit", icon: PhoneCall },
+    { href: "/portal/report", label: "Report", icon: FileText },
   ];
 
   return (
@@ -52,7 +54,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
       {/* Main Content Area */}
       <main className="flex-1 w-full px-6 sm:px-10 lg:px-16 xl:px-24 py-8">
-        {children}
+        <ErrorBoundary fallbackTitle="This section encountered an error">
+          <div key={pathname} className="animate-fade-in">
+            {children}
+          </div>
+        </ErrorBoundary>
       </main>
     </div>
   );

@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "clean-root-lock": "node -e \"try { require('fs').unlinkSync('../package-lock.json'); console.log('Deleted root lockfile'); } catch(e) { console.log('No root lockfile to delete'); }\"",
+    "clean": "node -e \"try { require('fs').rmSync('.next', { recursive: true, force: true }); console.log('Cleaned Next.js cache'); } catch(e) {}\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

@@ -21,6 +21,7 @@ import {
   Wallet
 } from "lucide-react";
 import { SearchProfile, HouseholdType } from "@/lib/types";
+import ModeSelector from "./ModeSelector";
 
 const DHAKA_AREAS = [
   "Banani", "Gulshan", "Banasree", "Badda", "Mohakhali", "Tejgaon", 
@@ -250,9 +251,27 @@ export default function LandingPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          PERSONA QUICK-START — Full width grid
+          MODE SELECTOR — What do you want to do today?
           ══════════════════════════════════════════════════ */}
       <section className="bg-card border-y border-border-light py-16 px-6 sm:px-10 lg:px-16 xl:px-24 transition-colors duration-300">
+        <div className="mb-10">
+          <span className="px-3 py-1 bg-primary/8 border border-primary/12 text-primary text-[10px] uppercase font-black tracking-widest rounded-full">
+            Choose Your Path
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight mt-4">
+            What do you want to do today?
+          </h2>
+          <p className="text-sm text-text-muted mt-2 max-w-2xl leading-relaxed">
+            Each mode gives you a different kind of help — from planning your search to preparing for a flat visit.
+          </p>
+        </div>
+        <ModeSelector />
+      </section>
+
+      {/* ══════════════════════════════════════════════════
+          PERSONA QUICK-START — Full width grid
+          ══════════════════════════════════════════════════ */}
+      <section className="bg-bg-alt py-16 px-6 sm:px-10 lg:px-16 xl:px-24 transition-colors duration-300">
         <div className="mb-10">
           <span className="px-3 py-1 bg-primary/8 border border-primary/12 text-primary text-[10px] uppercase font-black tracking-widest rounded-full">
             Try it Now

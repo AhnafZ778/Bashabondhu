@@ -1,16 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { useSearch } from "@/context/SearchContext";
 import AreaRecommendations from "@/components/AreaRecommendations";
 import ListingGrid from "@/components/ListingGrid";
+import DemoScanAnimation from "@/components/DemoScanAnimation";
 import Link from "next/link";
 import { Home as HomeIcon, Sparkles, HelpCircle, ArrowRight, Settings } from "lucide-react";
 import { personas } from "@/lib/data/personas";
+import { listings } from "@/lib/data/listings";
 import { SearchProfile } from "@/lib/types";
+import { generateScanSummary } from "@/lib/services/demo-scan.service";
 
 export default function PortalPage() {
   const { profile, planSearch, scoredListings, resetSearch } = useSearch();
+  const [scanComplete, setScanComplete] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
 
   // Count high compatibility matches
   const highCompatCount = scoredListings.filter(l => l.scores.total >= 80).length;
@@ -29,7 +34,14 @@ export default function PortalPage() {
       dealBreakers: p.dealBreakers
     };
     planSearch(newProfile);
+    setShowAnimation(true);
+    setScanComplete(false);
   };
+
+  const handleScanComplete = useCallback(() => {
+    setScanComplete(true);
+    setShowAnimation(false);
+  }, []);
 
   // If search profile doesn't exist, show a clean onboarding screen with persona quick selectors
   if (!profile) {
@@ -72,25 +84,50 @@ export default function PortalPage() {
             </p>
 
             <div className="grid grid-cols-1 gap-2.5 pt-2">
-              {personas.slice(0, 3).map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => handlePersonaSelect(p)}
-                  className="flex items-start text-left p-3.5 rounded-2xl border border-border-light bg-bg-alt hover:bg-card hover:border-primary/25 hover:shadow-xs transition-all group cursor-pointer"
-                >
-                  <span className="text-2xl mr-3 group-hover:scale-105 transition-transform select-none shrink-0">{p.avatar}</span>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-extrabold text-text-main group-hover:text-primary transition-colors leading-tight">{p.name}</h4>
-                    <p className="text-[10px] text-text-muted mt-1 leading-relaxed line-clamp-1">
-                      {p.description}
-                    </p>
-                  </div>
-                </button>
-              ))}
+              {personas.slice(0, 5).map((p) => {
+                const isDemo = p.id === "rafi-mita";
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => handlePersonaSelect(p)}
+                    className={`flex items-start text-left p-3.5 rounded-2xl border bg-bg-alt hover:bg-card hover:shadow-xs transition-all group cursor-pointer ${
+                      isDemo
+                        ? "border-gold/40 ring-1 ring-gold/20 hover:border-gold/60"
+                        : "border-border-light hover:border-primary/25"
+                    }`}
+                  >
+                    <span className="text-2xl mr-3 group-hover:scale-105 transition-transform select-none shrink-0">{p.avatar}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-xs font-extrabold text-text-main group-hover:text-primary transition-colors leading-tight">{p.name}</h4>
+                        {isDemo && (
+                          <span className="text-[8px] uppercase font-black tracking-widest px-1.5 py-0.5 bg-gold/10 text-gold border border-gold/20 rounded-md">
+                            Demo
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-text-muted mt-1 leading-relaxed line-clamp-1">
+                        {p.description}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
+    );
+  }
+
+  // Show scan animation after profile is set
+  if (profile && showAnimation) {
+    const scanSummary = generateScanSummary(listings, profile);
+    return (
+      <DemoScanAnimation
+        scanSummary={scanSummary}
+        onComplete={handleScanComplete}
+      />
     );
   }
 

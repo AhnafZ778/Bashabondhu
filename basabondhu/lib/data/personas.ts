@@ -85,5 +85,56 @@ export const personas: (SearchProfile & { name: string; description: string; ava
     ],
     priorities: ["safety", "generator", "lift", "commute"],
     dealBreakers: ["no-lift", "heavy-waterlogging"]
+  },
+  {
+    id: "sabbir-relocating",
+    name: "Sabbir (Relocating Professional)",
+    description: "Moving from Chittagong for a new job near Gulshan. Doesn't know Dhaka areas well. Needs area guidance and a reliable flat.",
+    avatar: "🧳",
+    mode: "plan",
+    rentingOrBuying: "renting",
+    householdType: "single-professional",
+    lookingFor: "full-flat",
+    budgetMonthly: 30000,
+    maxFirstMonthCash: 80000,
+    commuteAnchors: [
+      { label: "Gulshan Office", area: "Mohakhali" }
+    ],
+    priorities: ["commute", "rent", "quiet-area", "lift"],
+    dealBreakers: ["high-advance", "heavy-waterlogging"]
+  },
+  {
+    id: "maliha-roommates",
+    name: "Maliha & Roommates (Female Group)",
+    description: "3 working women sharing a flat. Need a female-friendly building with security and late-night access in Uttara or Bashundhara.",
+    avatar: "👩‍👩‍👩",
+    mode: "plan",
+    rentingOrBuying: "renting",
+    householdType: "group",
+    lookingFor: "full-flat",
+    budgetMonthly: 18000,
+    maxFirstMonthCash: 50000,
+    commuteAnchors: [
+      { label: "Uttara Office Zone", area: "Uttara" }
+    ],
+    priorities: ["safety", "rent", "lift", "generator"],
+    dealBreakers: ["family-only", "no-lift", "heavy-waterlogging"]
+  },
+  {
+    id: "kamal-budget",
+    name: "Kamal (Budget Bachelor)",
+    description: "Just graduated, first job in Tejgaon industrial area. Extremely tight budget, needs cheapest sublet possible. Open to shared rooms.",
+    avatar: "🎒",
+    mode: "plan",
+    rentingOrBuying: "renting",
+    householdType: "bachelor",
+    lookingFor: "room-sublet",
+    budgetMonthly: 10000,
+    maxFirstMonthCash: 25000,
+    commuteAnchors: [
+      { label: "Factory Office", area: "Tejgaon" }
+    ],
+    priorities: ["rent", "commute", "bachelor-friendly"],
+    dealBreakers: ["family-only", "broker", "high-advance"]
   }
 ];

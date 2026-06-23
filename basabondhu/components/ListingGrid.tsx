@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useSearch } from "@/context/SearchContext";
 import { ScoredListing } from "@/lib/types";
 import { calculateFirstMonthCost } from "@/lib/cost-calculator";
+import { getCostWithBrokerToggle } from "@/lib/services/cost.service";
 import { 
   AlertTriangle, 
   CheckCircle2, 
@@ -40,6 +41,7 @@ export default function ListingGrid() {
   const [selectedListingDetail, setSelectedListingDetail] = useState<ScoredListing | null>(null);
   const [activeTab, setActiveTab] = useState<"analysis" | "costs" | "script">("analysis");
   const [copiedText, setCopiedText] = useState(false);
+  const [includeBrokerFee, setIncludeBrokerFee] = useState(true);
 
   if (!profile || scoredListings.length === 0) return null;
 
@@ -543,15 +545,41 @@ export default function ListingGrid() {
               )}
 
               {/* TAB 2: Shifting Cost Math */}
-              {activeTab === "costs" && (
+              {activeTab === "costs" && (() => {
+                const costData = getCostWithBrokerToggle(selectedListingDetail, includeBrokerFee);
+                return (
                 <div className="space-y-5 animate-fade-in">
                   <div className="bg-primary text-white rounded-2xl p-5 shadow-sm">
                     <p className="text-[10px] uppercase font-bold tracking-wider opacity-80">Estimated Total Upfront Cash Needed</p>
                     <h4 className="text-3xl font-black mt-1">
-                      ৳{calculateFirstMonthCost(selectedListingDetail).total.toLocaleString()}
+                      ৳{costData.total.toLocaleString()}
                     </h4>
                     <p className="text-[11px] opacity-75 mt-2">Includes security advance deposits, first month rent, shifting charges, and fees.</p>
                   </div>
+
+                  {/* Broker Fee Toggle */}
+                  {selectedListingDetail.sourceType === "broker" || (selectedListingDetail.brokerFee !== null && selectedListingDetail.brokerFee > 0) ? (
+                    <div className="bg-amber-500/5 border border-amber-500/15 rounded-2xl p-4 flex items-center justify-between">
+                      <div>
+                        <h4 className="font-bold text-xs text-text-main">Include Broker Fee?</h4>
+                        <p className="text-[11px] text-text-muted mt-0.5">
+                          {includeBrokerFee 
+                            ? `Adding ৳${(selectedListingDetail.brokerFee || 0).toLocaleString()} broker charge`
+                            : "Broker fee excluded from total"}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIncludeBrokerFee(!includeBrokerFee)}
+                        className={`relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer ${
+                          includeBrokerFee ? "bg-primary" : "bg-border-light"
+                        }`}
+                      >
+                        <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                          includeBrokerFee ? "translate-x-5.5" : "translate-x-0.5"
+                        }`} />
+                      </button>
+                    </div>
+                  ) : null}
 
                   {/* Itemized list */}
                   <div className="bg-card border border-border-light rounded-2xl p-4.5 space-y-3.5 text-xs text-text-main transition-colors">
@@ -560,46 +588,47 @@ export default function ListingGrid() {
                     </h4>
                     <div className="flex justify-between">
                       <span className="text-text-muted">First Month Rent</span>
-                      <span className="font-bold text-text-main">৳{selectedListingDetail.rent.toLocaleString()}</span>
+                      <span className="font-bold text-text-main">৳{costData.rent.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-muted">Security Advance ({selectedListingDetail.advanceMonths} month)</span>
-                      <span className="font-bold text-text-main">৳{(selectedListingDetail.rent * selectedListingDetail.advanceMonths).toLocaleString()}</span>
+                      <span className="font-bold text-text-main">৳{costData.advance.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-muted">Service Charge</span>
                       <span className="font-bold text-text-main">
-                        ৳{(selectedListingDetail.serviceCharge || 0).toLocaleString()}
+                        ৳{costData.serviceCharge.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-muted">Brokerage Fee</span>
-                      <span className="font-bold text-text-main">
-                        {selectedListingDetail.brokerFee ? `৳${selectedListingDetail.brokerFee.toLocaleString()}` : "৳0"}
+                      <span className={`text-text-muted ${!includeBrokerFee ? "line-through opacity-50" : ""}`}>Brokerage Fee</span>
+                      <span className={`font-bold ${!includeBrokerFee ? "line-through opacity-50 text-text-muted" : "text-text-main"}`}>
+                        {costData.brokerFee ? `৳${costData.brokerFee.toLocaleString()}` : "৳0"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-muted">Moving Truck / Rickshaw Estimate</span>
-                      <span className="font-bold text-text-main">৳2,500</span>
+                      <span className="font-bold text-text-main">৳{costData.movingEstimate.toLocaleString()}</span>
                     </div>
                   </div>
 
                   {/* Cost Warnings */}
-                  {calculateFirstMonthCost(selectedListingDetail).warnings.length > 0 && (
+                  {costData.warnings.length > 0 && (
                     <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4.5">
                       <div className="flex items-center gap-1.5 mb-2">
                         <AlertTriangle className="w-4 h-4 text-amber-600" />
                         <h4 className="font-bold text-xs text-amber-800 uppercase tracking-wider">Hidden Cost Warnings</h4>
                       </div>
                       <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-700">
-                        {calculateFirstMonthCost(selectedListingDetail).warnings.map((w, idx) => (
+                        {costData.warnings.map((w, idx) => (
                           <li key={idx} className="font-semibold">{w}</li>
                         ))}
                       </ul>
                     </div>
                   )}
                 </div>
-              )}
+                );
+              })()}
 
               {/* TAB 3: Pre-Visit Script & Missing details */}
               {activeTab === "script" && (
