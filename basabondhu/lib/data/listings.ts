@@ -1,0 +1,371 @@
+import { Listing } from "../types";
+import { areas } from "./areas";
+
+const propertyImages = [
+  "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1560185127-6a2806647f81?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80"
+];
+
+// 20 high-fidelity anchor listings for specific demo scenarios
+const baseListings: Listing[] = [
+  {
+    id: "banasree-1",
+    title: "Banasree Block C 2-Bed Family Flat",
+    rawText: "Banasree Block C, 2 bed, 2 bath, drawing dining, 1050 sqft. Rent 20000, service charge 3000. 2 months advance. Gas line, lift available, no generator. Family preferred. Direct owner post.",
+    sourceType: "direct",
+    area: "Banasree",
+    addressHint: "Block C, Road 4",
+    city: "Dhaka",
+    latitude: 23.7645,
+    longitude: 90.4312,
+    rent: 20000,
+    bedrooms: 2,
+    bathrooms: 2,
+    sizeSqft: 1050,
+    tenantPreference: "family",
+    familyAllowed: true,
+    bachelorAllowed: false,
+    femaleFriendly: false,
+    studentFriendly: false,
+    advanceMonths: 2,
+    brokerFee: 0,
+    serviceCharge: 3000,
+    serviceChargeKnown: true,
+    gasType: "line",
+    lift: true,
+    generator: false,
+    waterloggingRisk: "high",
+    utilityClarity: "clear",
+    commuteNotes: "10 mins walk to Rampura bridge bus stand.",
+    houseRules: ["No loud noise after 11 PM", "Tenants must pay utility bills by 10th of each month"],
+    redFlags: ["Area has significant waterlogging during high monsoons.", "No generator backup for lift."],
+    goodPoints: ["Cheap rent for 1050 sqft", "Govt gas line connection", "Direct owner post, no broker fee."],
+    imageUrl: propertyImages[5]
+  },
+  {
+    id: "banasree-2",
+    title: "Banasree Block E 3-Bed Family Apartment",
+    rawText: "Banasree Block E, rent 28000, family preferred, 2 month advance, lift ase, gas cylinder, service charge extra, available from July.",
+    sourceType: "broker",
+    area: "Banasree",
+    addressHint: "Block E, Road 7",
+    city: "Dhaka",
+    latitude: 23.7612,
+    longitude: 90.4356,
+    rent: 28000,
+    bedrooms: 3,
+    bathrooms: 3,
+    sizeSqft: 1400,
+    tenantPreference: "family",
+    familyAllowed: true,
+    bachelorAllowed: false,
+    femaleFriendly: false,
+    studentFriendly: false,
+    advanceMonths: 2,
+    brokerFee: null,
+    serviceCharge: null,
+    serviceChargeKnown: false,
+    gasType: "cylinder",
+    lift: true,
+    generator: true,
+    waterloggingRisk: "high",
+    utilityClarity: "partial",
+    commuteNotes: "Rampura Banasree main road access in 5 mins by rickshaw.",
+    houseRules: ["Only family allowed", "Night lock at 11:30 PM"],
+    redFlags: ["Service charge and broker fee are undisclosed in post.", "Cylinder gas only.", "Block E road floods during heavy rain."],
+    goodPoints: ["Spacious 3-bed layout", "Generator backup available for lift and common areas"],
+    imageUrl: propertyImages[3]
+  },
+  {
+    id: "mohakhali-1",
+    title: "Mohakhali 2-Bed Flat Near Office Zone",
+    rawText: "Mohakhali Wireless Gate, 2 bed, 2 bath, 950 sqft. Rent 28000, service charge 4000. 1 month advance. Gas line, generator + lift available. Perfect for corporate employees. Direct owner.",
+    sourceType: "direct",
+    area: "Mohakhali",
+    addressHint: "Wireless Gate, Gp goli",
+    city: "Dhaka",
+    latitude: 23.7792,
+    longitude: 90.4015,
+    rent: 28000,
+    bedrooms: 2,
+    bathrooms: 2,
+    sizeSqft: 950,
+    tenantPreference: "any",
+    familyAllowed: true,
+    bachelorAllowed: true,
+    femaleFriendly: true,
+    studentFriendly: true,
+    advanceMonths: 1,
+    brokerFee: 0,
+    serviceCharge: 4000,
+    serviceChargeKnown: true,
+    gasType: "line",
+    lift: true,
+    generator: true,
+    waterloggingRisk: "low",
+    utilityClarity: "clear",
+    commuteNotes: "5 mins walk to Mohakhali Wireless main road bus stop. Highly accessible.",
+    houseRules: ["No late entry after 12:00 AM without warning guard"],
+    redFlags: ["GP Goli is crowded and noisy"],
+    goodPoints: ["Only 1 month advance", "Lift + generator active", "Govt gas line", "Very close to Gulshan-1 and Mohakhali office areas"],
+    imageUrl: propertyImages[0]
+  },
+  {
+    id: "bashundhara-1",
+    title: "Bashundhara Student-Friendly Sublet Near NSU",
+    rawText: "Sublet for rent in Bashundhara Block C, single room with attach bathroom, only for university students. Rent 9500 (all inclusive), 1 month advance. Cylinder gas, generator, no lift. Direct post.",
+    sourceType: "direct",
+    area: "Bashundhara",
+    addressHint: "Block C, Road 5",
+    city: "Dhaka",
+    latitude: 23.8162,
+    longitude: 90.4288,
+    rent: 9500,
+    bedrooms: 1,
+    bathrooms: 1,
+    sizeSqft: 250,
+    tenantPreference: "student",
+    familyAllowed: false,
+    bachelorAllowed: true,
+    femaleFriendly: true,
+    studentFriendly: true,
+    advanceMonths: 1,
+    brokerFee: 0,
+    serviceCharge: 0,
+    serviceChargeKnown: true,
+    gasType: "cylinder",
+    lift: false,
+    generator: true,
+    waterloggingRisk: "low",
+    utilityClarity: "clear",
+    commuteNotes: "8 mins walk to North South University (NSU) gate.",
+    houseRules: ["No guests allowed overnight", "Strict study environment"],
+    redFlags: ["Located on 4th floor, no lift", "Cylinder gas system"],
+    goodPoints: ["Super close to NSU/IUB", "Rent includes gas, current, wifi, maid bills", "No broker fee"],
+    imageUrl: propertyImages[1]
+  },
+  {
+    id: "dhanmondi-1",
+    title: "Dhanmondi Female-Friendly Sublet Near University",
+    rawText: "Dhanmondi Road 15 sublet for female student or job holder. Single room, rent 11000 inclusive, 1 month advance, gas cylinder, generator backup, lift available. Secure gates close 10 PM.",
+    sourceType: "direct",
+    area: "Dhanmondi",
+    addressHint: "Road 15 (old 28)",
+    city: "Dhaka",
+    latitude: 23.7482,
+    longitude: 90.3755,
+    rent: 11000,
+    bedrooms: 1,
+    bathrooms: 1,
+    sizeSqft: 300,
+    tenantPreference: "female",
+    familyAllowed: false,
+    bachelorAllowed: false,
+    femaleFriendly: true,
+    studentFriendly: true,
+    advanceMonths: 1,
+    brokerFee: 0,
+    serviceCharge: 0,
+    serviceChargeKnown: true,
+    gasType: "cylinder",
+    lift: true,
+    generator: true,
+    waterloggingRisk: "low",
+    utilityClarity: "clear",
+    commuteNotes: "Rickshaw access to all parts of Dhanmondi. Close to State University and ULAB.",
+    houseRules: ["Female only", "Main gate locks at 10 PM. No late entry.", "No male guests allowed."],
+    redFlags: ["Strict curfew at 10 PM", "Cylinder gas only"],
+    goodPoints: ["Highly secure building with 24/7 CCTV & guard", "Includes all utility bills in rent", "Equipped with lift and full generator backup"],
+    imageUrl: propertyImages[2]
+  },
+  {
+    id: "mirpur-1",
+    title: "Mirpur 10 Budget Flat Near Metro Station",
+    rawText: "Mirpur 10 ground floor flat, 2 bed, 2 bath. Rent 14000, SC 1500. Gas cylinder, no lift, no generator. Bachelor or family allowed. 2 months advance. Direct owner.",
+    sourceType: "direct",
+    area: "Mirpur",
+    addressHint: "Sector 6, near Metro station",
+    city: "Dhaka",
+    latitude: 23.8072,
+    longitude: 90.3685,
+    rent: 14000,
+    bedrooms: 2,
+    bathrooms: 2,
+    sizeSqft: 800,
+    tenantPreference: "any",
+    familyAllowed: true,
+    bachelorAllowed: true,
+    femaleFriendly: true,
+    studentFriendly: true,
+    advanceMonths: 2,
+    brokerFee: 0,
+    serviceCharge: 1500,
+    serviceChargeKnown: true,
+    gasType: "cylinder",
+    lift: false,
+    generator: false,
+    waterloggingRisk: "medium",
+    utilityClarity: "clear",
+    commuteNotes: "Just 4 mins walk to Mirpur 10 Metro Rail Station. Best for commuters.",
+    houseRules: ["Quiet hours after 11 PM"],
+    redFlags: ["Ground floor can get waterlogged on road in heavy monsoons", "No generator or lift backup"],
+    goodPoints: ["Extremely close to Metro Rail", "Cheap rent for 2 beds", "Bachelor friendly"],
+    imageUrl: propertyImages[4]
+  },
+  {
+    id: "lalmatia-1",
+    title: "Lalmatia Block D Premium Family Flat",
+    rawText: "Lalmatia Block D, 3 bed, 4 bath, huge drawing dining. Rent 42000, service charge 5000. 2 months advance. Gas line, lift, generator backup active. Quiet residential area. No brokers.",
+    sourceType: "direct",
+    area: "Lalmatia",
+    addressHint: "Block D, Road 3",
+    city: "Dhaka",
+    latitude: 23.7558,
+    longitude: 90.3708,
+    rent: 42000,
+    bedrooms: 3,
+    bathrooms: 4,
+    sizeSqft: 1650,
+    tenantPreference: "family",
+    familyAllowed: true,
+    bachelorAllowed: false,
+    femaleFriendly: false,
+    studentFriendly: false,
+    advanceMonths: 2,
+    brokerFee: 0,
+    serviceCharge: 5000,
+    serviceChargeKnown: true,
+    gasType: "line",
+    lift: true,
+    generator: true,
+    waterloggingRisk: "low",
+    utilityClarity: "clear",
+    commuteNotes: "Quiet street, near Satmasjid road. Easy access to Dhanmondi schools.",
+    houseRules: ["Strictly family only", "No pets allowed", "Written tenancy agreement mandatory"],
+    redFlags: ["High monthly service charge (৳5,000)"],
+    goodPoints: ["Prestigious and safe neighborhood", "Government gas line connection", "Full lift and generator backup for internal points"],
+    imageUrl: propertyImages[6]
+  },
+  {
+    id: "mohammadpur-1",
+    title: "Mohammadpur Tajmahal Road Family Flat",
+    rawText: "Mohammadpur Tajmahal Road 3 bed 3 bath, rent 25000, SC 3000. Gas line active, lift and generator present. 2 months advance. Family preferred.",
+    sourceType: "direct",
+    area: "Mohammadpur",
+    addressHint: "Tajmahal Road",
+    city: "Dhaka",
+    latitude: 23.7585,
+    longitude: 90.3622,
+    rent: 25000,
+    bedrooms: 3,
+    bathrooms: 3,
+    sizeSqft: 1200,
+    tenantPreference: "family",
+    familyAllowed: true,
+    bachelorAllowed: false,
+    femaleFriendly: false,
+    studentFriendly: false,
+    advanceMonths: 2,
+    brokerFee: 0,
+    serviceCharge: 3000,
+    serviceChargeKnown: true,
+    gasType: "line",
+    lift: true,
+    generator: true,
+    waterloggingRisk: "medium",
+    utilityClarity: "clear",
+    commuteNotes: "Easy access to Town Hall bus stand and Dhanmondi.",
+    houseRules: ["Tenants must verify NID", "Family only"],
+    redFlags: ["Tajmahal Road can have traffic jam in school hours"],
+    goodPoints: ["Govt gas line active", "Lift and generator included", "Near schools and parks"],
+    imageUrl: propertyImages[7]
+  }
+];
+
+// Generates remaining ~90 listings based on area configs to ensure a robust dataset of 100+ items
+function generateListings(): Listing[] {
+  const list: Listing[] = [...baseListings];
+  const preferences: ("family" | "bachelor" | "student" | "female" | "any")[] = [
+    "family", "bachelor", "student", "female", "any"
+  ];
+  
+  const sources: ("facebook" | "bikroy" | "bproperty" | "broker" | "direct")[] = [
+    "facebook", "bikroy", "bproperty", "broker", "direct"
+  ];
+
+  areas.forEach((area, index) => {
+    // Generate 9 listings per area
+    for (let i = 1; i <= 9; i++) {
+      const id = `${area.id}-gen-${i}`;
+      const bedrooms = (i % 3) + 1; // 1, 2, or 3 beds
+      const bathrooms = Math.max(1, bedrooms - (i % 2));
+      
+      const baseRent = area.rentLow + Math.round((area.rentHigh - area.rentLow) * (i / 10));
+      const rent = Math.round(baseRent / 1000) * 1000;
+      
+      const pref = preferences[(i + index) % preferences.length];
+      const source = sources[(i * 3) % sources.length];
+      
+      const lift = bedrooms >= 3 || (i % 2 === 0);
+      const generator = lift && (i % 3 !== 0);
+      
+      const gasType = i % 4 === 0 ? "cylinder" : (i % 4 === 1 ? "unknown" : "line");
+      const serviceCharge = Math.round((rent * 0.1) / 500) * 500 || 1500;
+      const advanceMonths = (i % 2) + 1; // 1 or 2 months
+      
+      const brokerFee = source === "broker" ? rent : (source === "bproperty" ? Math.round(rent * 0.5) : 0);
+
+      const title = `${area.name} ${bedrooms}-Bed ${pref === "family" ? "Family Flat" : (pref === "female" ? "Female Sublet" : "Apartment")}`;
+      const rawText = `${area.name} apartment for rent. ${bedrooms} bed, ${bathrooms} bath. Rent: ${rent}. Service charge: ${serviceCharge}. ${lift ? "Lift" : "No lift"}. Gas: ${gasType}. Tenant preference: ${pref}. Contact soon.`;
+
+      const imageIndex = (index * 9 + i) % propertyImages.length;
+
+      list.push({
+        id,
+        title,
+        rawText,
+        sourceType: source,
+        area: area.name,
+        addressHint: `Sector ${i}, Road ${i * 2 + 1}`,
+        city: "Dhaka",
+        latitude: area.latitude + (i * 0.001) - 0.005,
+        longitude: area.longitude + (i * 0.001) - 0.005,
+        rent,
+        bedrooms,
+        bathrooms,
+        sizeSqft: bedrooms * 400 + (i * 20),
+        tenantPreference: pref,
+        familyAllowed: pref === "family" || pref === "any",
+        bachelorAllowed: pref === "bachelor" || pref === "student" || pref === "any",
+        femaleFriendly: pref === "female" || pref === "any",
+        studentFriendly: pref === "student" || pref === "any",
+        advanceMonths,
+        brokerFee,
+        serviceCharge,
+        serviceChargeKnown: i % 5 !== 0,
+        gasType,
+        lift,
+        generator,
+        waterloggingRisk: area.waterloggingRisk,
+        utilityClarity: i % 3 === 0 ? "partial" : "clear",
+        commuteNotes: area.commuteNotes,
+        houseRules: [`Maintain cleanliness`, `Pay rent before 10th`],
+        redFlags: area.waterloggingRisk === "high" ? ["High risk of waterlogging during rain."] : [],
+        goodPoints: ["Quiet street", "Good ventilation"],
+        imageUrl: propertyImages[imageIndex]
+      });
+    }
+  });
+
+  return list;
+}
+
+export const listings = generateListings();

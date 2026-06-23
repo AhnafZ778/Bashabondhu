@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+:root {
+  /* ──────────────────────────────────────────────
+     LIGHT MODE — White, Copper & Gold
+     Anchor: Deep charcoal for trust
+     Primary Brand: Copper
+     Accent: Gold
+     ────────────────────────────────────────────── */
+  --bg-primary: #FAF9F6;        /* warm off-white paper */
+  --bg-secondary: #F2F0EA;      /* warm light grey */
+  --bg-card: #FFFFFF;
+
+  --text-main: #1A1A1A;         /* near-black — maximum readability */
+  --text-muted: #71717A;        /* zinc-500 — soft muted */
+
+  --brand-primary: #C86446;     /* solid premium Copper */
+  --brand-secondary: #B05034;   /* slightly darker copper on hover */
+  --brand-gold: #A1700F;        /* high-contrast bronze Gold for AAA readability */
+  --brand-gold-light: #FEF7E8;  /* gold tint background */
+
+  --border-light: #E8E5DD;      /* warm stone border */
+  --border-hover: #D5D0C6;      /* slightly darker on hover */
+
+  --color-visit: #2E7D5B;       /* sage green — approval */
+  --color-maybe: #D4943A;       /* warm amber — caution */
+  --color-callfirst: #C97D2F;   /* deeper amber */
+  --color-avoid: #C44040;       /* muted red — danger */
+}
+
+@theme {
+  --color-bg: var(--bg-primary);
+  --color-bg-alt: var(--bg-secondary);
+  --color-card: var(--bg-card);
+
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+
+  --color-primary: var(--brand-primary);
+  --color-secondary: var(--brand-secondary);
+  --color-gold: var(--brand-gold);
+  --color-gold-bg: var(--brand-gold-light);
+
+  --color-border-light: var(--border-light);
+  --color-border-hover: var(--border-hover);
+
+  --color-visit: var(--color-visit);
+  --color-maybe: var(--color-maybe);
+  --color-callfirst: var(--color-callfirst);
+  --color-avoid: var(--color-avoid);
+
+  --font-sans: var(--font-inter), sans-serif;
+
+  --animate-slide-in: slide-in 0.3s ease-out;
+  --animate-fade-in: fade-in 0.25s ease-out;
+
+  @keyframes slide-in {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+body {
+  background-color: var(--bg-secondary);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
