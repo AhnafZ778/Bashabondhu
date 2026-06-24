@@ -3,7 +3,7 @@
 import React from "react";
 import { useSearch } from "@/context/SearchContext";
 import { calculateFirstMonthCost } from "@/lib/cost-calculator";
-import { GitCompare, Trash2, ShieldAlert, Sparkles } from "lucide-react";
+import { GitCompare, Trash2, ShieldAlert, Sparkles, X } from "lucide-react";
 
 export default function ListingComparison() {
   const { selectedForCompare, scoredListings, toggleCompare, clearCompare } = useSearch();
@@ -165,7 +165,7 @@ export default function ListingComparison() {
               <td className="py-3 px-4 text-text-muted font-medium">Lift / Generator</td>
               {listingsToCompare.map((l) => (
                 <td key={l.id} className="py-3 px-4 text-text-main">
-                  {l.lift ? "✅ Lift Present" : "❌ No Lift"} / {l.generator ? "✅ Generator backup" : "❌ No Generator"}
+                  <span className={l.lift ? "text-visit font-semibold" : "text-avoid font-semibold"}>{l.lift ? "Lift Present" : "No Lift"}</span> / <span className={l.generator ? "text-visit font-semibold" : "text-avoid font-semibold"}>{l.generator ? "Generator backup" : "No Generator"}</span>
                 </td>
               ))}
             </tr>

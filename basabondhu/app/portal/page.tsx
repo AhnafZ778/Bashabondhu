@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Home as HomeIcon, Sparkles, HelpCircle, ArrowRight, Settings } from "lucide-react";
 import { personas } from "@/lib/data/personas";
 import { SearchProfile } from "@/lib/types";
+import { PersonaIcon } from "@/components/PersonaIcons";
 
 export default function PortalPage() {
   const { profile, planSearch, scoredListings, resetSearch } = useSearch();
@@ -34,61 +35,158 @@ export default function PortalPage() {
   // If search profile doesn't exist, show a clean onboarding screen with persona quick selectors
   if (!profile) {
     return (
-      <div className="space-y-10 animate-fade-in py-4">
-        <div className="space-y-3 max-w-3xl">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-[10px] uppercase font-extrabold tracking-widest rounded-full border border-primary/20">
-            <Sparkles className="w-3 h-3" />
-            Set Up Your Match Profile
+      <div className="space-y-8 animate-fade-in py-4">
+        {/* Header Section */}
+        <div className="space-y-2 text-center md:text-left">
+          <span className="text-[#C9952B] font-serif text-[10px] sm:text-xs uppercase tracking-[0.3em] block font-bold">
+            Match Portal
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight leading-tight">
-            How do you want to find your next home?
+          <h2 className="text-3xl sm:text-4xl font-serif uppercase tracking-[0.08em] text-text-main font-black">
+            Set Up Your Profile
           </h2>
-          <p className="text-sm text-text-muted leading-relaxed">
-            Configure your lifestyle criteria (commute daily anchor, maximum shifting budget, custom rules) to filter and rank Dhaka rentals with zero guesswork.
+          <p className="text-xs sm:text-sm text-text-muted max-w-xl leading-relaxed">
+            Select a path below to build custom matcher criteria or load a preset renter profile.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {/* Action Card 1: Custom Wizard */}
-          <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 space-y-5 shadow-sm">
-            <h3 className="font-extrabold text-lg text-text-main">Option A: Build Custom Criteria</h3>
-            <p className="text-xs text-text-muted leading-relaxed">
-              Step-by-step profile matcher. We will ask you about your household type, maximum move-in cash, transit hub (work/school), and deal breakers. Takes less than 60 seconds.
-            </p>
-            <Link
-              href="/portal/wizard"
-              className="inline-flex items-center gap-1.5 px-5 py-3 bg-primary hover:bg-secondary text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md shadow-primary/10 active:scale-[0.98] cursor-pointer"
-            >
-              Start Guided Matcher
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          {/* Action Card 2: Quick Personas */}
-          <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm">
-            <h3 className="font-extrabold text-lg text-text-main">Option B: Use Demo Personas</h3>
-            <p className="text-xs text-text-muted leading-relaxed">
-              Instantly test BasaBondhu matches using preset Dhaka renter situations.
-            </p>
-
-            <div className="grid grid-cols-1 gap-2.5 pt-2">
-              {personas.slice(0, 3).map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => handlePersonaSelect(p)}
-                  className="flex items-start text-left p-3.5 rounded-2xl border border-border-light bg-bg-alt hover:bg-card hover:border-primary/25 hover:shadow-xs transition-all group cursor-pointer"
+        {/* Asymmetrical Image-Backed Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Option A: Custom Guided Matcher (Spans 2 columns on desktop) */}
+          <div className="relative md:col-span-2 h-[320px] rounded-3xl overflow-hidden group shadow-md border border-black/[0.03]">
+            {/* Background Image */}
+            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-103" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80')` }} />
+            {/* Dark Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+            
+            {/* Content Overlay */}
+            <div className="absolute inset-0 p-8 flex flex-col justify-between items-start text-white">
+              <span className="px-2.5 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-[9px] uppercase font-black tracking-widest rounded-md text-[#C9952B]">
+                Custom Path
+              </span>
+              
+              <div className="space-y-4 w-full">
+                <div className="space-y-1">
+                  <h3 className="text-2xl font-serif uppercase tracking-wider font-bold">
+                    Guided Matcher
+                  </h3>
+                  <p className="text-xs text-white/70 max-w-sm font-medium">
+                    Customize your rent budget, daily commute hubs, and security rules in 3 steps.
+                  </p>
+                </div>
+                
+                <Link
+                  href="/portal/wizard"
+                  className="inline-flex items-center gap-1.5 px-5 py-3 bg-[#C9952B] hover:bg-[#b08020] text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98] cursor-pointer"
                 >
-                  <span className="text-2xl mr-3 group-hover:scale-105 transition-transform select-none shrink-0">{p.avatar}</span>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-extrabold text-text-main group-hover:text-primary transition-colors leading-tight">{p.name}</h4>
-                    <p className="text-[10px] text-text-muted mt-1 leading-relaxed line-clamp-1">
-                      {p.description}
-                    </p>
-                  </div>
-                </button>
-              ))}
+                  Start Guided Matcher
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
+
+          {/* Rafi & Mita (Demo Couple) */}
+          {(() => {
+            const p = personas.find(x => x.id === "rafi-mita") || personas[0];
+            return (
+              <button
+                onClick={() => handlePersonaSelect(p)}
+                className="relative h-[320px] rounded-3xl overflow-hidden group shadow-md text-left focus:outline-none border border-black/[0.03] cursor-pointer"
+              >
+                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105" style={{ backgroundImage: `url('${p.imageUrl}')` }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
+                
+                <div className="absolute inset-0 p-6 flex flex-col justify-between text-white">
+                  <div className="flex justify-between items-start w-full">
+                    <span className="px-2 py-0.5 bg-white/15 backdrop-blur-md border border-white/20 text-[8px] font-black tracking-wider uppercase rounded">
+                      Couple
+                    </span>
+                    <div className="w-7 h-7 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-[#C9952B]">
+                      <PersonaIcon iconId={p.iconId} className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <h4 className="text-base font-serif uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
+                      {p.name.split(" (")[0]}
+                    </h4>
+                    <p className="text-[10px] text-[#C9952B] font-bold uppercase tracking-wider">
+                      ৳{p.budgetMonthly.toLocaleString()}/mo
+                    </p>
+                  </div>
+                </div>
+              </button>
+            );
+          })()}
+
+          {/* Row 2: 3 demo profiles (Nusrat, Abrar, Haque Family) */}
+          {personas.filter(p => ["nusrat-student", "abrar-bachelor", "haque-family"].includes(p.id)).map((p) => {
+            const label = p.id === "nusrat-student" ? "Student" : p.id === "abrar-bachelor" ? "Bachelor" : "Family";
+            return (
+              <button
+                key={p.id}
+                onClick={() => handlePersonaSelect(p)}
+                className="relative h-[280px] rounded-3xl overflow-hidden group shadow-md text-left focus:outline-none border border-black/[0.03] cursor-pointer"
+              >
+                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105" style={{ backgroundImage: `url('${p.imageUrl}')` }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
+                
+                <div className="absolute inset-0 p-6 flex flex-col justify-between text-white">
+                  <div className="flex justify-between items-start w-full">
+                    <span className="px-2 py-0.5 bg-white/15 backdrop-blur-md border border-white/20 text-[8px] font-black tracking-wider uppercase rounded">
+                      {label}
+                    </span>
+                    <div className="w-7 h-7 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-[#C9952B]">
+                      <PersonaIcon iconId={p.iconId} className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <h4 className="text-base font-serif uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
+                      {p.name.split(" (")[0]}
+                    </h4>
+                    <p className="text-[10px] text-[#C9952B] font-bold uppercase tracking-wider">
+                      ৳{p.budgetMonthly.toLocaleString()}/mo
+                    </p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+
+          {/* Row 3: Tasnim (Wide banner spanning 3 columns) */}
+          {(() => {
+            const p = personas.find(x => x.id === "tasnim-woman") || personas[4];
+            return (
+              <button
+                onClick={() => handlePersonaSelect(p)}
+                className="relative md:col-span-3 h-[180px] rounded-3xl overflow-hidden group shadow-md text-left focus:outline-none border border-black/[0.03] cursor-pointer"
+              >
+                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-103" style={{ backgroundImage: `url('${p.imageUrl}')` }} />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-transparent" />
+                
+                <div className="absolute inset-0 p-8 flex flex-col justify-between text-white md:flex-row md:items-end">
+                  <div className="space-y-3">
+                    <span className="inline-block px-2 py-0.5 bg-white/15 backdrop-blur-md border border-white/20 text-[8px] font-black tracking-wider uppercase rounded">
+                      Executive
+                    </span>
+                    <div className="space-y-1">
+                      <h4 className="text-lg md:text-xl font-serif uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
+                        {p.name.split(" (")[0]}
+                      </h4>
+                      <p className="text-[10px] text-[#C9952B] font-bold uppercase tracking-wider">
+                        ৳{p.budgetMonthly.toLocaleString()}/mo
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-[#C9952B] shrink-0 mt-3 md:mt-0">
+                    <PersonaIcon iconId={p.iconId} className="w-4 h-4" />
+                  </div>
+                </div>
+              </button>
+            );
+          })()}
         </div>
       </div>
     );
@@ -102,63 +200,48 @@ export default function PortalPage() {
       <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-32">
         <div className="bg-card border border-border-light rounded-3xl p-6 shadow-xs space-y-5 transition-all duration-300">
           <div className="flex items-center justify-between pb-3 border-b border-border-light">
-            <h3 className="font-extrabold text-text-main text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors">
-              <HomeIcon className="w-4 h-4 text-primary" />
-              Match Parameters
+            <h3 className="font-bold text-text-main text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors">
+              <HomeIcon className="w-3.5 h-3.5 text-[#C9952B]" />
+              Renter Criteria
             </h3>
             <button
               onClick={resetSearch}
-              className="text-[10px] font-black text-primary uppercase hover:underline cursor-pointer transition-colors"
+              className="text-[9px] font-black text-[#C9952B] uppercase tracking-wider hover:underline cursor-pointer transition-colors"
             >
               Reset All
             </button>
           </div>
 
-          <div className="space-y-3.5 text-xs">
-            <div className="flex justify-between items-center bg-bg-alt p-3 rounded-xl border border-border-light transition-colors">
-              <span className="text-text-muted font-bold">Household Type:</span>
-              <span className="font-extrabold text-text-main capitalize">{profile.householdType}</span>
+          <div className="space-y-1 text-xs divide-y divide-black/[0.04]">
+            <div className="flex justify-between items-center py-2.5 transition-colors">
+              <span className="text-text-muted font-medium">Household:</span>
+              <span className="font-bold text-text-main capitalize">{profile.householdType}</span>
             </div>
             
-            <div className="flex justify-between items-center bg-bg-alt p-3 rounded-xl border border-border-light transition-colors">
-              <span className="text-text-muted font-bold">Monthly Rent Limit:</span>
-              <span className="font-extrabold text-text-main">৳{profile.budgetMonthly.toLocaleString()}</span>
+            <div className="flex justify-between items-center py-2.5 transition-colors">
+              <span className="text-text-muted font-medium">Budget Limit:</span>
+              <span className="font-bold text-text-main">৳{profile.budgetMonthly.toLocaleString()}</span>
             </div>
 
-            <div className="flex justify-between items-center bg-bg-alt p-3 rounded-xl border border-border-light transition-colors">
-              <span className="text-text-muted font-bold">Transit Daily Anchor:</span>
-              <span className="font-extrabold text-text-main">{profile.commuteAnchors[0]?.area || "Any"}</span>
+            <div className="flex justify-between items-center py-2.5 transition-colors">
+              <span className="text-text-muted font-medium">Transit Hub:</span>
+              <span className="font-bold text-text-main">{profile.commuteAnchors[0]?.area || "Any"}</span>
             </div>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-2 flex flex-col gap-3">
             <Link
               href="/portal/wizard"
-              className="w-full py-3 px-4 bg-bg-alt hover:bg-bg border border-border-light hover:border-primary/30 text-text-main rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all text-xs font-extrabold"
+              className="w-full py-2.5 px-4 bg-transparent hover:bg-bg border border-border-light hover:border-[#C9952B]/40 text-text-main rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all text-[10px] font-black uppercase tracking-wider"
             >
-              <Settings className="w-3.5 h-3.5 text-primary" />
-              Edit Criteria Details
+              <Settings className="w-3.5 h-3.5 text-[#C9952B]" />
+              Modify Profile
             </Link>
-          </div>
 
-          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 text-[11px] text-text-main space-y-2 transition-colors">
-            <div className="flex items-center gap-1.5 font-bold text-primary">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Matching Intelligence</span>
+            <div className="bg-[#C9952B]/5 border border-[#C9952B]/10 rounded-xl p-3 text-[10px] text-text-muted flex items-center justify-between transition-colors">
+              <span className="font-bold text-[#C9952B] uppercase tracking-wider">Scored Matches</span>
+              <span className="bg-[#C9952B] text-white px-2 py-0.5 rounded font-black text-[9px]">{highCompatCount} Homes</span>
             </div>
-            <p className="text-text-muted leading-relaxed font-medium">
-              Found <strong className="text-primary">{highCompatCount} high-compatibility matches</strong> based on your preferences. Adjust sliders or active markers to re-score.
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-card border border-border-light rounded-3xl p-5 shadow-xs flex items-start gap-3 transition-colors duration-300">
-          <HelpCircle className="w-5 h-5 text-text-muted shrink-0 mt-0.5" />
-          <div>
-            <h4 className="text-xs font-bold text-text-main">Verify Details</h4>
-            <p className="text-[10px] text-text-muted mt-1 leading-relaxed">
-              Add compatible apartments to your Shortlist, then head to the <strong>Compare Shortlist</strong> and <strong>Call Scripts & Prep</strong> pages to prepare for calls.
-            </p>
           </div>
         </div>
       </div>

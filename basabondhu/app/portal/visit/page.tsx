@@ -6,13 +6,13 @@ import VisitPlanner from "@/components/VisitPlanner";
 export default function VisitPage() {
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="space-y-1 text-left">
-        <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] uppercase font-black tracking-widest rounded-full border border-primary/20">
-          Negotiation & Call Planner
+      <div className="space-y-1.5 text-left">
+        <span className="text-[#C9952B] font-serif text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold">
+          Call Scripts & Prep
         </span>
-        <h2 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight transition-colors">Visit Preparation Planner</h2>
-        <p className="text-xs sm:text-sm text-text-muted leading-relaxed transition-colors">
-          Generate tailored phone interview scripts to verify missing details from the landlord before scheduling physical site visits.
+        <h2 className="text-2xl sm:text-3xl font-serif uppercase tracking-wider text-text-main font-black transition-colors">Visit Preparation</h2>
+        <p className="text-xs text-text-muted leading-relaxed transition-colors">
+          Tailored call scripts to verify details and key physical visit checklists.
         </p>
       </div>
 

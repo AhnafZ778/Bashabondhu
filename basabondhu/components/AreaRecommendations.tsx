@@ -16,16 +16,13 @@ export default function AreaRecommendations() {
       {/* Compact Horizon Banner */}
       <div className="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             <div className="flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-emerald-800" />
+              <MapPin className="w-3.5 h-3.5 text-[#C9952B]" />
               <h3 className="text-xs font-black uppercase text-slate-800 tracking-wider">
-                Neighborhood Suitability
+                Suitability Matrix
               </h3>
             </div>
-            <p className="text-[11px] text-slate-500 leading-relaxed max-w-md">
-              Matching areas based on curfew rules, flood levels, and transit hubs. Click an area to view local trade-offs.
-            </p>
           </div>
           
           <div className="flex flex-wrap gap-2">
@@ -41,10 +38,10 @@ export default function AreaRecommendations() {
                 <button
                   key={area.id}
                   onClick={() => setSelectedArea(area)}
-                  className="px-3.5 py-2.5 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-850/40 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:text-emerald-850 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="px-3 py-2 bg-slate-50 hover:bg-[#C9952B]/5 hover:border-[#C9952B]/40 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:text-text-main transition-all flex items-center gap-2 cursor-pointer active:scale-95"
                 >
                   <span className="font-semibold">{area.name}</span>
-                  <span className="bg-emerald-500/10 text-emerald-800 text-[10px] font-black px-1.5 py-0.5 rounded-md">
+                  <span className="bg-[#C9952B]/10 text-[#C9952B] text-[10px] font-black px-1.5 py-0.5 rounded-md">
                     {suitability}/10 Fit
                   </span>
                   <ArrowRight className="w-3 h-3 text-slate-400" />
@@ -63,7 +60,7 @@ export default function AreaRecommendations() {
             {/* Header */}
             <div className="p-6 border-b border-slate-100 flex justify-between items-start">
               <div>
-                <span className="text-[10px] uppercase font-black tracking-widest text-emerald-800 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#C9952B] bg-[#C9952B]/10 border border-[#C9952B]/20 px-2 py-0.5 rounded-md">
                   Area Analysis
                 </span>
                 <h4 className="text-xl font-black text-slate-900 mt-2">{selectedArea.name}</h4>
@@ -90,7 +87,7 @@ export default function AreaRecommendations() {
                     </div>
                     <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
                       <div 
-                        className="bg-emerald-600 h-full rounded-full" 
+                        className="bg-[#C9952B] h-full rounded-full" 
                         style={{ width: `${selectedArea.familySuitability * 10}%` }}
                       />
                     </div>
@@ -103,7 +100,7 @@ export default function AreaRecommendations() {
                     </div>
                     <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
                       <div 
-                        className="bg-emerald-600 h-full rounded-full" 
+                        className="bg-[#C9952B] h-full rounded-full" 
                         style={{ width: `${selectedArea.bachelorSuitability * 10}%` }}
                       />
                     </div>

@@ -16,63 +16,63 @@ export default function VisitPlanner() {
 
   return (
     <div className="w-full space-y-6 transition-colors duration-300">
-      <div className="flex items-center gap-2 mb-2">
-        <PhoneCall className="w-5 h-5 text-primary" />
-        <h2 className="text-lg font-bold text-text-main font-sans">Visit Prep & Landlord Scripts</h2>
+      <div className="flex items-center gap-1.5 mb-2">
+        <PhoneCall className="w-4 h-4 text-[#C9952B]" />
+        <h2 className="text-xs font-black uppercase text-slate-800 tracking-wider">Visit Planner & Scripts</h2>
       </div>
 
       {visitListings.length === 0 ? (
-        <div className="bg-card border border-border-light rounded-3xl p-8 text-center shadow-sm transition-colors duration-300">
-          <Calendar className="w-12 h-12 text-primary/20 mx-auto mb-4" />
-          <h3 className="font-bold text-base text-text-main">No Shortlisted Homes Yet</h3>
-          <p className="text-xs text-text-muted mt-1.5 max-w-sm mx-auto">
-            Run the guided search and select listings that are &quot;Visit Worthy&quot; or &quot;Maybe&quot; to generate custom call scripts.
+        <div className="bg-card border border-border-light rounded-3xl p-8 text-center shadow-xs transition-colors duration-300">
+          <Calendar className="w-10 h-10 text-[#C9952B]/20 mx-auto mb-3" />
+          <h3 className="font-serif uppercase tracking-wider text-xs font-bold text-text-main">No Shortlisted Homes</h3>
+          <p className="text-[11px] text-text-muted mt-1 max-w-xs mx-auto">
+            Select listings from top recommendations to generate verification scripts.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Column 1 & 2: Scripts and listings */}
-          <div className="md:col-span-2 space-y-6">
+          <div className="lg:col-span-8 space-y-6">
             {visitListings.map((l, idx) => {
               return (
-                <div key={l.id} className="bg-card border border-border-light rounded-3xl p-5 shadow-sm space-y-4 transition-colors duration-300">
+                <div key={l.id} className="bg-card border border-border-light rounded-3xl p-5 shadow-xs space-y-4 transition-colors duration-300">
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-[9px] uppercase font-extrabold bg-primary/10 text-primary px-2.5 py-1 rounded-md border border-primary/20">
-                        Option #{idx + 1} script
+                      <span className="text-[9px] uppercase font-extrabold bg-[#C9952B]/10 text-[#C9952B] px-2.5 py-1 rounded-md border border-[#C9952B]/20">
+                        Script #{idx + 1}
                       </span>
-                      <h3 className="font-bold text-text-main text-base mt-2 leading-tight">{l.title}</h3>
-                      <p className="text-xs text-text-muted">{l.area} • ৳{l.rent.toLocaleString()}/mo</p>
+                      <h3 className="font-bold text-text-main text-sm mt-2 leading-tight">{l.title}</h3>
+                      <p className="text-[11px] text-text-muted">{l.area} • ৳{l.rent.toLocaleString()}/mo</p>
                     </div>
-                    <span className="text-xs font-extrabold text-gold bg-gold-bg border border-gold/25 px-2.5 py-1 rounded-md">
-                      {l.scores.total}% Match
+                    <span className="text-[10px] font-extrabold text-[#C9952B] bg-[#C9952B]/5 border border-[#C9952B]/20 px-2 py-0.5 rounded-md">
+                      {l.scores.total}% Fit
                     </span>
                   </div>
 
                   {/* Banglish call script */}
-                  <div className="bg-bg-alt border border-border-light rounded-2xl p-4 text-xs leading-relaxed font-mono text-text-main">
-                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border-light">
-                      <PhoneCall className="w-3.5 h-3.5 text-primary" />
-                      <span className="font-bold text-primary">Banglish Call Script</span>
+                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[11px] leading-relaxed font-mono text-text-main">
+                    <div className="flex items-center gap-1.5 mb-2 pb-1.5 border-b border-slate-200/50">
+                      <PhoneCall className="w-3.5 h-3.5 text-[#C9952B]" />
+                      <span className="font-black text-[#C9952B] uppercase tracking-wider text-[10px]">Call Script</span>
                     </div>
-                    <p className="italic">
-                      &ldquo;Assalamu Alaikum. Ami apnar flat er post ti dekhlam. Shifting plan korchi family/bachelor shathe. 
-                      Flat a ki Govt gas connection ache naki cylinder? R service charge {l.serviceChargeKnown && l.serviceCharge ? `৳${l.serviceCharge.toLocaleString()}` : "koto ashte pare fixed"}? 
-                      Amra {new Date().toLocaleString('en-US', { month: 'long' })} a visit korte chaile kobe shubidha hobe?&rdquo;
+                    <p className="italic text-slate-700">
+                      &ldquo;Assalamu Alaikum. Ami flat er post ti dekhe call korlam. Shifting plan korchi family/bachelor shathe. 
+                      Flat a ki Govt gas connection ache naki cylinder? R service charge {l.serviceChargeKnown && l.serviceCharge ? `৳${l.serviceCharge.toLocaleString()}` : "koto fixed"}? 
+                      Amra flat ti visit korte chaile kobe shubidha hobe?&rdquo;
                     </p>
                   </div>
 
                   {/* Specific warning checklist */}
-                  <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-3.5 text-xs text-amber-850 space-y-1.5">
+                  <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-3.5 text-xs text-amber-800 space-y-1">
                     <div className="flex items-center gap-1.5 font-bold mb-1">
-                      <AlertTriangle className="w-4 h-4 text-amber-500" />
-                      <span>Verify before signing agreement:</span>
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                      <span className="text-[11px] font-black uppercase tracking-wider">Verify before signing:</span>
                     </div>
-                    <ul className="list-disc pl-5 space-y-1 text-[11px] text-amber-800">
-                      <li>Verify if the {l.advanceMonths}-month advance (৳{(l.rent * l.advanceMonths).toLocaleString()}) is fully refundable in the contract.</li>
-                      {l.gasType === "cylinder" && <li>Confirm who pays for the monthly empty cylinder replacement cylinder.</li>}
-                      {l.waterloggingRisk === "high" && <li>Ask neighborhood shopkeepers if water logging rises above the gate level during heavy rain.</li>}
-                      {!l.generator && <li>IPS backup settings: Confirm if IPS capacity is sufficient for fan and light during load shedding.</li>}
+                    <ul className="list-disc pl-4 space-y-0.5 text-[11px]">
+                      <li>Refundability of the {l.advanceMonths}-month advance (৳{(l.rent * l.advanceMonths).toLocaleString()}).</li>
+                      {l.gasType === "cylinder" && <li>Who pays for the cylinder refills.</li>}
+                      {l.waterloggingRisk === "high" && <li>Waterlogging level in the alley during heavy rains.</li>}
+                      {!l.generator && <li>IPS backup capacity for fan & light.</li>}
                     </ul>
                   </div>
                 </div>
@@ -81,50 +81,50 @@ export default function VisitPlanner() {
           </div>
 
           {/* Column 3: Global Shifting checklist */}
-          <div className="bg-primary/5 border border-primary/10 rounded-3xl p-5 shadow-sm space-y-5 h-fit transition-colors duration-300">
-            <div className="flex items-center gap-2 pb-3 border-b border-primary/10">
-              <FileText className="w-4 h-4 text-primary" />
-              <h3 className="font-bold text-sm text-primary">Physical Visit Checklist</h3>
+          <div className="lg:col-span-4 bg-slate-50 border border-slate-200/80 rounded-3xl p-5 shadow-xs space-y-4 h-fit">
+            <div className="flex items-center gap-1.5 pb-2 border-b border-slate-200">
+              <FileText className="w-4 h-4 text-[#C9952B]" />
+              <h3 className="text-xs font-black uppercase text-slate-800 tracking-wider">Physical Visit</h3>
             </div>
 
-            <div className="space-y-4 text-xs text-text-main">
+            <div className="space-y-3.5 text-xs text-text-main">
               <div className="flex items-start gap-2.5">
-                <div className="w-4 h-4 rounded border border-border-light flex items-center justify-center shrink-0 mt-0.5 bg-card">
-                  <CheckCircle className="w-3 h-3 text-primary opacity-0 hover:opacity-100 transition-opacity" />
+                <div className="w-3.5 h-3.5 rounded border border-slate-300 flex items-center justify-center shrink-0 mt-0.5 bg-white">
+                  <CheckCircle className="w-2.5 h-2.5 text-[#C9952B] opacity-0 hover:opacity-100 transition-opacity" />
                 </div>
                 <div>
-                  <span className="font-semibold text-text-main block">Check Water Pressure & Quality</span>
-                  <p className="text-[10px] text-text-muted mt-0.5">Turn on taps in toilets. Ensure water is clean, iron-free and pressure is good on upper floors.</p>
+                  <span className="font-bold text-text-main text-[11px] block">Water Quality & Pressure</span>
+                  <p className="text-[10px] text-text-muted mt-0.5 leading-normal">Turn on taps. Check iron levels and flow pressure.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <div className="w-4 h-4 rounded border border-border-light flex items-center justify-center shrink-0 mt-0.5 bg-card">
-                  <CheckCircle className="w-3 h-3 text-primary opacity-0 hover:opacity-100 transition-opacity" />
+                <div className="w-3.5 h-3.5 rounded border border-slate-300 flex items-center justify-center shrink-0 mt-0.5 bg-white">
+                  <CheckCircle className="w-2.5 h-2.5 text-[#C9952B] opacity-0 hover:opacity-100 transition-opacity" />
                 </div>
                 <div>
-                  <span className="font-semibold text-text-main block">Inspect Electric Load & Meters</span>
-                  <p className="text-[10px] text-text-muted mt-0.5">Confirm if pre-paid electric meter is installed and check balance/tariff system.</p>
+                  <span className="font-bold text-text-main text-[11px] block">Electricity Meters</span>
+                  <p className="text-[10px] text-text-muted mt-0.5 leading-normal">Verify pre-paid electric meter tariff rates.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <div className="w-4 h-4 rounded border border-border-light flex items-center justify-center shrink-0 mt-0.5 bg-card">
-                  <CheckCircle className="w-3 h-3 text-primary opacity-0 hover:opacity-100 transition-opacity" />
+                <div className="w-3.5 h-3.5 rounded border border-slate-300 flex items-center justify-center shrink-0 mt-0.5 bg-white">
+                  <CheckCircle className="w-2.5 h-2.5 text-[#C9952B] opacity-0 hover:opacity-100 transition-opacity" />
                 </div>
                 <div>
-                  <span className="font-semibold text-text-main block">Walk the local alley at night</span>
-                  <p className="text-[10px] text-text-muted mt-0.5">Ensure the street is well-lit and secure after 9 PM. Ask guards about safety incidents.</p>
+                  <span className="font-bold text-text-main text-[11px] block">Night Security</span>
+                  <p className="text-[10px] text-text-muted mt-0.5 leading-normal">Confirm if alley is well-lit and guarded post 9 PM.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <div className="w-4 h-4 rounded border border-border-light flex items-center justify-center shrink-0 mt-0.5 bg-card">
-                  <CheckCircle className="w-3 h-3 text-primary opacity-0 hover:opacity-100 transition-opacity" />
+                <div className="w-3.5 h-3.5 rounded border border-slate-300 flex items-center justify-center shrink-0 mt-0.5 bg-white">
+                  <CheckCircle className="w-2.5 h-2.5 text-[#C9952B] opacity-0 hover:opacity-100 transition-opacity" />
                 </div>
                 <div>
-                  <span className="font-semibold text-text-main block">Verify Tenant Information Form</span>
-                  <p className="text-[10px] text-text-muted mt-0.5">Verify with landlord if DMP (Dhaka Metropolitan Police) verification form is required upon shifting.</p>
+                  <span className="font-bold text-text-main text-[11px] block">DMP Verification Form</span>
+                  <p className="text-[10px] text-text-muted mt-0.5 leading-normal">Confirm if police verification form is required.</p>
                 </div>
               </div>
             </div>

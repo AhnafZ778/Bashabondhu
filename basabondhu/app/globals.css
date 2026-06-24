@@ -2,25 +2,25 @@
 
 :root {
   /* ──────────────────────────────────────────────
-     LIGHT MODE — White, Copper & Gold
+     LIGHT MODE — White, Gold & Coral (Navana Style)
      Anchor: Deep charcoal for trust
-     Primary Brand: Copper
-     Accent: Gold
+     Primary Brand: Navana Coral (#e54a65)
+     Accent: Navana Gold (#c9a96e)
      ────────────────────────────────────────────── */
-  --bg-primary: #FAF9F6;        /* warm off-white paper */
-  --bg-secondary: #F2F0EA;      /* warm light grey */
+  --bg-primary: #fbfbfb;        /* clean off-white */
+  --bg-secondary: #f6f7f9;      /* Navana premium off-white/light grey */
   --bg-card: #FFFFFF;
 
-  --text-main: #1A1A1A;         /* near-black — maximum readability */
-  --text-muted: #71717A;        /* zinc-500 — soft muted */
+  --text-main: #111111;         /* near-black — maximum readability */
+  --text-muted: #666666;        /* muted grey */
 
-  --brand-primary: #C86446;     /* solid premium Copper */
-  --brand-secondary: #B05034;   /* slightly darker copper on hover */
-  --brand-gold: #A1700F;        /* high-contrast bronze Gold for AAA readability */
-  --brand-gold-light: #FEF7E8;  /* gold tint background */
+  --brand-primary: #e54a65;     /* Navana Coral */
+  --brand-secondary: #c93b54;   /* darker coral on hover */
+  --brand-gold: #c9a96e;        /* Navana Gold/Bronze */
+  --brand-gold-light: #f7f3eb;  /* gold tint background */
 
-  --border-light: #E8E5DD;      /* warm stone border */
-  --border-hover: #D5D0C6;      /* slightly darker on hover */
+  --border-light: #dddddd;      /* crisp thin border */
+  --border-hover: #bbbbbb;      /* slightly darker on hover */
 
   --color-visit: #2E7D5B;       /* sage green — approval */
   --color-maybe: #D4943A;       /* warm amber — caution */
@@ -50,6 +50,7 @@
   --color-avoid: var(--color-avoid);
 
   --font-sans: var(--font-inter), sans-serif;
+  --font-serif: var(--font-cormorant), serif;
 
   --animate-slide-in: slide-in 0.3s ease-out;
   --animate-fade-in: fade-in 0.25s ease-out;
@@ -70,3 +71,9 @@ body {
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+

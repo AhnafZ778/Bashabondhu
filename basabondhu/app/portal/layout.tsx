@@ -19,13 +19,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   ];
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen bg-bg-alt transition-colors duration-300">
+    <div className="flex-1 flex flex-col min-h-screen bg-bg-alt transition-colors duration-300 pt-16">
       <Navbar />
 
       {/* Portal Tabs Navigation */}
-      <div className="border-b border-border-light bg-bg sticky top-16 z-40 shadow-xs transition-colors duration-300">
+      <div className="border-b border-black/[0.04] bg-white/80 backdrop-blur-md sticky top-16 z-40 transition-colors duration-300">
         <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-24">
-          <nav className="flex space-x-1 sm:space-x-3 py-3 overflow-x-auto" aria-label="Tabs">
+          <nav className="flex space-x-1 sm:space-x-2 py-3 overflow-x-auto" aria-label="Tabs">
             {navItems.map((tab) => {
               const Icon = tab.icon;
               // Match exact path or root portal tab
@@ -35,13 +35,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider shrink-0 transition-all cursor-pointer active:scale-95 border ${
                     isActive
-                      ? "bg-primary text-white shadow-md shadow-primary/10"
-                      : "text-text-muted hover:bg-bg-alt hover:text-text-main"
+                      ? "bg-primary text-white border-primary/10 shadow-md shadow-primary/15"
+                      : "text-text-muted bg-transparent border-transparent hover:bg-black/[0.03] hover:text-text-main"
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5 stroke-[2]" />
                   {tab.label}
                 </Link>
               );

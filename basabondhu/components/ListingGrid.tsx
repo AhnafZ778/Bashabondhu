@@ -108,46 +108,47 @@ export default function ListingGrid() {
   return (
     <div className="w-full transition-colors duration-300">
       {/* Dynamic Adjustment Filters Panel */}
-      <div className="mb-8 bg-bg border border-border-light rounded-2xl p-5 backdrop-blur-sm transition-colors duration-300">
-        <div className="flex items-center gap-2 mb-3.5">
-          <SlidersHorizontal className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-bold text-text-main tracking-tight">Refine Recommendations Dynamically</h3>
-        </div>
-        <div className="flex flex-wrap gap-2.5">
-          {[
-            { value: "shorter-commute", label: "🕒 Shorter Commute First" },
-            { value: "lower-rent", label: "৳ Lower Rent First" },
-            { value: "avoid-broker", label: "🚫 Skip Brokers" },
-            { value: "avoid-waterlogging", label: "🌊 No Waterlogging Areas" }
-          ].map((adj) => {
-            const isActive = activeAdjustments.includes(adj.value);
-            return (
-              <button
-                key={adj.value}
-                onClick={() => toggleAdjustment(adj.value)}
-                className={`px-3.5 py-2 rounded-xl border text-xs font-semibold tracking-tight transition-all duration-300 cursor-pointer ${
-                  isActive
-                    ? "bg-primary border-primary text-white shadow-sm"
-                    : "bg-card border-border-light text-text-main hover:border-border-hover hover:bg-bg-alt"
-                }`}
-              >
-                {adj.label}
-              </button>
-            );
-          })}
+      <div className="mb-8 bg-bg border border-border-light rounded-2xl p-4 transition-colors duration-300">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#C9952B]" />
+            <span className="text-[10px] font-black text-[#C9952B] uppercase tracking-wider">Refine:</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { value: "shorter-commute", label: "Shorter Commute" },
+              { value: "lower-rent", label: "Lower Rent" },
+              { value: "avoid-broker", label: "Direct Owner Only" },
+              { value: "avoid-waterlogging", label: "Dry Areas Only" }
+            ].map((adj) => {
+              const isActive = activeAdjustments.includes(adj.value);
+              return (
+                <button
+                  key={adj.value}
+                  onClick={() => toggleAdjustment(adj.value)}
+                  className={`px-3 py-1.5 rounded-lg border text-[11px] font-bold tracking-tight transition-all duration-300 cursor-pointer ${
+                    isActive
+                      ? "bg-[#C9952B] border-[#C9952B] text-white shadow-sm"
+                      : "bg-card border-border-light text-text-main hover:border-[#C9952B]/40 hover:bg-bg-alt"
+                  }`}
+                >
+                  {adj.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Main Results Showcase */}
       <div className="mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="w-4 h-4 text-gold fill-gold" />
-              <span className="text-[11px] font-extrabold text-gold uppercase tracking-widest">BB Smart Recommendations</span>
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#C9952B]" />
+              <span className="text-[10px] font-extrabold text-[#C9952B] uppercase tracking-[0.2em] font-serif">Recommendations</span>
             </div>
-            <h2 className="text-2xl font-black text-text-main tracking-tight transition-colors">From Messy Listings to Your Best 3 Options</h2>
-            <p className="text-sm text-text-muted mt-0.5 transition-colors">We analyzed landlord parameters, hidden moving costs, and waterlogging alerts.</p>
+            <h2 className="text-xl sm:text-2xl font-serif uppercase tracking-wider text-text-main font-black transition-colors">Top Matches</h2>
           </div>
         </div>
 
@@ -221,12 +222,11 @@ export default function ListingGrid() {
                     </div>
 
                     {/* Quick highlights */}
-                    <div className="space-y-1">
+                    <div className="flex flex-wrap gap-1 pt-1.5">
                       {listing.goodPoints.slice(0, 2).map((pt, idx) => (
-                        <div key={idx} className="flex items-center gap-1.5 text-text-muted text-xs">
-                          <span className="w-1 h-1 rounded-full bg-primary shrink-0"></span>
-                          <span className="line-clamp-1">{pt}</span>
-                        </div>
+                        <span key={idx} className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold border border-slate-200/20">
+                          {pt}
+                        </span>
                       ))}
                     </div>
                   </div>

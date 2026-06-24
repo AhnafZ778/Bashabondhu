@@ -5,14 +5,15 @@ import { useRouter } from "next/navigation";
 import { useSearch } from "@/context/SearchContext";
 import { personas } from "@/lib/data/personas";
 import { SearchProfile, HouseholdType, Priority, DealBreaker } from "@/lib/types";
-import { ArrowRight, ArrowLeft, Check, Sparkles, Info } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Sparkles, Info, Lightbulb, Home, Heart, Users, GraduationCap, Shield } from "lucide-react";
+import { PersonaIcon } from "./PersonaIcons";
 
-const HOUSEHOLD_OPTIONS: { value: HouseholdType; label: string; desc: string; icon: string }[] = [
-  { value: "family", label: "Family", desc: "Moving with children, parents or elders.", icon: "👨‍👩‍👧‍👦" },
-  { value: "couple", label: "Married Couple", desc: "Just the two of you shifting.", icon: "💑" },
-  { value: "bachelor", label: "Bachelor Group", desc: "Job holders sharing a flat.", icon: "👬" },
-  { value: "student", label: "Student", desc: "Looking for sublet room or shared house.", icon: "🎓" },
-  { value: "working-woman", label: "Working Woman", desc: "Seeking secure, female-friendly space.", icon: "👩‍💼" }
+const HOUSEHOLD_OPTIONS: { value: HouseholdType; label: string; desc: string; iconId: string }[] = [
+  { value: "family", label: "Family", desc: "Moving with children, parents or elders.", iconId: "family" },
+  { value: "couple", label: "Married Couple", desc: "Just the two of you shifting.", iconId: "couple" },
+  { value: "bachelor", label: "Bachelor Group", desc: "Job holders sharing a flat.", iconId: "professional" },
+  { value: "student", label: "Student", desc: "Looking for sublet room or shared house.", iconId: "student" },
+  { value: "working-woman", label: "Working Woman", desc: "Seeking secure, female-friendly space.", iconId: "executive" }
 ];
 
 const PRIORITIES_OPTIONS: { value: Priority; label: string }[] = [
@@ -138,7 +139,9 @@ export default function Wizard() {
                 onClick={() => selectPersona(p)}
                 className="flex items-start text-left p-3.5 rounded-2xl border border-border-light bg-card hover:border-primary/45 hover:shadow-md transition-all group cursor-pointer"
               >
-                <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">{p.avatar}</span>
+                <div className="w-8 h-8 mr-3 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                  <PersonaIcon iconId={p.iconId} className="w-5 h-5 text-primary" />
+                </div>
                 <div>
                   <h4 className="text-sm font-bold text-primary group-hover:text-secondary transition-colors">{p.name}</h4>
                   <p className="text-xs text-text-muted mt-0.5 line-clamp-2">{p.description}</p>
@@ -193,7 +196,9 @@ export default function Wizard() {
                       : "border-border-light hover:border-primary/30"
                   }`}
                 >
-                  <span className="text-2xl mr-3">{opt.icon}</span>
+                  <div className="w-9 h-9 mr-3 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <PersonaIcon iconId={opt.iconId} className="w-5 h-5 text-primary" />
+                  </div>
                   <div>
                     <h4 className="font-bold text-sm text-text-main">{opt.label}</h4>
                     <p className="text-xs text-text-muted mt-0.5">{opt.desc}</p>
@@ -276,8 +281,9 @@ export default function Wizard() {
                   <span>৳100,000 (Average)</span>
                   <span>৳200,000 (Premium)</span>
                 </div>
-                <p className="text-[11px] text-text-muted mt-2 italic">
-                  💡 This covers 1st month rent + 2 months advance + service charges + moving cost.
+                <p className="text-[11px] text-text-muted mt-2 italic flex items-start gap-1.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
+                  <span>This covers 1st month rent + 2 months advance + service charges + moving cost.</span>
                 </p>
               </div>
             </div>

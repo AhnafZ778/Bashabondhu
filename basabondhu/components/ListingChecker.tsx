@@ -15,7 +15,8 @@ import {
   Play, 
   Sparkles, 
   Copy, 
-  Check
+  Check,
+  Phone
 } from "lucide-react";
 
 export default function ListingChecker() {
@@ -181,34 +182,35 @@ export default function ListingChecker() {
                 <button
                   onClick={handleAIParse}
                   disabled={isParsing}
-                  className="w-full py-3 px-4 bg-primary text-white text-xs font-black tracking-wider uppercase rounded-xl hover:bg-secondary active:scale-[0.98] transition-all shadow-md shadow-primary/10 disabled:bg-bg-alt disabled:text-text-muted/40 disabled:shadow-none flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-3 px-4 bg-[#C9952B] text-white text-xs font-black tracking-wider uppercase rounded-xl hover:bg-[#b08020] active:scale-[0.98] transition-all shadow-md shadow-[#C9952B]/10 disabled:bg-bg-alt disabled:text-text-muted/40 disabled:shadow-none flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 fill-white text-white" />
-                  {isParsing ? "Analyzing with Gemini AI..." : "Enhance with Gemini Parser"}
+                  {isParsing ? "Analyzing..." : "Gemini AI Parse"}
                 </button>
               </div>
             )}
 
             {apiError && (
-              <div className="mt-3 text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 font-semibold">
-                ⚠️ {apiError}
+              <div className="mt-3 text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 font-semibold flex items-start gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                <span>{apiError}</span>
               </div>
             )}
           </div>
 
           <div className="border-t border-border-light pt-4">
             <span className="block text-[10px] font-black uppercase tracking-wider text-text-muted mb-3">
-              Try a confusing demo post
+              Try a demo post
             </span>
             <div className="space-y-2">
               {messyExamples.slice(0, 4).map((ex) => (
                 <button
                   key={ex.id}
                   onClick={() => loadExample(ex.text)}
-                  className="w-full flex items-center justify-between text-left p-3 rounded-xl border border-border-light bg-bg-alt hover:bg-card hover:border-primary/30 transition-all text-xs font-semibold group cursor-pointer text-text-main"
+                  className="w-full flex items-center justify-between text-left p-3 rounded-xl border border-border-light bg-bg-alt hover:bg-card hover:border-[#C9952B]/30 transition-all text-xs font-semibold group cursor-pointer text-text-main"
                 >
                   <span className="text-text-main line-clamp-1 flex-1 pr-2">{ex.title}</span>
-                  <Play className="w-3 h-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                  <Play className="w-3 h-3 text-[#C9952B] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                 </button>
               ))}
             </div>
@@ -220,9 +222,9 @@ export default function ListingChecker() {
           {!parsed ? (
             <div className="h-full min-h-[350px] border-2 border-dashed border-border-light rounded-3xl flex flex-col items-center justify-center p-8 text-center bg-card shadow-sm transition-colors duration-300">
               <Clipboard className="w-12 h-12 text-text-muted/40 mb-3.5" />
-              <h3 className="font-extrabold text-text-main text-base">Unpack Social Media Listings</h3>
+              <h3 className="font-extrabold text-text-main text-base font-serif uppercase tracking-wider">Unpack Social Media Listings</h3>
               <p className="text-xs text-text-muted mt-2 max-w-sm leading-relaxed">
-                Paste any unstructured text post on the left to extract exact rent figures, service charge omissions, and tenant rules.
+                Paste a rental post on the left to parse budget rules and missing details.
               </p>
             </div>
           ) : (
@@ -269,9 +271,9 @@ export default function ListingChecker() {
                   <div className="mt-5 p-4 bg-rose-500/5 border border-rose-200/30 rounded-2xl flex gap-3">
                     <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                     <div>
-                      <span className="text-xs font-bold text-rose-600">Undisclosed Information Warning</span>
+                      <span className="text-xs font-bold text-rose-600">Undisclosed details to verify:</span>
                       <p className="text-[11px] text-text-muted mt-1 leading-normal">
-                        The post did not disclose: <span className="font-semibold">{parsed.missingFields.join(", ")}</span>. These are common sources of conflict/hidden costs. Verify them directly.
+                        <span className="font-semibold">{parsed.missingFields.join(", ")}</span>
                       </p>
                     </div>
                   </div>
@@ -335,7 +337,7 @@ export default function ListingChecker() {
 
                   {/* Cash Flow Invoice Card */}
                   {cost && (
-                    <div className="bg-primary text-white rounded-2xl p-5 space-y-3 shadow-md">
+                    <div className="bg-slate-900 text-white rounded-2xl p-5 space-y-3 shadow-md border border-slate-800">
                       <div className="flex justify-between text-xs opacity-85">
                         <span>First Month Rent</span>
                         <span>৳{cost.rent.toLocaleString()}</span>
@@ -361,7 +363,7 @@ export default function ListingChecker() {
                       
                       <div className="flex justify-between pt-3.5 border-t border-white/10 font-black text-sm">
                         <span className="text-white opacity-90">True Upfront Shifting Cost</span>
-                        <span className={profile && cost.total > profile.maxFirstMonthCash ? "text-rose-300 font-extrabold" : "text-gold font-extrabold"}>
+                        <span className={profile && cost.total > profile.maxFirstMonthCash ? "text-rose-300 font-extrabold" : "text-[#C9952B] font-extrabold"}>
                           ৳{cost.total.toLocaleString()}
                         </span>
                       </div>
@@ -387,14 +389,14 @@ export default function ListingChecker() {
                 <div className="bg-card border border-border-light rounded-3xl p-6 shadow-md space-y-4 transition-colors duration-300">
                   <div className="flex justify-between items-center pb-3.5 border-b border-border-light">
                     <h3 className="font-extrabold text-text-main text-sm">3. Compatibility Analysis</h3>
-                    <span className="text-xs font-black text-primary">
+                    <span className="text-xs font-black text-[#C9952B]">
                       {scoredSimulated.scores.total}% Fit Score
                     </span>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                      <CheckCircle2 className="w-5 h-5 text-primary" />
+                    <div className="w-10 h-10 rounded-xl bg-[#C9952B]/10 flex items-center justify-center shrink-0 border border-[#C9952B]/20">
+                      <CheckCircle2 className="w-5 h-5 text-[#C9952B]" />
                     </div>
                     <div>
                       <h4 className="font-bold text-xs text-text-main">Verdict: {getVerdictLabel(scoredSimulated.verdict)}</h4>
@@ -407,12 +409,15 @@ export default function ListingChecker() {
               {/* Landlord verification script */}
               <div className="bg-bg-alt border border-border-light rounded-3xl p-6 shadow-md space-y-3.5 transition-colors duration-300">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-extrabold text-text-main text-sm">📞 Pre-Visit Verification Script</h3>
+                  <h3 className="font-extrabold text-text-main text-sm flex items-center gap-1.5">
+                  <Phone className="w-4 h-4 text-[#C9952B]" />
+                  Pre-Visit Verification Script
+                </h3>
                   <button
                     onClick={() => handleCopyScript(`Assalamu Alaikum. Flat er post ti dekhe jogajog korlam. Apnar flat-er details a service charge ar advance koto lagbe jana jabe ki? Flat ti ki titas pipeline gas? Shifting kobe kora jabe?`)}
-                    className="text-xs font-bold text-primary hover:text-secondary flex items-center gap-1 bg-card px-2.5 py-1.5 rounded-xl border border-border-light shadow-xs cursor-pointer"
+                    className="text-xs font-bold text-[#C9952B] hover:text-[#b08020] flex items-center gap-1 bg-card px-2.5 py-1.5 rounded-xl border border-border-light shadow-xs cursor-pointer"
                   >
-                    {copiedText ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedText ? <Check className="w-3.5 h-3.5 text-[#C9952B]" /> : <Copy className="w-3.5 h-3.5" />}
                     {copiedText ? "Copied" : "Copy Script"}
                   </button>
                 </div>

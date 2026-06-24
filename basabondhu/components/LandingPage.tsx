@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSearch } from "@/context/SearchContext";
 import { personas } from "@/lib/data/personas";
@@ -21,6 +21,8 @@ import {
   Wallet
 } from "lucide-react";
 import { SearchProfile, HouseholdType } from "@/lib/types";
+import ScrollVideo from "./ScrollVideo";
+import { PersonaIcon } from "./PersonaIcons";
 
 const DHAKA_AREAS = [
   "Banani", "Gulshan", "Banasree", "Badda", "Mohakhali", "Tejgaon", 
@@ -43,6 +45,37 @@ const HOUSEHOLD_OPTIONS: { value: HouseholdType; label: string }[] = [
   { value: "working-woman", label: "Working Woman" }
 ];
 
+const VERIFICATION_SLIDES = [
+  {
+    index: "01",
+    subtitle: "TRUE COST AUDITING",
+    title: "Upfront Cash Trap",
+    desc: "Advertised ৳22k rent. Real day-one cost: ৳87k after security deposits, advance rent, lift/security service charges, broker commissions, and shifting movers. BasaBondhu computes the exact day-one outlay instantly so you never get blind-sided.",
+    imageUrl: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80"
+  },
+  {
+    index: "02",
+    subtitle: "HISTORICAL FLOOD DATA",
+    title: "Waterlogging Risk",
+    desc: "Banasree Block D or Dhanmondi 27 looks pristine in the dry winter. By July, the access roads are knee-deep. BasaBondhu overlays historical monsoon water levels and drainage quality to highlight flood-prone areas before you lease.",
+    imageUrl: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=400&q=80"
+  },
+  {
+    index: "03",
+    subtitle: "UTILITY CONNECTION AUDIT",
+    title: "Gas Line Lies",
+    desc: "Listing descriptions stating \"gas available\" frequently mask cylinder dependencies, which add up to ৳2,000/month to your basic utilities. We directly verify the pipeline connection type before you make a visit.",
+    imageUrl: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=400&q=80"
+  },
+  {
+    index: "04",
+    subtitle: "LIFESTYLE MATCHING",
+    title: "Restrictive Rules",
+    desc: "Bachelors and students face strict 11 PM curfews, gate locks, and no-overnight-guest rules. Families require secure compounds. We audit tenant agreement rules to match listings to your lifestyle.",
+    imageUrl: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=400&q=80"
+  }
+];
+
 export default function LandingPage() {
   const { planSearch } = useSearch();
   const router = useRouter();
@@ -52,15 +85,52 @@ export default function LandingPage() {
   const [selectedArea, setSelectedArea] = useState<string>("Banani");
   const [selectedBudget, setSelectedBudget] = useState<number>(25000);
 
+  // Track whether the video section is in view to hide/show navbar
+  const videoSectionRef = useRef<HTMLDivElement>(null);
+  const [isVideoInView, setIsVideoInView] = useState(false);
+
+  // Active verification slide state
+  const [activeVerificationIndex, setActiveVerificationIndex] = useState(0);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVideoInView(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+
+    const el = videoSectionRef.current;
+    if (el) observer.observe(el);
+
+    return () => {
+      if (el) observer.unobserve(el);
+    };
+  }, []);
+
+  // Toggle navbar visibility based on video section presence
+  useEffect(() => {
+    const navbar = document.querySelector("header");
+    if (!navbar) return;
+
+    if (isVideoInView) {
+      navbar.style.transform = "translateY(-100%)";
+      navbar.style.opacity = "0";
+      navbar.style.pointerEvents = "none";
+    } else {
+      navbar.style.transform = "translateY(0)";
+      navbar.style.opacity = "1";
+      navbar.style.pointerEvents = "auto";
+    }
+  }, [isVideoInView]);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Infer lookingFor type
     const lookingFor = (selectedHousehold === "student" || selectedHousehold === "working-woman")
       ? "room-sublet"
       : "full-flat";
 
-    // Build profile matching options
     const profile: SearchProfile = {
       id: "custom-search",
       mode: "plan",
@@ -68,7 +138,7 @@ export default function LandingPage() {
       householdType: selectedHousehold,
       lookingFor,
       budgetMonthly: selectedBudget,
-      maxFirstMonthCash: selectedBudget * 3, // reasonable estimate
+      maxFirstMonthCash: selectedBudget * 3,
       commuteAnchors: [{ label: "Work/School", area: selectedArea }],
       priorities: ["commute", "rent"],
       dealBreakers: []
@@ -96,52 +166,61 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col transition-colors duration-300">
+    <div className="flex-1 flex flex-col bg-[#fbfbfb]">
 
       {/* ══════════════════════════════════════════════════
-          HERO — Solid, full-width theme-integrated background
+          IMMERSIVE SCROLL VIDEO — Full-screen, navbar hidden
+          Scroll-driven frame-by-frame cinematic experience.
+          This is the FIRST thing visitors see.
           ══════════════════════════════════════════════════ */}
-      <section className="relative min-h-[700px] border-b border-border-light text-text-main flex items-center overflow-hidden">
+      <div ref={videoSectionRef}>
+        <ScrollVideo />
+      </div>
+
+      {/* ══════════════════════════════════════════════════
+          HERO — Full-cover background image with floating search card
+          ══════════════════════════════════════════════════ */}
+      <section className="relative min-h-[720px] text-text-main flex items-center overflow-hidden py-12">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
             src="/landing.jpeg" 
             alt="BasaBondhu Hero Background" 
-            className="w-full h-full object-cover" 
+            className="w-full h-full object-cover grayscale-[15%] brightness-[90%]" 
           />
+          <div className="absolute inset-0 bg-white/20" />
         </div>
 
-        {/* Solid Content Card Overlay (Left-aligned, utilizing space beautifully) */}
-        <div className="relative z-10 w-full px-6 sm:px-10 lg:px-16 xl:px-24 py-16">
-          <div className="max-w-2xl bg-white border border-border-light p-8 sm:p-10 rounded-3xl shadow-xl space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-[10px] font-extrabold uppercase tracking-widest text-primary">
+        {/* Solid Content Card Overlay */}
+        <div className="relative z-10 w-full px-6 sm:px-10 lg:px-16 xl:px-24 py-16 flex justify-start">
+          <div className="max-w-xl bg-white border border-black/5 p-8 sm:p-10 rounded-2xl shadow-2xl space-y-6 text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gold/10 border border-gold/20 text-[10px] font-black uppercase tracking-[0.2em] text-[#b5955a]">
               <Sparkles className="w-3.5 h-3.5" />
-              Dhaka House-Hunting, Simplified
+              Broaden Home Boundaries
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1]">
-              From messy listings to{" "}
-              <span className="text-primary">3 homes worth visiting.</span>
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-serif font-bold uppercase tracking-[0.1em] leading-[1.2] text-[#111111]">
+              From messy listings to<br />
+              <span className="text-gold font-bold">3 homes worth visiting.</span>
             </h1>
 
-            <p className="text-text-muted text-sm sm:text-base leading-relaxed">
+            <p className="text-text-muted text-xs sm:text-sm leading-relaxed">
               Tired of scrolling endless Facebook groups, calling bad brokers, and facing surprise landlord curfews? BasaBondhu filters out Dhaka rent traps instantly.
             </p>
 
-            {/* Trivago-Style Search Widget - Stacked inside the floating card */}
+            {/* Search Widget */}
             <form 
               onSubmit={handleSearchSubmit} 
-              className="space-y-3 w-full"
+              className="space-y-4 w-full pt-2"
             >
-              {/* Dropdown 1: Area */}
-              <div className="flex items-center gap-2.5 px-3 py-2 bg-bg-alt rounded-xl border border-border-light hover:border-border-hover transition-colors">
-                <MapPin className="w-5 h-5 text-text-muted shrink-0" />
+              <div className="flex items-center gap-2.5 px-3 py-2.5 bg-bg-alt rounded-lg border border-black/10 hover:border-gold/50 transition-colors">
+                <MapPin className="w-4 h-4 text-gold shrink-0" />
                 <div className="flex-1 text-left min-w-0">
-                  <label className="block text-[9px] uppercase tracking-wider font-extrabold text-text-muted">Where do you live/work?</label>
+                  <label className="block text-[8px] uppercase tracking-[0.15em] font-black text-text-muted">Where do you live/work?</label>
                   <select 
                     value={selectedArea}
                     onChange={(e) => setSelectedArea(e.target.value)}
-                    className="block w-full text-xs font-bold text-text-main bg-transparent border-0 p-0 focus:ring-0 focus:outline-hidden"
+                    className="block w-full text-xs font-bold text-text-main bg-transparent border-0 p-0 focus:ring-0 focus:outline-hidden mt-0.5"
                   >
                     {DHAKA_AREAS.map(area => (
                       <option key={area} value={area} className="bg-card text-text-main font-bold">{area}</option>
@@ -151,15 +230,14 @@ export default function LandingPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Dropdown 2: Household Type */}
-                <div className="flex items-center gap-2.5 px-3 py-2 bg-bg-alt rounded-xl border border-border-light hover:border-border-hover transition-colors">
-                  <Users className="w-5 h-5 text-text-muted shrink-0" />
+                <div className="flex items-center gap-2.5 px-3 py-2.5 bg-bg-alt rounded-lg border border-black/10 hover:border-gold/50 transition-colors">
+                  <Users className="w-4 h-4 text-gold shrink-0" />
                   <div className="flex-1 text-left min-w-0">
-                    <label className="block text-[9px] uppercase tracking-wider font-extrabold text-text-muted">Who is shifting?</label>
+                    <label className="block text-[8px] uppercase tracking-[0.15em] font-black text-text-muted">Who is shifting?</label>
                     <select 
                       value={selectedHousehold}
                       onChange={(e) => setSelectedHousehold(e.target.value as HouseholdType)}
-                      className="block w-full text-xs font-bold text-text-main bg-transparent border-0 p-0 focus:ring-0 focus:outline-hidden"
+                      className="block w-full text-xs font-bold text-text-main bg-transparent border-0 p-0 focus:ring-0 focus:outline-hidden mt-0.5"
                     >
                       {HOUSEHOLD_OPTIONS.map(opt => (
                         <option key={opt.value} value={opt.value} className="bg-card text-text-main font-bold">{opt.label}</option>
@@ -168,15 +246,14 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Dropdown 3: Budget */}
-                <div className="flex items-center gap-2.5 px-3 py-2 bg-bg-alt rounded-xl border border-border-light hover:border-border-hover transition-colors">
-                  <Wallet className="w-5 h-5 text-text-muted shrink-0" />
+                <div className="flex items-center gap-2.5 px-3 py-2.5 bg-bg-alt rounded-lg border border-black/10 hover:border-gold/50 transition-colors">
+                  <Wallet className="w-4 h-4 text-gold shrink-0" />
                   <div className="flex-1 text-left min-w-0">
-                    <label className="block text-[9px] uppercase tracking-wider font-extrabold text-text-muted">Monthly Budget</label>
+                    <label className="block text-[8px] uppercase tracking-[0.15em] font-black text-text-muted">Monthly Budget</label>
                     <select 
                       value={selectedBudget}
                       onChange={(e) => setSelectedBudget(parseInt(e.target.value))}
-                      className="block w-full text-xs font-bold text-text-main bg-transparent border-0 p-0 focus:ring-0 focus:outline-hidden"
+                      className="block w-full text-xs font-bold text-text-main bg-transparent border-0 p-0 focus:ring-0 focus:outline-hidden mt-0.5"
                     >
                       {BUDGET_OPTIONS.map(opt => (
                         <option key={opt.value} value={opt.value} className="bg-card text-text-main font-bold">{opt.label}</option>
@@ -186,26 +263,23 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Search button */}
               <button
                 type="submit"
-                className="w-full py-3.5 bg-primary hover:bg-secondary text-white font-black text-xs tracking-wider rounded-xl uppercase shadow-md shadow-primary/10 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
+                className="w-full py-4 bg-gold hover:bg-[#b5955a] text-white font-serif text-[10px] tracking-[0.25em] font-bold rounded-lg uppercase shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all duration-300"
               >
                 <Search className="w-4 h-4" />
                 Find My Match
               </button>
             </form>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-text-muted pt-4 border-t border-border-light">
-              <span>Or analyze custom text:</span>
+            <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold text-text-muted pt-4 border-t border-black/5">
+              <span className="uppercase tracking-wider">Or analyze custom ad:</span>
               <button
-                onClick={() => {
-                  router.push("/portal/parser");
-                }}
-                className="px-4 py-2 bg-bg-alt hover:bg-card border border-border-light hover:border-primary/30 text-text-main rounded-xl flex items-center gap-2 cursor-pointer transition-all"
+                onClick={() => { router.push("/portal/parser"); }}
+                className="px-4 py-2 bg-bg-alt hover:bg-white border border-black/10 hover:border-gold text-text-main rounded-lg flex items-center gap-2 cursor-pointer transition-all duration-300"
               >
-                <Clipboard className="w-3.5 h-3.5 text-primary" />
-                Paste a Facebook Listing Ad
+                <Clipboard className="w-3.5 h-3.5 text-gold" />
+                PASTE A FACEBOOK LISTING AD
               </button>
             </div>
           </div>
@@ -213,77 +287,293 @@ export default function LandingPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          PAIN POINTS — Full-width, left-aligned heading
+          LATEST MATCHES — Navana style launches section
           ══════════════════════════════════════════════════ */}
-      <section className="bg-bg-alt py-16 px-6 sm:px-10 lg:px-16 xl:px-24 transition-colors duration-300">
-        <div className="mb-10">
-          <span className="px-3 py-1 bg-primary/8 border border-primary/12 text-primary text-[10px] uppercase font-black tracking-widest rounded-full">
-            The Real Problem
+      <section className="bg-[#eaeaea] py-20 px-6 sm:px-10 lg:px-16 xl:px-24 border-y border-black/5">
+        <div className="text-center space-y-2 mb-16">
+          <span className="text-gold font-serif text-[10px] sm:text-xs uppercase tracking-[0.4em] block">
+            Curated Listings
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight mt-4">
-            Every renter in Dhaka faces the same traps
+          <h2 className="text-3xl sm:text-4xl font-serif uppercase tracking-[0.15em] text-[#111111] font-bold">
+            Latest Matches
           </h2>
-          <p className="text-sm text-text-muted mt-2 max-w-2xl leading-relaxed">
-            Listings are everywhere. The hard part is knowing what you&apos;ll actually pay, what the landlord won&apos;t tell you, and whether the road floods in July.
+          <div className="w-12 h-[1px] bg-gold mx-auto mt-4" />
+          <p className="text-xs text-text-muted tracking-wide max-w-md mx-auto pt-2">
+            Premium hand-picked listings currently verified in Dhaka's core commuter areas.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { icon: Coins, title: "Upfront Cash Trap", desc: "Advertised ৳22k rent. Real day-one cost: ৳87k after advance, service charge, broker fee, and movers.", color: "#D1523F" },
-            { icon: Droplets, title: "Waterlogging Risk", desc: "Banasree Block D looks perfect in December. In July, the road is knee-deep. We flag flood-prone zones.", color: "#3B82F6" },
-            { icon: Flame, title: "Gas Line Lies", desc: "\"Gas available\" often means cylinder gas — ৳1,500/month extra. We verify the actual connection type.", color: "#F59E0B" },
-            { icon: Lock, title: "Curfews & Rules", desc: "Bachelors face 11 PM gate locks and no-guest policies. Families want secure compounds. We match rules to lifestyle.", color: "#8B5CF6" },
-          ].map((item, i) => (
-            <div key={i} className="bg-card border border-border-light rounded-xl p-5 hover:shadow-md transition-all duration-200 space-y-3 group">
-              <div 
-                className="w-10 h-10 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: `${item.color}14`, border: `1px solid ${item.color}22` }}
-              >
-                <item.icon className="w-5 h-5" style={{ color: item.color }} />
+            {
+              tag: "BANANI, DHAKA",
+              title: "The Belmont Suites",
+              specs: "৳35,000 / month • 3 Beds • Lift & Generator",
+              badge: "R E N T A L",
+              img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+              tag: "GULSHAN, DHAKA",
+              title: "Serene Vista Residences",
+              specs: "৳45,000 / month • 2 Beds • Piping Gas",
+              badge: "R E N T A L",
+              img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+              tag: "BASHUNDHARA, DHAKA",
+              title: "Oakridge Student Studio",
+              specs: "৳18,000 / month • 1 Bed • Bachelor Allowed",
+              badge: "S U B L E T",
+              img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80"
+            }
+          ].map((item, index) => (
+            <div 
+              key={index}
+              className="relative bg-white border border-black/5 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 pr-8 group cursor-pointer"
+              onClick={() => { router.push("/portal"); }}
+            >
+              {/* Card Image */}
+              <div className="aspect-[4/3] w-full overflow-hidden relative">
+                <img 
+                  src={item.img} 
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
               </div>
-              <h3 className="font-extrabold text-text-main text-sm">{item.title}</h3>
-              <p className="text-xs text-text-muted leading-relaxed">{item.desc}</p>
+
+              {/* Card Content */}
+              <div className="p-6 space-y-2 text-left">
+                <span className="text-[9px] uppercase tracking-[0.2em] font-black text-gold block">
+                  {item.tag}
+                </span>
+                <h3 className="font-serif text-lg uppercase tracking-wider text-[#111111] font-bold group-hover:text-gold transition-colors duration-300">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-text-muted leading-relaxed font-semibold">
+                  {item.specs}
+                </p>
+                <div className="pt-2 flex items-center gap-1.5 text-[9px] uppercase tracking-widest font-black text-primary group-hover:translate-x-1.5 transition-transform duration-300">
+                  <span>Explore Match</span>
+                  <ChevronRight className="w-3 h-3" />
+                </div>
+              </div>
+
+              {/* Rotated Vertical Badge Ribbons */}
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-[#c9a96e] group-hover:bg-[#b5955a] flex items-center justify-center select-none transition-colors duration-300">
+                <span className="writing-mode-vertical text-white font-sans text-[8px] font-black uppercase tracking-[0.3em] rotate-180">
+                  {item.badge}
+                </span>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════
-          PERSONA QUICK-START — Full width grid
+          ALL EYES ON VERIFICATION — Twin column design layout
           ══════════════════════════════════════════════════ */}
-      <section className="bg-card border-y border-border-light py-16 px-6 sm:px-10 lg:px-16 xl:px-24 transition-colors duration-300">
-        <div className="mb-10">
-          <span className="px-3 py-1 bg-primary/8 border border-primary/12 text-primary text-[10px] uppercase font-black tracking-widest rounded-full">
-            Try it Now
+      <section className="bg-white py-20 px-6 sm:px-10 lg:px-16 xl:px-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Left Column - Large Image w/ Title Overlap */}
+          <div className="lg:col-span-7 relative h-[450px] lg:h-[550px] w-full overflow-hidden rounded-xl shadow-md border border-black/5">
+            <img 
+              src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80" 
+              alt="BasaBondhu Verification Auditing" 
+              className="w-full h-full object-cover grayscale-[10%]"
+            />
+            {/* Dark tint overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+            
+            {/* Giant Title Overlay */}
+            <div className="absolute inset-0 flex items-end p-8 sm:p-12">
+              <h2 className="font-serif text-white/35 text-5xl sm:text-6xl lg:text-[6.5rem] leading-[0.85] uppercase tracking-[0.05em] select-none font-bold">
+                ZERO<br />GUESSWORK
+              </h2>
+            </div>
+          </div>
+
+          {/* Right Column - Overlapping Slideshow Card */}
+          <div className="lg:col-span-5 lg:-ml-16 relative z-10">
+            <div className="bg-[#fbfbfb] border border-black/10 rounded-xl p-8 sm:p-10 shadow-2xl space-y-6 text-left">
+              <div className="flex items-center justify-between pb-4 border-b border-black/5">
+                <div>
+                  <span className="text-[#c9a96e] font-serif text-2xl font-bold">
+                    {VERIFICATION_SLIDES[activeVerificationIndex].index}
+                  </span>
+                  <span className="text-text-muted/30 font-sans text-xs ml-1">/ 04</span>
+                </div>
+                <span className="px-2.5 py-1 bg-gold/10 text-gold text-[9px] uppercase font-black tracking-widest rounded-md">
+                  {VERIFICATION_SLIDES[activeVerificationIndex].subtitle}
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="font-serif text-xl sm:text-2xl uppercase tracking-wider text-[#111111] font-bold">
+                  {VERIFICATION_SLIDES[activeVerificationIndex].title}
+                </h3>
+                <p className="text-xs text-text-muted leading-relaxed font-semibold">
+                  {VERIFICATION_SLIDES[activeVerificationIndex].desc}
+                </p>
+              </div>
+
+              {/* Crop image for index visual interest */}
+              <div className="h-32 w-full overflow-hidden rounded-lg relative">
+                <img 
+                  src={VERIFICATION_SLIDES[activeVerificationIndex].imageUrl} 
+                  alt="Slide Detail" 
+                  className="w-full h-full object-cover grayscale-[15%] transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gold/5" />
+              </div>
+
+              {/* Slider Dots */}
+              <div className="flex items-center gap-2 pt-2">
+                {VERIFICATION_SLIDES.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveVerificationIndex(index)}
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      activeVerificationIndex === index ? "w-8 bg-[#c9a96e]" : "w-2 bg-black/10 hover:bg-black/30"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════
+          PERSONA QUICK-START — Pick your situation
+          Premium image-backed cards with SVG icons
+          ══════════════════════════════════════════════════ */}
+      <section className="bg-[#111111] border-y border-black/5 py-24 px-6 sm:px-10 lg:px-16 xl:px-24 text-center">
+        <div className="mb-16 space-y-2">
+          <span className="text-gold font-serif text-[10px] sm:text-xs uppercase tracking-[0.4em] block">
+            Direct Entry
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight mt-4">
-            Pick your situation
+          <h2 className="text-3xl sm:text-4xl font-serif uppercase tracking-[0.15em] text-white font-bold">
+            Pick Your Situation
           </h2>
-          <p className="text-sm text-text-muted mt-2 max-w-2xl leading-relaxed">
+          <div className="w-12 h-[1px] bg-gold mx-auto mt-4" />
+          <p className="text-xs text-white/50 tracking-wide max-w-md mx-auto pt-2 font-semibold">
             Select a persona to see instant matching results, cost breakdowns, and call scripts — no signup needed.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {personas.map((p) => (
+        {/* Top row: 3 large cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+          {personas.slice(0, 3).map((p) => (
             <button
               key={p.id}
               onClick={() => handlePersonaSelect(p)}
-              className="flex items-start text-left p-4 rounded-xl border border-border-light bg-bg-alt hover:bg-bg hover:border-primary/25 hover:shadow-md transition-all duration-200 group cursor-pointer"
+              className="relative group cursor-pointer rounded-xl overflow-hidden text-left h-[380px] focus:outline-none focus:ring-2 focus:ring-gold/50"
             >
-              <span className="text-2xl mr-3 group-hover:scale-110 transition-transform select-none shrink-0">{p.avatar}</span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-2">
-                  <h4 className="text-xs font-extrabold text-text-main group-hover:text-primary transition-colors leading-tight">{p.name}</h4>
-                  <ChevronRight className="w-3.5 h-3.5 text-text-muted group-hover:text-primary shrink-0 mt-0.5 transition-colors" />
+              {/* Background Image */}
+              <img
+                src={p.imageUrl}
+                alt={p.name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 group-hover:from-black/95 group-hover:via-black/50 transition-all duration-500" />
+              
+              {/* Top Badge */}
+              <div className="absolute top-5 left-5 z-10">
+                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg text-[8px] uppercase tracking-[0.2em] font-black text-white/80">
+                  {p.householdType}
+                </span>
+              </div>
+
+              {/* SVG Icon — Top Right */}
+              <div className="absolute top-5 right-5 z-10">
+                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 flex items-center justify-center group-hover:bg-gold/20 group-hover:border-gold/30 transition-all duration-500">
+                  <PersonaIcon iconId={p.iconId} className="w-6 h-6 text-white/70 group-hover:text-gold transition-colors duration-500" />
                 </div>
-                <p className="text-[9px] uppercase tracking-wider font-bold text-text-muted mt-0.5">
-                  {p.householdType} • ৳{p.budgetMonthly.toLocaleString()}/mo
-                </p>
-                <p className="text-[11px] text-text-muted mt-1.5 leading-relaxed line-clamp-2">
+              </div>
+
+              {/* Content — Bottom */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-10 space-y-3">
+                <div className="space-y-1">
+                  <h4 className="text-lg font-serif uppercase tracking-wider text-white font-bold group-hover:text-gold transition-colors duration-300">
+                    {p.name}
+                  </h4>
+                  <p className="text-[10px] uppercase tracking-widest font-black text-gold/80">
+                    ৳{p.budgetMonthly.toLocaleString()}/mo
+                  </p>
+                </div>
+                <p className="text-xs text-white/60 leading-relaxed font-semibold line-clamp-2">
                   {p.description}
                 </p>
+                <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+                  <span className="text-[9px] uppercase font-black tracking-widest text-white/70 group-hover:text-gold transition-colors duration-300">
+                    Load Profile
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5 text-white/40 group-hover:text-gold group-hover:translate-x-1 transition-all duration-300" />
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Bottom row: 2 wide cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {personas.slice(3).map((p) => (
+            <button
+              key={p.id}
+              onClick={() => handlePersonaSelect(p)}
+              className="relative group cursor-pointer rounded-xl overflow-hidden text-left h-[320px] focus:outline-none focus:ring-2 focus:ring-gold/50"
+            >
+              {/* Background Image */}
+              <img
+                src={p.imageUrl}
+                alt={p.name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 group-hover:from-black/95 group-hover:via-black/50 transition-all duration-500" />
+              
+              {/* Top Badge */}
+              <div className="absolute top-5 left-5 z-10">
+                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg text-[8px] uppercase tracking-[0.2em] font-black text-white/80">
+                  {p.householdType}
+                </span>
+              </div>
+
+              {/* SVG Icon — Top Right */}
+              <div className="absolute top-5 right-5 z-10">
+                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 flex items-center justify-center group-hover:bg-gold/20 group-hover:border-gold/30 transition-all duration-500">
+                  <PersonaIcon iconId={p.iconId} className="w-6 h-6 text-white/70 group-hover:text-gold transition-colors duration-500" />
+                </div>
+              </div>
+
+              {/* Content — Bottom */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                <div className="flex items-end justify-between gap-4">
+                  <div className="space-y-2 flex-1">
+                    <div className="space-y-1">
+                      <h4 className="text-lg font-serif uppercase tracking-wider text-white font-bold group-hover:text-gold transition-colors duration-300">
+                        {p.name}
+                      </h4>
+                      <p className="text-[10px] uppercase tracking-widest font-black text-gold/80">
+                        ৳{p.budgetMonthly.toLocaleString()}/mo
+                      </p>
+                    </div>
+                    <p className="text-xs text-white/60 leading-relaxed font-semibold line-clamp-2 max-w-lg">
+                      {p.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 pb-1">
+                    <span className="text-[9px] uppercase font-black tracking-widest text-white/70 group-hover:text-gold transition-colors duration-300">
+                      Load Profile
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-white/40 group-hover:text-gold group-hover:translate-x-1 transition-all duration-300" />
+                  </div>
+                </div>
               </div>
             </button>
           ))}
@@ -291,64 +581,68 @@ export default function LandingPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          COMPARISON — Full width two-column
+          COMPARISON — How We're Different
           ══════════════════════════════════════════════════ */}
-      <section className="bg-bg-alt py-16 px-6 sm:px-10 lg:px-16 xl:px-24 transition-colors duration-300">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-4 space-y-4">
-            <span className="px-3 py-1 bg-primary/8 border border-primary/12 text-primary text-[10px] uppercase font-black tracking-widest rounded-full">
-              How We&apos;re Different
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight leading-tight mt-4">
-              3 steps to protect your weekend and wallet
-            </h2>
-            <p className="text-sm text-text-muted leading-relaxed">
-              Don&apos;t call landlords blind. Query, filter, verify — then visit only 2 or 3 places.
+      <section className="bg-white py-20 px-6 sm:px-10 lg:px-16 xl:px-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <div className="lg:col-span-4 space-y-6 text-left">
+            <div>
+              <span className="text-[#c9a96e] font-serif text-[10px] sm:text-xs uppercase tracking-[0.4em] block">
+                Integrity first
+              </span>
+              <h2 className="text-3xl font-serif uppercase tracking-[0.1em] text-[#111111] font-bold mt-2">
+                3 Steps to Protect Your Wallet
+              </h2>
+              <div className="w-12 h-[1px] bg-gold mt-4" />
+            </div>
+
+            <p className="text-xs text-text-muted leading-relaxed font-semibold">
+              Don't call landlords blind. Query, filter, verify — then visit only 2 or 3 verified places.
             </p>
             
             <div className="space-y-4 pt-2">
               {[
-                { n: "1", title: "Define Lifestyle Needs", desc: "Budget, commute, waterlogging tolerance, gas requirements." },
-                { n: "2", title: "Paste & Parse Listings", desc: "Paste a Facebook ad. We extract rent, service charge, and score it." },
+                { n: "1", title: "Define Lifestyle Needs", desc: "Budget, commute hubs, waterlogging tolerance, gas type preferences." },
+                { n: "2", title: "Paste & Parse Listings", desc: "Paste a Facebook listing ad. We extract real rent, service charges, and score safety." },
                 { n: "3", title: "Verify Before Visiting", desc: "Use custom phone scripts to ask landlords hard questions first." },
               ].map((step) => (
-                <div key={step.n} className="flex gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-primary text-white font-extrabold text-xs flex items-center justify-center shrink-0">{step.n}</div>
+                <div key={step.n} className="flex gap-4">
+                  <div className="w-8 h-8 rounded-lg bg-[#c9a96e] text-white font-serif text-xs flex items-center justify-center shrink-0 font-bold select-none">{step.n}</div>
                   <div>
-                    <h4 className="font-extrabold text-sm text-text-main">{step.title}</h4>
-                    <p className="text-xs text-text-muted mt-0.5 leading-relaxed">{step.desc}</p>
+                    <h4 className="font-serif text-sm uppercase tracking-wider text-[#111111] font-bold">{step.title}</h4>
+                    <p className="text-[11px] text-text-muted mt-0.5 leading-relaxed font-semibold">{step.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="lg:col-span-8 bg-card border border-border-light rounded-xl p-5 sm:p-6 shadow-sm transition-colors duration-300">
-            <h3 className="font-extrabold text-sm text-text-main mb-5 flex items-center gap-2">
-              <Layers className="w-4 h-4 text-primary" />
+          <div className="lg:col-span-8 bg-[#fbfbfb] border border-black/10 rounded-xl p-6 sm:p-8 shadow-xl text-left">
+            <h3 className="font-serif text-sm uppercase tracking-widest text-[#111111] mb-6 flex items-center gap-2 font-bold">
+              <Layers className="w-4 h-4 text-[#c9a96e]" />
               BasaBondhu vs Typical Portals
             </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-border-light text-text-muted font-bold uppercase tracking-wider text-[10px]">
+                  <tr className="border-b border-black/5 text-text-muted font-black uppercase tracking-[0.15em] text-[9px] pb-3">
                     <th className="pb-3 pr-4">Feature</th>
-                    <th className="pb-3 px-4 text-text-muted/50">Others</th>
-                    <th className="pb-3 pl-4 text-primary font-black">BasaBondhu</th>
+                    <th className="pb-3 px-4 text-text-muted/40">Others</th>
+                    <th className="pb-3 pl-4 text-gold font-bold">BasaBondhu</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border-light">
+                <tbody className="divide-y divide-black/5 font-semibold text-xs">
                   {[
                     { field: "Search Filters", others: "Price, bedrooms — that's it.", us: "Waterlogging, gas type, curfew rules, commute hubs." },
-                    { field: "Messy Ad Parsing", others: "Cannot handle unstructured text.", us: "Gemini AI parses Facebook posts and extracts data." },
-                    { field: "Upfront Cost", others: "Shows monthly rent only.", us: "Calculates real day-one shifting cash including deposit." },
-                    { field: "Landlord Prep", others: "None. You call blind.", us: "Custom Banglish phone scripts for every listing." },
+                    { field: "Messy Ad Parsing", others: "Cannot handle unstructured posts.", us: "Gemini AI parses Facebook posts and extracts metrics." },
+                    { field: "Upfront Cost", others: "Shows monthly rent only.", us: "Calculates real day-one shifting cash with advance." },
+                    { field: "Landlord Prep", others: "None. You call completely blind.", us: "Custom Banglish phone scripts for every listing." },
                   ].map((row, i) => (
-                    <tr key={i}>
-                      <td className="py-3 pr-4 font-bold text-text-main">{row.field}</td>
-                      <td className="py-3 px-4 text-text-muted">{row.others}</td>
-                      <td className="py-3 pl-4 font-bold text-primary">
+                    <tr key={i} className="hover:bg-black/5 transition-colors duration-150">
+                      <td className="py-4 pr-4 font-serif uppercase tracking-wider text-[#111111] font-bold text-[11px]">{row.field}</td>
+                      <td className="py-4 px-4 text-text-muted">{row.others}</td>
+                      <td className="py-4 pl-4 font-bold text-[#c9a96e]">
                         <span className="flex items-center gap-1.5">
                           <Check className="w-3.5 h-3.5 shrink-0" />
                           {row.us}
@@ -366,21 +660,19 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════════════════
           CTA — Solid Theme-Integrated Background
           ══════════════════════════════════════════════════ */}
-      <section className="bg-bg border-t border-border-light text-text-main py-14 px-6 sm:px-10 lg:px-16 xl:px-24">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
-              Stop wasting weekends on bad apartments
+      <section className="bg-[#111111] text-white py-16 px-6 sm:px-10 lg:px-16 xl:px-24">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 text-left">
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-serif uppercase tracking-[0.15em] font-bold text-white">
+              Stop Wasting Weekends on Bad Apartments
             </h2>
-            <p className="text-text-muted text-sm mt-2 max-w-xl leading-relaxed">
-              Parse confusing listings, calculate real costs, verify details with landlords — all before you leave your chair.
+            <p className="text-white/60 text-xs sm:text-sm max-w-xl leading-relaxed font-semibold">
+              Parse confusing listings, calculate real day-one upfront costs, and verify critical details with landlords — all before you leave your home.
             </p>
           </div>
           <button
-            onClick={() => {
-              router.push("/portal");
-            }}
-            className="px-7 py-4 bg-primary hover:bg-secondary text-white font-black text-sm tracking-wider rounded-xl uppercase active:scale-[0.97] transition-all shadow-lg shadow-primary/20 flex items-center gap-2 cursor-pointer shrink-0"
+            onClick={() => { router.push("/portal"); }}
+            className="px-8 py-4.5 bg-gold hover:bg-[#b5955a] text-white font-serif text-[10px] tracking-[0.25em] font-bold rounded-lg uppercase transition-all duration-300 shadow-lg shadow-gold/15 flex items-center gap-2 cursor-pointer shrink-0"
           >
             Get Started Free
             <ArrowRight className="w-4 h-4" />
