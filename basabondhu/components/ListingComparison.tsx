@@ -202,6 +202,67 @@ export default function ListingComparison() {
                 </td>
               ))}
             </tr>
+
+            {/* Best For Summary */}
+            <tr className="border-b border-border-light hover:bg-bg-alt/50 bg-gold-bg/30">
+              <td className="py-3 px-4 text-gold font-bold">Best For</td>
+              {listingsToCompare.map((l) => {
+                const bestFor: string[] = [];
+                if (l.rent === minRent) bestFor.push("Cheapest Rent");
+                if (calculateFirstMonthCost(l).total === minTotalCost) bestFor.push("Lowest Upfront");
+                if (l.scores.total === maxScore) bestFor.push("Overall Best Match");
+                if (l.scores.commuteFit >= 80) bestFor.push("Great Commute");
+                if (l.waterloggingRisk === "low") bestFor.push("Flood-Safe");
+                if (l.gasType === "line") bestFor.push("Titas Gas Line");
+                if (bestFor.length === 0) bestFor.push("Balanced Option");
+                return (
+                  <td key={l.id} className="py-3 px-4">
+                    <div className="flex flex-wrap gap-1.5">
+                      {bestFor.slice(0, 3).map((tag, idx) => (
+                        <span key={idx} className="text-[9px] uppercase tracking-wide bg-gold/10 text-gold px-2 py-0.5 rounded-md font-bold border border-gold/15">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                );
+              })}
+            </tr>
+
+            {/* Visit Order Recommendation */}
+            <tr className="bg-primary/5">
+              <td className="py-3.5 px-4 text-primary font-bold">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-primary fill-primary" />
+                  Recommended Visit Order
+                </div>
+              </td>
+              {(() => {
+                // Sort by total score descending for visit order
+                const sorted = [...listingsToCompare].sort((a, b) => b.scores.total - a.scores.total);
+                return listingsToCompare.map((l) => {
+                  const visitRank = sorted.findIndex(s => s.id === l.id) + 1;
+                  const isFirst = visitRank === 1;
+                  return (
+                    <td key={l.id} className="py-3.5 px-4">
+                      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-extrabold text-xs ${
+                        isFirst 
+                          ? "bg-primary text-white shadow-sm shadow-primary/15" 
+                          : "bg-bg-alt text-text-main border border-border-light"
+                      }`}>
+                        <span>{isFirst ? "🏆" : `#${visitRank}`}</span>
+                        <span>{isFirst ? "Visit First" : `Visit ${visitRank}${visitRank === 2 ? "nd" : "rd"}`}</span>
+                      </div>
+                      {isFirst && (
+                        <p className="text-[10px] text-primary font-semibold mt-1.5">
+                          Highest overall score — best bang for your time.
+                        </p>
+                      )}
+                    </td>
+                  );
+                });
+              })()}
+            </tr>
           </tbody>
         </table>
       </div>

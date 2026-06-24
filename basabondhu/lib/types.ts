@@ -49,7 +49,7 @@ export type Listing = {
   id: string;
   title: string;
   rawText: string;
-  sourceType: "facebook" | "bikroy" | "bproperty" | "broker" | "direct";
+  sourceType: "facebook" | "bikroy" | "bproperty" | "broker" | "direct" | "seed";
   area: string;
   addressHint: string;
   city: "Dhaka";
@@ -68,6 +68,7 @@ export type Listing = {
   brokerFee: number | null;
   serviceCharge: number | null;
   serviceChargeKnown: boolean;
+  brokerFeeKnown: boolean;
   gasType: "line" | "cylinder" | "unknown";
   lift: boolean;
   generator: boolean;
@@ -77,7 +78,10 @@ export type Listing = {
   houseRules: string[];
   redFlags: string[];
   goodPoints: string[];
+  missingFields: string[];
   imageUrl?: string;
+  isActive: boolean;
+  isDemo: boolean;
 };
 
 export type ScoredListing = Listing & {
@@ -144,4 +148,42 @@ export type ParsedListing = {
   availability: string | null;
   missingFields: string[];
   confidence: "high" | "medium" | "low";
+};
+
+export type ScanSummary = {
+  scanned: number;
+  removedBudget: number;
+  removedCommute: number;
+  removedHiddenCost: number;
+  removedHouseholdMismatch: number;
+  selected: number;
+};
+
+export type ComparisonResult = {
+  listings: ScoredListing[];
+  recommendedListingId: string;
+  visitOrder: string[];
+  summary: string;
+  bestRentId: string;
+  bestCommuteId: string;
+  lowestUpfrontId: string;
+};
+
+export type ChecklistSection = {
+  category: string;
+  items: { label: string; description: string; checked: boolean }[];
+};
+
+export type HousingReport = {
+  profileSummary: string;
+  recommendedAreas: AreaProfile[];
+  scanSummary: ScanSummary;
+  topListings: ScoredListing[];
+  comparison?: ComparisonResult;
+  costSummaries: FirstMonthCost[];
+  mainRisks: string[];
+  questionsToAsk: string[];
+  visitChecklist: ChecklistSection[];
+  finalRecommendation: string;
+  generatedAt: string;
 };

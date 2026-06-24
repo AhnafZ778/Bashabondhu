@@ -77,3 +77,82 @@ body {
   text-orientation: mixed;
 }
 
+/* Print-friendly styles for report */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .no-print,
+  nav,
+  header,
+  [class*="sticky"] {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+}
+
+/* ── Mobile Responsiveness ── */
+
+/* Smooth scrollbar hiding for horizontal tab navigation */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 640px) {
+  /* Ensure minimum 44px tap targets on mobile */
+  button, a, [role="button"] {
+    min-height: 44px;
+  }
+
+  /* Reduce padding on mobile for more content space */
+  .px-6 { padding-left: 1rem; padding-right: 1rem; }
+
+  /* Detail drawer goes full-width on mobile */
+  .max-w-lg {
+    max-width: 100% !important;
+  }
+
+  /* Comparison table scroll hint */
+  .min-w-\[500px\] {
+    min-width: 600px;
+  }
+}
+
+/* Safe area insets for notch devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Focus visible styles for keyboard navigation / accessibility */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

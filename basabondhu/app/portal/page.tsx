@@ -1,17 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { useSearch } from "@/context/SearchContext";
 import AreaRecommendations from "@/components/AreaRecommendations";
 import ListingGrid from "@/components/ListingGrid";
+import DemoScanAnimation from "@/components/DemoScanAnimation";
 import Link from "next/link";
 import { Home as HomeIcon, Sparkles, HelpCircle, ArrowRight, Settings } from "lucide-react";
 import { personas } from "@/lib/data/personas";
+import { listings } from "@/lib/data/listings";
 import { SearchProfile } from "@/lib/types";
 import { PersonaIcon } from "@/components/PersonaIcons";
+import { generateScanSummary } from "@/lib/services/demo-scan.service";
 
 export default function PortalPage() {
   const { profile, planSearch, scoredListings, resetSearch } = useSearch();
+  const [scanComplete, setScanComplete] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
 
   // Count high compatibility matches
   const highCompatCount = scoredListings.filter(l => l.scores.total >= 80).length;
@@ -30,7 +35,14 @@ export default function PortalPage() {
       dealBreakers: p.dealBreakers
     };
     planSearch(newProfile);
+    setShowAnimation(true);
+    setScanComplete(false);
   };
+
+  const handleScanComplete = useCallback(() => {
+    setScanComplete(true);
+    setShowAnimation(false);
+  }, []);
 
   // If search profile doesn't exist, show a clean onboarding screen with persona quick selectors
   if (!profile) {
@@ -49,6 +61,7 @@ export default function PortalPage() {
           </p>
         </div>
 
+<<<<<<< HEAD
         {/* Asymmetrical Image-Backed Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Option A: Custom Guided Matcher (Spans 2 columns on desktop) */}
@@ -189,6 +202,17 @@ export default function PortalPage() {
           })()}
         </div>
       </div>
+    );
+  }
+
+  // Show scan animation after profile is set
+  if (profile && showAnimation) {
+    const scanSummary = generateScanSummary(listings, profile);
+    return (
+      <DemoScanAnimation
+        scanSummary={scanSummary}
+        onComplete={handleScanComplete}
+      />
     );
   }
 
