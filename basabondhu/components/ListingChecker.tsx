@@ -131,6 +131,7 @@ export default function ListingChecker() {
       brokerFee: overrideBrokerFee,
       serviceCharge: overrideServiceCharge,
       serviceChargeKnown: overrideServiceCharge > 0,
+      brokerFeeKnown: overrideBrokerFee > 0,
       gasType: (parsed.gasType as "line" | "cylinder" | "unknown") ?? "unknown",
       lift: parsed.lift ?? false,
       generator: parsed.generator ?? false,
@@ -139,7 +140,10 @@ export default function ListingChecker() {
       commuteNotes: "",
       houseRules: [],
       redFlags: [],
-      goodPoints: []
+      goodPoints: [],
+      missingFields: parsed.missingFields ?? [],
+      isActive: true,
+      isDemo: false
     };
   };
 

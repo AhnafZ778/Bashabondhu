@@ -1,4 +1,4 @@
-import { SearchProfile, HouseholdType } from "../types";
+import { SearchProfile, HouseholdType, Priority } from "../types";
 
 /**
  * Search Profile Service
@@ -73,7 +73,7 @@ export function generateProfileSummary(profile: SearchProfile): string {
   return summary;
 }
 
-function inferPriorities(householdType: HouseholdType): string[] {
+function inferPriorities(householdType: HouseholdType): Priority[] {
   switch (householdType) {
     case "family":
       return ["family-friendly", "school", "gas", "no-waterlogging"];
