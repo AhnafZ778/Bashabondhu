@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { SearchProfile, ScoredListing, ParsedListing, AreaProfile } from "@/lib/types";
+import { SearchProfile, ScoredListing, ParsedListing, AreaProfile, Listing } from "@/lib/types";
 import { listings } from "@/lib/data/listings";
 import { areas } from "@/lib/data/areas";
 import { scoreListing } from "@/lib/scoring";
@@ -27,6 +27,9 @@ type SearchContextType = {
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
+import { mapHarvestedListingToListing } from "@/lib/harvester/listing-mapper";
+import { useEffect } from "react";
+
 export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<SearchProfile | null>(null);
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
@@ -34,12 +37,28 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [activeAdjustments, setActiveAdjustments] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"landing" | "portal">("landing");
   const [activeTab, setActiveTab] = useState<"search" | "check" | "compare" | "visit">("search");
+  const [dynamicListings, setDynamicListings] = useState<Listing[]>([]);
+
+  // Fetch live published listings from the harvester database
+  useEffect(() => {
+    fetch("/api/harvester/published-listings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.ok && Array.isArray(data.listings)) {
+          const mapped = data.listings.map((l: any) => mapHarvestedListingToListing(l));
+          setDynamicListings(mapped);
+        }
+      })
+      .catch((err) => console.warn("Failed to fetch dynamic listings:", err));
+  }, [profile]); // re-fetch when starting a new search profile
 
   // Compute scored and ranked listings dynamically when profile or adjustments change
   const scoredListings = React.useMemo(() => {
     if (!profile) return [];
 
-    const scored = listings.map(listing => 
+    const combinedListings = [...dynamicListings, ...listings];
+
+    const scored = combinedListings.map(listing => 
       scoreListing(listing, profile, activeAdjustments)
     );
 
@@ -49,7 +68,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
       if (a.verdict !== "avoid" && b.verdict === "avoid") return -1;
       return b.scores.total - a.scores.total;
     });
-  }, [profile, activeAdjustments]);
+  }, [profile, activeAdjustments, dynamicListings]);
 
   // Recommend Areas based on budget and suitability
   const recommendedAreas = React.useMemo(() => {
