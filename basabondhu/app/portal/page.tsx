@@ -61,7 +61,6 @@ export default function PortalPage() {
           </p>
         </div>
 
-<<<<<<< HEAD
         {/* Asymmetrical Image-Backed Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Option A: Custom Guided Matcher (Spans 2 columns on desktop) */}
