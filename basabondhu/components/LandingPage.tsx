@@ -385,7 +385,107 @@ export default function LandingPage() {
         <ScrollVideo />
       </div>
 
+      {/* ──────────────────────────────────────────────────
+          SLIDING LOGO BANNER (Replacing Mode Selector)
+          ────────────────────────────────────────────────── */}
+      <section className="bg-[#0f0f0f] border-y border-white/5 py-16 overflow-hidden relative select-none">
+        {/* Soft left/right gradients for seamless entry/exit effect */}
+        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#0f0f0f] to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#0f0f0f] to-transparent z-10 pointer-events-none" />
+        
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 mb-8 text-center sm:text-left">
+          <span className="px-3.5 py-1.5 bg-gold/10 border border-gold/20 text-gold text-[10px] sm:text-xs uppercase font-black tracking-widest rounded-full">
+            Our Partners & Sponsors
+          </span>
+        </div>
 
+        {/* Sliding Wrapper */}
+        <div className="flex w-[200%] animate-marquee-right">
+          {/* First Set of Logos */}
+          <div className="flex justify-around items-center min-w-full gap-8">
+            <div className="flex flex-col items-center gap-3 bg-zinc-900/40 border border-white/5 backdrop-blur-md px-8 py-5 rounded-2xl w-64 hover:border-gold/30 hover:bg-zinc-900/60 transition-all duration-300 group">
+              <div className="h-16 flex items-center justify-center">
+                <img 
+                  src="/Logos/AUST IDC - Black.png" 
+                  alt="AUST IDC - Black" 
+                  className="max-h-full max-w-[180px] object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300 brightness-0 invert" 
+                />
+              </div>
+              <span className="text-zinc-500 group-hover:text-zinc-300 font-mono text-[11px] uppercase tracking-wider transition-colors">
+                AUST IDC - Black
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center gap-3 bg-zinc-900/40 border border-white/5 backdrop-blur-md px-8 py-5 rounded-2xl w-64 hover:border-gold/30 hover:bg-zinc-900/60 transition-all duration-300 group">
+              <div className="h-16 flex items-center justify-center">
+                <img 
+                  src="/Logos/Code front.png" 
+                  alt="Code front" 
+                  className="max-h-full max-w-[180px] object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300" 
+                />
+              </div>
+              <span className="text-zinc-500 group-hover:text-zinc-300 font-mono text-[11px] uppercase tracking-wider transition-colors">
+                Code front
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center gap-3 bg-zinc-900/40 border border-white/5 backdrop-blur-md px-8 py-5 rounded-2xl w-64 hover:border-gold/30 hover:bg-zinc-900/60 transition-all duration-300 group">
+              <div className="h-16 flex items-center justify-center">
+                <img 
+                  src="/Logos/Mindsparks 26 Logo.png" 
+                  alt="Mindsparks 26 Logo" 
+                  className="max-h-full max-w-[180px] object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300" 
+                />
+              </div>
+              <span className="text-zinc-500 group-hover:text-zinc-300 font-mono text-[11px] uppercase tracking-wider transition-colors">
+                Mindsparks 26 Logo
+              </span>
+            </div>
+          </div>
+
+          {/* Second Duplicate Set of Logos (for seamless looping) */}
+          <div className="flex justify-around items-center min-w-full gap-8">
+            <div className="flex flex-col items-center gap-3 bg-zinc-900/40 border border-white/5 backdrop-blur-md px-8 py-5 rounded-2xl w-64 hover:border-gold/30 hover:bg-zinc-900/60 transition-all duration-300 group">
+              <div className="h-16 flex items-center justify-center">
+                <img 
+                  src="/Logos/AUST IDC - Black.png" 
+                  alt="AUST IDC - Black" 
+                  className="max-h-full max-w-[180px] object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300 brightness-0 invert" 
+                />
+              </div>
+              <span className="text-zinc-500 group-hover:text-zinc-300 font-mono text-[11px] uppercase tracking-wider transition-colors">
+                AUST IDC - Black
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center gap-3 bg-zinc-900/40 border border-white/5 backdrop-blur-md px-8 py-5 rounded-2xl w-64 hover:border-gold/30 hover:bg-zinc-900/60 transition-all duration-300 group">
+              <div className="h-16 flex items-center justify-center">
+                <img 
+                  src="/Logos/Code front.png" 
+                  alt="Code front" 
+                  className="max-h-full max-w-[180px] object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300" 
+                />
+              </div>
+              <span className="text-zinc-500 group-hover:text-zinc-300 font-mono text-[11px] uppercase tracking-wider transition-colors">
+                Code front
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center gap-3 bg-zinc-900/40 border border-white/5 backdrop-blur-md px-8 py-5 rounded-2xl w-64 hover:border-gold/30 hover:bg-zinc-900/60 transition-all duration-300 group">
+              <div className="h-16 flex items-center justify-center">
+                <img 
+                  src="/Logos/Mindsparks 26 Logo.png" 
+                  alt="Mindsparks 26 Logo" 
+                  className="max-h-full max-w-[180px] object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300" 
+                />
+              </div>
+              <span className="text-zinc-500 group-hover:text-zinc-300 font-mono text-[11px] uppercase tracking-wider transition-colors">
+                Mindsparks 26 Logo
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* ──────────────────────────────────────────────────
           HERO — Full-cover background image with floating search card
           ────────────────────────────────────────────────── */}
