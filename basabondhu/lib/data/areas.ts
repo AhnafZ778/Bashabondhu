@@ -19,7 +19,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "medium",
     mainTradeoff: "Lower rent & spacious flats, but risk of flooding during heavy rain and high peak-hour commute times.",
     latitude: 23.7634,
-    longitude: 90.4321
+    longitude: 90.4321,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["Ideal School & College", "Banasree National Ideal", "Al-Rajhi High School"],
+    topHospitals: ["Al-Raji Hospital", "Farazy Hospital Badda"]
   },
   {
     id: "badda",
@@ -39,7 +70,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "medium",
     mainTradeoff: "Very close to Gulshan-1 offices and low rents, but chaotic streets and high density.",
     latitude: 23.7805,
-    longitude: 90.4266
+    longitude: 90.4266,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["Sir John Wilson School", "Cambrian School & College"],
+    topHospitals: ["Universal Medical College", "Amz Hospital"]
   },
   {
     id: "mohakhali",
@@ -59,7 +121,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "high",
     mainTradeoff: "Excellent office connectivity and reliable utility services, but rents are steep and noisy.",
     latitude: 23.7788,
-    longitude: 90.4002
+    longitude: 90.4002,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["South Breeze School", "BAF Shaheen College"],
+    topHospitals: ["ICDDR,B Hospital", "Metropolitan Hospital"]
   },
   {
     id: "tejgaon",
@@ -79,7 +172,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "high",
     mainTradeoff: "Superb central transit connection and robust utility flow, but heavily industrial and lacks quiet streets.",
     latitude: 23.7596,
-    longitude: 90.3996
+    longitude: 90.3996,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["St. Joseph School", "Tejgaon Govt. High School"],
+    topHospitals: ["National Institute of ENT", "Samorita Hospital"]
   },
   {
     id: "mohammadpur",
@@ -99,7 +223,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "medium",
     mainTradeoff: "Rich community feel, close to Dhanmondi schools and moderate rents, but far from north office districts.",
     latitude: 23.7542,
-    longitude: 90.3601
+    longitude: 90.3601,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["Residential Model College", "St. Joseph School", "Mohammadpur Preparatory"],
+    topHospitals: ["Bangladesh Specialized Hospital", "Care Medical College Hospital"]
   },
   {
     id: "lalmatia",
@@ -119,7 +274,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "high",
     mainTradeoff: "Safe, highly planned, and serene with top tier schools nearby, but strict landlords and premium rents.",
     latitude: 23.7561,
-    longitude: 90.3703
+    longitude: 90.3703,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["Sunnydale", "Lalmatia Housing Society School", "SFX Greenherald"],
+    topHospitals: ["City Hospital Lalmatia", "Al-Manar Hospital"]
   },
   {
     id: "mirpur",
@@ -139,7 +325,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "medium",
     mainTradeoff: "Extremely affordable rents and direct Metro connectivity, but heavily populated and busy.",
     latitude: 23.8056,
-    longitude: 90.3697
+    longitude: 90.3697,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["Monipur High School", "SOS Hermann Gmeiner School", "Scholastica (Mirpur)"],
+    topHospitals: ["National Heart Foundation", "Kidney Foundation Hospital"]
   },
   {
     id: "uttara",
@@ -159,7 +376,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "high",
     mainTradeoff: "Highly planned, green, silent, and very clean with great utilities, but far from central Dhaka city centers.",
     latitude: 23.8759,
-    longitude: 90.3795
+    longitude: 90.3795,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["Scholastica (Uttara)", "Aga Khan School", "Sunnydale (Uttara)"],
+    topHospitals: ["Kuwait Bangladesh Friendship Hospital", "Uttara Adhunik Medical College"]
   },
   {
     id: "bashundhara",
@@ -179,7 +427,38 @@ export const areas: AreaProfile[] = [
     utilityReliability: "high",
     mainTradeoff: "Extremely safe, planned residential area with student sublets, but costly internal transport and gate curfews.",
     latitude: 23.8151,
-    longitude: 90.4255
+    longitude: 90.4255,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["International School Dhaka (ISD)", "Hurdco International School", "Playpen"],
+    topHospitals: ["Evercare Hospital Dhaka", "Asgar Ali Hospital"]
   },
   {
     id: "dhanmondi",
@@ -199,6 +478,145 @@ export const areas: AreaProfile[] = [
     utilityReliability: "high",
     mainTradeoff: "Amazing parks, food culture, elite schools, and lake vibes, but permanent traffic congestion and high rents.",
     latitude: 23.7461,
-    longitude: 90.3742
+    longitude: 90.3742,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: [
+        "service_charge",
+        "gas_type",
+        "road_access",
+        "waterlogging",
+        "broker_fee"
+      ],
+      highAttentionScopes: [
+        "gas_type",
+        "waterlogging",
+        "road_access"
+      ],
+      commonListingAmbiguities: [
+        "service_charge",
+        "gas_type",
+        "broker_fee"
+      ],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside-lane road access should be verified before visiting.",
+        "Gas type and service charge are often important to confirm.",
+        "Rainy-day access can change the visit decision."
+      ]
+    },
+    topSchools: ["Sunnydale", "Scholastica (Dhanmondi)", "Maple Leaf International"],
+    topHospitals: ["Labaid Specialized Hospital", "Bangladesh Medical College Hospital", "Ibn Sina Hospital"]
+  },
+  {
+    id: "banani",
+    name: "Banani",
+    rentRange: "৳35,000 - ৳90,000",
+    rentLow: 35000,
+    rentHigh: 90000,
+    bestFor: ["Expats", "Corporate Executives", "High Budget Renters"],
+    avoidIf: ["You are looking for cheap budget housing", "You hate commercial hustle-bustle"],
+    commuteNotes: "Excellent access via Kemal Ataturk Avenue. Close to Gulshan and Mohakhali. Direct metro access nearby.",
+    affordability: "low",
+    familySuitability: 9,
+    bachelorSuitability: 7,
+    femaleSuitability: 9,
+    schoolAccess: 9,
+    waterloggingRisk: "low",
+    utilityReliability: "high",
+    mainTradeoff: "High rent and premium costs, but unbeatable security, infrastructure, and upscale dining/amenities.",
+    latitude: 23.7937,
+    longitude: 90.4066,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: ["service_charge", "gas_type", "road_access", "broker_fee"],
+      highAttentionScopes: ["gas_type", "broker_fee"],
+      commonListingAmbiguities: ["service_charge", "broker_fee"],
+      rainyDayRisk: "low",
+      roadAccessRisk: "low",
+      utilityClarityRisk: "low",
+      brokerPresence: "high",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Premium apartments usually require standard security clearance.",
+        "Gas line connection is common, but cylinder gas is present in newer high-rises."
+      ]
+    },
+    topSchools: ["Banani International School", "South Breeze School", "AISD"],
+    topHospitals: ["Premium Dental Clinic", "Banani Clinic Ltd", "Kurmitola General Hospital"]
+  },
+  {
+    id: "gulshan",
+    name: "Gulshan",
+    rentRange: "৳45,000 - ৳120,000",
+    rentLow: 45000,
+    rentHigh: 120000,
+    bestFor: ["Expats", "Diplomats", "Corporate Leaders"],
+    avoidIf: ["You have a tight budget under ৳40k", "You hate heavily guarded check-posts"],
+    commuteNotes: "Excellent access. Heart of the diplomatic zone. Close to Banani and Baridhara.",
+    affordability: "low",
+    familySuitability: 9,
+    bachelorSuitability: 6,
+    femaleSuitability: 9,
+    schoolAccess: 9,
+    waterloggingRisk: "low",
+    utilityReliability: "high",
+    mainTradeoff: "Premium living standards and diplomatic security, but extremely high rent, high deposit, and peak traffic hours.",
+    latitude: 23.7925,
+    longitude: 90.4178,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: ["service_charge", "gas_type", "road_access", "broker_fee"],
+      highAttentionScopes: ["gas_type", "broker_fee"],
+      commonListingAmbiguities: ["service_charge", "broker_fee"],
+      rainyDayRisk: "low",
+      roadAccessRisk: "low",
+      utilityClarityRisk: "low",
+      brokerPresence: "high",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Check-posts restrict commercial vehicle entry at night.",
+        "Gas line is present in almost all older buildings; newer blocks use central LPG."
+      ]
+    },
+    topSchools: ["Scholastica", "Sir John Wilson School", "International School Dhaka"],
+    topHospitals: ["United Hospital", "Square Hospital Gulshan", "Aesthetics Clinic"]
+  },
+  {
+    id: "merul-badda",
+    name: "Merul Badda",
+    rentRange: "৳15,000 - ৳32,000",
+    rentLow: 15000,
+    rentHigh: 32000,
+    bestFor: ["Families", "Couples", "Budget Renters"],
+    avoidIf: ["You need zero commute to Gulshan/Banani", "You hate high traffic on DIT Road"],
+    commuteNotes: "Located south of Badda. Excellent commute access to Gulshan-1 and Hatirjheel.",
+    affordability: "high",
+    familySuitability: 8,
+    bachelorSuitability: 7,
+    femaleSuitability: 7,
+    schoolAccess: 8,
+    waterloggingRisk: "medium",
+    utilityReliability: "medium",
+    mainTradeoff: "Spacious apartments at very affordable rates, but suffers from peak-hour traffic bottleneck near Hatirjheel.",
+    latitude: 23.7686,
+    longitude: 90.4258,
+    hiddenCostProfile: {
+      commonHiddenCostScopes: ["service_charge", "gas_type", "road_access", "waterlogging", "broker_fee"],
+      highAttentionScopes: ["gas_type", "waterlogging", "road_access"],
+      commonListingAmbiguities: ["service_charge", "gas_type", "broker_fee"],
+      rainyDayRisk: "medium",
+      roadAccessRisk: "medium",
+      utilityClarityRisk: "medium",
+      brokerPresence: "medium",
+      tenantRestrictionFrequency: "medium",
+      localNotes: [
+        "Inside lane road access is narrow and should be verified.",
+        "Water supply is a common local check point."
+      ]
+    },
+    topSchools: ["Ideal School & College", "Merul Badda High School", "Scholastica (Merul Branch)"],
+    topHospitals: ["Labaid Clinic Badda", "Farazy Hospital Badda"]
   }
 ];

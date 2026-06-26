@@ -53,7 +53,7 @@ function calculateScanSummary(
         removedBudget++;
       } else if (listing.scores.commuteFit < 40) {
         removedCommute++;
-      } else if (listing.scores.hiddenCostRisk > 60) {
+      } else if (listing.scores.hiddenScopePenalty > 60) {
         removedHiddenCost++;
       } else if (listing.scores.householdFit < 30) {
         removedHouseholdMismatch++;
@@ -63,7 +63,7 @@ function calculateScanSummary(
       }
     } else if (listing.verdict === "call-first") {
       // Some of these are still not selected, count the primary issue
-      if (listing.scores.hiddenCostRisk > 50) {
+      if (listing.scores.hiddenScopePenalty > 50) {
         removedHiddenCost++;
       }
     }

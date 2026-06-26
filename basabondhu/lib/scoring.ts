@@ -1,18 +1,23 @@
 import { Listing, ScoredListing, SearchProfile, Verdict } from "./types";
 import { calculateFirstMonthCost } from "./cost-calculator";
+import { parseListingSync } from "./services/listing-parser.service";
+import { detectHiddenCostScopes } from "./services/hidden-cost-scope.service";
 
 // Travel compatibility matrix between 10 Dhaka areas (100 = excellent/same, 20 = very poor)
 const COMMUTE_MATRIX: Record<string, Record<string, number>> = {
-  Banasree: { Banasree: 100, Badda: 80, Mohakhali: 60, Tejgaon: 60, Mohammadpur: 40, Lalmatia: 40, Mirpur: 30, Uttara: 30, Bashundhara: 60, Dhanmondi: 45 },
-  Badda: { Banasree: 80, Badda: 100, Mohakhali: 75, Tejgaon: 70, Mohammadpur: 45, Lalmatia: 45, Mirpur: 40, Uttara: 50, Bashundhara: 80, Dhanmondi: 45 },
-  Mohakhali: { Banasree: 60, Badda: 75, Mohakhali: 100, Tejgaon: 90, Mohammadpur: 65, Lalmatia: 70, Mirpur: 60, Uttara: 70, Bashundhara: 70, Dhanmondi: 70 },
-  Tejgaon: { Banasree: 60, Badda: 70, Mohakhali: 90, Tejgaon: 100, Mohammadpur: 70, Lalmatia: 75, Mirpur: 60, Uttara: 60, Bashundhara: 65, Dhanmondi: 75 },
-  Mohammadpur: { Banasree: 40, Badda: 45, Mohakhali: 65, Tejgaon: 70, Mohammadpur: 100, Lalmatia: 90, Mirpur: 70, Uttara: 45, Bashundhara: 40, Dhanmondi: 85 },
-  Lalmatia: { Banasree: 40, Badda: 45, Mohakhali: 70, Tejgaon: 75, Mohammadpur: 90, Lalmatia: 100, Mirpur: 65, Uttara: 45, Bashundhara: 40, Dhanmondi: 90 },
-  Mirpur: { Banasree: 30, Badda: 40, Mohakhali: 60, Tejgaon: 60, Mohammadpur: 70, Lalmatia: 65, Mirpur: 100, Uttara: 65, Bashundhara: 50, Dhanmondi: 60 },
-  Uttara: { Banasree: 30, Badda: 50, Mohakhali: 70, Tejgaon: 60, Mohammadpur: 45, Lalmatia: 45, Mirpur: 65, Uttara: 100, Bashundhara: 70, Dhanmondi: 45 },
-  Bashundhara: { Banasree: 60, Badda: 80, Mohakhali: 70, Tejgaon: 65, Mohammadpur: 40, Lalmatia: 40, Mirpur: 50, Uttara: 70, Bashundhara: 100, Dhanmondi: 45 },
-  Dhanmondi: { Banasree: 45, Badda: 45, Mohakhali: 70, Tejgaon: 75, Mohammadpur: 85, Lalmatia: 90, Mirpur: 60, Uttara: 45, Bashundhara: 45, Dhanmondi: 100 }
+  Banasree: { Banasree: 100, Badda: 80, "Merul Badda": 90, Mohakhali: 60, Tejgaon: 60, Mohammadpur: 40, Lalmatia: 40, Mirpur: 30, Uttara: 30, Bashundhara: 60, Dhanmondi: 45, Banani: 65, Gulshan: 70 },
+  Badda: { Banasree: 80, Badda: 100, "Merul Badda": 95, Mohakhali: 75, Tejgaon: 70, Mohammadpur: 45, Lalmatia: 45, Mirpur: 40, Uttara: 50, Bashundhara: 80, Dhanmondi: 45, Banani: 75, Gulshan: 85 },
+  "Merul Badda": { Banasree: 90, Badda: 95, "Merul Badda": 100, Mohakhali: 70, Tejgaon: 70, Mohammadpur: 40, Lalmatia: 40, Mirpur: 35, Uttara: 45, Bashundhara: 75, Dhanmondi: 45, Banani: 70, Gulshan: 80 },
+  Mohakhali: { Banasree: 60, Badda: 75, "Merul Badda": 70, Mohakhali: 100, Tejgaon: 90, Mohammadpur: 65, Lalmatia: 70, Mirpur: 60, Uttara: 70, Bashundhara: 70, Dhanmondi: 70, Banani: 90, Gulshan: 85 },
+  Tejgaon: { Banasree: 60, Badda: 70, "Merul Badda": 70, Mohakhali: 90, Tejgaon: 100, Mohammadpur: 70, Lalmatia: 75, Mirpur: 60, Uttara: 60, Bashundhara: 65, Dhanmondi: 75, Banani: 80, Gulshan: 75 },
+  Mohammadpur: { Banasree: 40, Badda: 45, "Merul Badda": 40, Mohakhali: 65, Tejgaon: 70, Mohammadpur: 100, Lalmatia: 90, Mirpur: 70, Uttara: 45, Bashundhara: 40, Dhanmondi: 85, Banani: 55, Gulshan: 50 },
+  Lalmatia: { Banasree: 40, Badda: 45, "Merul Badda": 40, Mohakhali: 70, Tejgaon: 75, Mohammadpur: 90, Lalmatia: 100, Mirpur: 65, Uttara: 45, Bashundhara: 40, Dhanmondi: 90, Banani: 55, Gulshan: 50 },
+  Mirpur: { Banasree: 30, Badda: 40, "Merul Badda": 35, Mohakhali: 60, Tejgaon: 60, Mohammadpur: 70, Lalmatia: 65, Mirpur: 100, Uttara: 65, Bashundhara: 50, Dhanmondi: 60, Banani: 60, Gulshan: 55 },
+  Uttara: { Banasree: 30, Badda: 50, "Merul Badda": 45, Mohakhali: 70, Tejgaon: 60, Mohammadpur: 45, Lalmatia: 45, Mirpur: 65, Uttara: 100, Bashundhara: 70, Dhanmondi: 45, Banani: 65, Gulshan: 60 },
+  Bashundhara: { Banasree: 60, Badda: 80, "Merul Badda": 75, Mohakhali: 70, Tejgaon: 65, Mohammadpur: 40, Lalmatia: 40, Mirpur: 50, Uttara: 70, Bashundhara: 100, Dhanmondi: 45, Banani: 75, Gulshan: 80 },
+  Dhanmondi: { Banasree: 45, Badda: 45, "Merul Badda": 45, Mohakhali: 70, Tejgaon: 75, Mohammadpur: 85, Lalmatia: 90, Mirpur: 60, Uttara: 45, Bashundhara: 45, Dhanmondi: 100, Banani: 55, Gulshan: 50 },
+  Banani: { Banasree: 65, Badda: 75, "Merul Badda": 70, Mohakhali: 90, Tejgaon: 80, Mohammadpur: 55, Lalmatia: 55, Mirpur: 60, Uttara: 65, Bashundhara: 75, Dhanmondi: 55, Banani: 100, Gulshan: 95 },
+  Gulshan: { Banasree: 70, Badda: 85, "Merul Badda": 80, Mohakhali: 85, Tejgaon: 75, Mohammadpur: 50, Lalmatia: 50, Mirpur: 55, Uttara: 60, Bashundhara: 80, Dhanmondi: 50, Banani: 95, Gulshan: 100 }
 };
 
 export function scoreListing(
@@ -65,17 +70,19 @@ export function scoreListing(
     else householdFit = 30;
   }
 
-  // 5. Hidden Cost Risk
-  let hiddenCostRisk = 0;
-  if (!listing.serviceChargeKnown) hiddenCostRisk += 30;
-  if (listing.brokerFee === null) hiddenCostRisk += 25;
-  else if (listing.brokerFee > 0) hiddenCostRisk += 15;
-  if (listing.advanceMonths >= 3) hiddenCostRisk += 20;
-  if (listing.gasType === "unknown") hiddenCostRisk += 10;
-  if (listing.gasType === "cylinder") hiddenCostRisk += 5;
-
-  // Normalize hidden cost risk to a 0-100 scale (100 is worst risk, so fit score is 100 - risk)
-  const hiddenCostFit = Math.max(0, 100 - hiddenCostRisk);
+  // 5. Hidden Scope Penalty
+  const parsed = parseListingSync(listing.rawText);
+  const scopes = detectHiddenCostScopes({ parsedListing: parsed, listing, searchProfile: profile });
+  
+  let hiddenScopePenalty = 0;
+  scopes.forEach(scope => {
+    if (scope.seriousness === "critical") hiddenScopePenalty += 25;
+    else if (scope.seriousness === "high") hiddenScopePenalty += 15;
+    else if (scope.seriousness === "medium") hiddenScopePenalty += 5;
+  });
+  hiddenScopePenalty = Math.min(100, hiddenScopePenalty);
+  
+  const hiddenCostFit = Math.max(0, 100 - hiddenScopePenalty);
 
   // 6. Utility Clarity Score
   let utilityClarity = 20;
@@ -170,11 +177,14 @@ export function scoreListing(
 
   // Determine Verdict
   let verdict: Verdict = "maybe";
+  
+  const highScopes = scopes.filter(s => s.seriousness === "high" || s.seriousness === "critical").length;
+
   if (dealBreakerTriggered || total < 40 || householdFit === 0) {
     verdict = "avoid";
-  } else if (total >= 75 && hiddenCostRisk < 30) {
+  } else if (total >= 75 && highScopes === 0) {
     verdict = "visit";
-  } else if (total >= 55 && hiddenCostRisk < 50) {
+  } else if (total >= 55 && highScopes <= 2) {
     verdict = "maybe";
   } else {
     verdict = "call-first";
@@ -237,12 +247,14 @@ export function scoreListing(
       firstMonthFit: Math.round(firstMonthFit),
       commuteFit: Math.round(commuteFit),
       householdFit: Math.round(householdFit),
-      hiddenCostRisk: Math.round(hiddenCostRisk),
+      hiddenScopePenalty: Math.round(hiddenScopePenalty),
       utilityClarity: Math.round(utilityClarity),
       waterloggingRisk: Math.round(100 - waterloggingFit),
       listingTrust: Math.round(listingTrust),
+      amenityFit: 100, // mock fallback
       total: Math.round(total)
     },
+    hiddenCostScopes: scopes,
     verdict,
     whyItFits,
     biggestRisk,

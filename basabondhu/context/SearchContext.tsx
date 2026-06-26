@@ -23,6 +23,12 @@ type SearchContextType = {
   setViewMode: (mode: "landing" | "portal") => void;
   activeTab: "search" | "check" | "compare" | "visit";
   setActiveTab: (tab: "search" | "check" | "compare" | "visit") => void;
+  isSimulating: boolean;
+  setIsSimulating: (simulating: boolean) => void;
+  refinedScoredListings: ScoredListing[] | null;
+  setRefinedScoredListings: (listings: ScoredListing[] | null) => void;
+  showNeighborhoodFactors: boolean;
+  setShowNeighborhoodFactors: (show: boolean) => void;
 };
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -38,6 +44,9 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [viewMode, setViewMode] = useState<"landing" | "portal">("landing");
   const [activeTab, setActiveTab] = useState<"search" | "check" | "compare" | "visit">("search");
   const [dynamicListings, setDynamicListings] = useState<Listing[]>([]);
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [refinedScoredListings, setRefinedScoredListings] = useState<ScoredListing[] | null>(null);
+  const [showNeighborhoodFactors, setShowNeighborhoodFactors] = useState(false);
 
   // Fetch live published listings from the harvester database
   useEffect(() => {
@@ -58,17 +67,86 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
 
     const combinedListings = [...dynamicListings, ...listings];
 
-    const scored = combinedListings.map(listing => 
-      scoreListing(listing, profile, activeAdjustments)
-    );
+    let listToScore = refinedScoredListings || [];
+
+    if (!refinedScoredListings) {
+      listToScore = combinedListings.map(listing => 
+        scoreListing(listing, profile, activeAdjustments)
+      );
+    }
+
+    // Filter strictly by the user's selected commute anchor area
+    const targetArea = profile.commuteAnchors[0]?.area;
+    const filteredListings = targetArea
+      ? listToScore.filter(l => l.area.toLowerCase() === targetArea.toLowerCase())
+      : listToScore;
 
     // Sort by total score descending, put "avoid" at the bottom
-    return scored.sort((a, b) => {
+    const sorted = [...filteredListings].sort((a, b) => {
       if (a.verdict === "avoid" && b.verdict !== "avoid") return 1;
       if (a.verdict !== "avoid" && b.verdict === "avoid") return -1;
       return b.scores.total - a.scores.total;
     });
-  }, [profile, activeAdjustments, dynamicListings]);
+
+    // Deduplicate by title to ensure different buildings
+    const seenTitles = new Set<string>();
+    const uniqueListings: ScoredListing[] = [];
+    for (const listing of sorted) {
+      const normalizedTitle = listing.title.toLowerCase().trim();
+      if (!seenTitles.has(normalizedTitle)) {
+        seenTitles.add(normalizedTitle);
+        uniqueListings.push(listing);
+      }
+    }
+
+    // DhakaImages files list
+    const dhakaImagesList = [
+      "8images.jpg",
+      "highly-populated-dhaka-city-crammed-with-unplanned-buildings-KDCB15.jpg",
+      "im88ages.jpg",
+      "im99ages.jpg",
+      "ima9ges.jpg",
+      "imag22es.jpg",
+      "imag999es.jpg",
+      "imag9es.jpg",
+      "image5s.jpg",
+      "image88s.jpg",
+      "image99s.jpg",
+      "images.jpg",
+      "istockphoto-2153844423-612x612.jpg"
+    ];
+
+    // Seed-based shuffle helper to ensure stability for current view/refinement
+    const seed = (profile?.id || "") + (targetArea || "");
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const getSeededRandom = (subSeed: number) => {
+      const x = Math.sin(hash + subSeed) * 10000;
+      return x - Math.floor(x);
+    };
+
+    const indices = Array.from({ length: dhakaImagesList.length }, (_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const r = getSeededRandom(i);
+      const j = Math.floor(r * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+
+    let topCount = 0;
+    return uniqueListings.map((listing) => {
+      if (listing.verdict !== "avoid" && topCount < 3) {
+        const imgName = dhakaImagesList[indices[topCount] % dhakaImagesList.length];
+        topCount++;
+        return {
+          ...listing,
+          imageUrl: `/DhakaImages/${imgName}`
+        };
+      }
+      return listing;
+    });
+  }, [profile, activeAdjustments, refinedScoredListings, dynamicListings]);
 
   // Recommend Areas based on budget and suitability
   const recommendedAreas = React.useMemo(() => {
@@ -104,6 +182,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     setProfile(newProfile);
     setActiveAdjustments([]); // reset adjustments on new search
     setSelectedForCompare([]);
+    setRefinedScoredListings(null);
   };
 
   const toggleAdjustment = (adjustment: string) => {
@@ -137,7 +216,9 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     setSelectedForCompare([]);
     setParsedListing(null);
     setActiveAdjustments([]);
+    setRefinedScoredListings(null);
     setActiveTab("search");
+    setShowNeighborhoodFactors(false);
   };
 
   return (
@@ -158,7 +239,13 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         viewMode,
         setViewMode,
         activeTab,
-        setActiveTab
+        setActiveTab,
+        isSimulating,
+        setIsSimulating,
+        refinedScoredListings,
+        setRefinedScoredListings,
+        showNeighborhoodFactors,
+        setShowNeighborhoodFactors
       }}
     >
       {children}

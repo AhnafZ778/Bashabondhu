@@ -3,6 +3,7 @@ import { parseMessyListing } from "@/lib/parser";
 import { scoreListing } from "@/lib/scoring";
 import { calculateFirstMonthCost } from "@/lib/cost-calculator";
 import { SearchProfile, Listing, Verdict } from "@/lib/types";
+import { detectHiddenCostScopes } from "@/lib/services/hidden-cost-scope.service";
 
 export async function POST(req: Request) {
   try {
@@ -64,6 +65,20 @@ export async function POST(req: Request) {
     let costBreakdown = calculateFirstMonthCost(tempListing);
     const questions: string[] = [];
 
+    // Detect hidden cost scopes
+    const scopes = detectHiddenCostScopes({ 
+      parsedListing: parsed, 
+      listing: tempListing, 
+      searchProfile: profile as SearchProfile 
+    });
+    const priorityScopes = scopes.filter(s => s.seriousness !== "low").sort((a, b) => {
+      if (a.seriousness === "critical") return -1;
+      if (b.seriousness === "critical") return 1;
+      if (a.seriousness === "high") return -1;
+      if (b.seriousness === "high") return 1;
+      return 0;
+    });
+
     if (profile) {
       const scored = scoreListing(tempListing, profile as SearchProfile);
       verdict = scored.verdict;
@@ -110,6 +125,8 @@ export async function POST(req: Request) {
       redFlags: tempListing.redFlags,
       questions,
       callScript,
+      hiddenCostScopes: scopes,
+      topHiddenCostWarnings: priorityScopes.slice(0, 3).map(s => s.label)
     });
   } catch (error) {
     console.error("POST /api/listings/check error:", error);

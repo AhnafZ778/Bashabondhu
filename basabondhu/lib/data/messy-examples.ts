@@ -198,5 +198,37 @@ export const messyExamples: MessyExample[] = [
     title: "Bangla script (Lalmatia, full Bangla post)",
     text: "লালমাটিয়া ব্লক সি-তে ৩ বেড ২ বাথ ফ্ল্যাট ভাড়া। ভাড়া ৩৮,০০০ টাকা। সার্ভিস চার্জ ৪,০০০ টাকা। সরকারি গ্যাস লাইন। লিফট আছে, জেনারেটর নেই। শুধুমাত্র পরিবার। ২ মাস অগ্রিম জমা দিতে হবে। ব্রোকার ফি নেই।",
     tags: ["Full Bangla", "Lalmatia", "Family Only"]
+  },
+  
+  // --- 5 Hidden Cost Ambiguous Examples ---
+  {
+    id: "hidden-banasree",
+    title: "Banasree hidden-cost ambiguity",
+    text: "Banasree 3 bed flat rent 32k, lift ase, family preferred, school er kache, gas cylinder, service charge discuss, road inside, advance 2 month, broker fee lagbe.",
+    tags: ["Hidden Cost", "Ambiguous", "Banasree"]
+  },
+  {
+    id: "hidden-badda",
+    title: "Badda incomplete terms",
+    text: "Badda notun flat 2 bed 25k, service charge pore bola hobe, gas nai cylinder use korte hobe, bachelor possible but owner er sathe kotha bolte hobe.",
+    tags: ["Hidden Cost", "Incomplete", "Badda"]
+  },
+  {
+    id: "hidden-mohammadpur",
+    title: "Mohammadpur utility risk",
+    text: "Mohammadpur 3 room family flat, rent 30k, direct owner, Titas gas, lift nai, 4th floor, advance negotiable, pani bill included kina confirm korte hobe.",
+    tags: ["Hidden Cost", "Utility Risk", "Mohammadpur"]
+  },
+  {
+    id: "hidden-bashundhara",
+    title: "Bashundhara broker & charge",
+    text: "Bashundhara R/A 2 bed furnished, rent 45k, service charge separate, generator, lift, parking available, agreement hobe, broker commission applicable.",
+    tags: ["Hidden Cost", "Broker", "Bashundhara"]
+  },
+  {
+    id: "hidden-mirpur",
+    title: "Mirpur access limit",
+    text: "Mirpur 2 bed 22k, family/bachelor both, prepaid meter, cylinder gas, no lift, inside goli, truck dhukte parbe na.",
+    tags: ["Hidden Cost", "Access", "Mirpur"]
   }
 ];

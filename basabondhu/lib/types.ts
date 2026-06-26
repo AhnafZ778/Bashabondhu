@@ -4,8 +4,10 @@ export type HouseholdType =
   | "bachelor" 
   | "student" 
   | "working-woman" 
-  | "group" 
+  | "group"
   | "single-professional";
+
+import { HiddenCostSourceId, HiddenCostSource } from "./domain/hidden-cost-sources";
 
 export type Priority =
   | "commute" 
@@ -30,6 +32,17 @@ export type DealBreaker =
   | "heavy-waterlogging" 
   | "far-from-transport";
 
+export type HiddenCostSensitivity = {
+  advanceTerms: "low" | "medium" | "high";
+  serviceChargeClarity: "low" | "medium" | "high";
+  gasClarity: "low" | "medium" | "high";
+  brokerFeeAvoidance: "low" | "medium" | "high";
+  utilityBillingClarity: "low" | "medium" | "high";
+  roadAccessConcern: "low" | "medium" | "high";
+  waterloggingConcern: "low" | "medium" | "high";
+  agreementReceiptImportance: "low" | "medium" | "high";
+};
+
 export type SearchProfile = {
   id: string;
   mode: "plan" | "check" | "compare" | "visit";
@@ -39,17 +52,42 @@ export type SearchProfile = {
   budgetMonthly: number;
   maxFirstMonthCash: number;
   commuteAnchors: { label: string; area: string }[];
+  husbandJobLocation?: string;
+  wifeJobLocation?: string;
+  childSchoolLocation?: string;
+  needsHealthcare?: boolean;
+  ownsCar?: boolean;
+  preferredFacing?: "south" | "east" | "west" | "north" | "any";
+  wantsNearbyMarket?: boolean;
+  environmentPreference?: "quiet" | "commercial" | "any";
   priorities: Priority[];
   dealBreakers: DealBreaker[];
+  hiddenCostSensitivity?: HiddenCostSensitivity;
 };
 
 export type Verdict = "visit" | "maybe" | "call-first" | "avoid";
+
+export type ListingHiddenCostSignals = {
+  mentionedScopes: HiddenCostSourceId[];
+  unclearScopes: HiddenCostSourceId[];
+  missingImportantScopes: HiddenCostSourceId[];
+  contradictionScopes: HiddenCostSourceId[];
+  sourceType: "owner" | "broker" | "facebook" | "bikroy" | "bproperty" | "whatsapp" | "unknown";
+  paymentBeforeVisitRisk: boolean;
+  proofAvailable: {
+    photos: boolean;
+    video: boolean;
+    utilityInfo: boolean;
+    serviceChargeBreakdown: boolean;
+    ownerContact: boolean;
+  };
+};
 
 export type Listing = {
   id: string;
   title: string;
   rawText: string;
-  sourceType: "facebook" | "bikroy" | "bproperty" | "broker" | "direct" | "seed";
+  sourceType: "facebook" | "bikroy" | "bproperty" | "broker" | "direct" | "seed" | "unknown";
   area: string;
   addressHint: string;
   city: "Dhaka";
@@ -74,6 +112,11 @@ export type Listing = {
   generator: boolean;
   waterloggingRisk: "low" | "medium" | "high" | "unknown";
   utilityClarity: "clear" | "partial" | "unclear";
+  parkingAvailable?: boolean;
+  facing?: "south" | "east" | "west" | "north";
+  distanceToHospitalMins?: number;
+  distanceToMarketMins?: number;
+  environment?: "quiet" | "commercial" | "residential";
   commuteNotes: string;
   houseRules: string[];
   redFlags: string[];
@@ -82,6 +125,7 @@ export type Listing = {
   imageUrl?: string;
   isActive: boolean;
   isDemo: boolean;
+  hiddenCostSignals?: ListingHiddenCostSignals;
 };
 
 export type ScoredListing = Listing & {
@@ -90,16 +134,30 @@ export type ScoredListing = Listing & {
     firstMonthFit: number;
     commuteFit: number;
     householdFit: number;
-    hiddenCostRisk: number;
+    hiddenScopePenalty: number;
     utilityClarity: number;
     waterloggingRisk: number;
     listingTrust: number;
+    amenityFit: number;
     total: number;
   };
+  hiddenCostScopes: HiddenCostSource[];
   verdict: Verdict;
   whyItFits: string;
   biggestRisk: string;
   questionsToAsk: string[];
+};
+
+export type AreaHiddenCostProfile = {
+  commonHiddenCostScopes: HiddenCostSourceId[];
+  highAttentionScopes: HiddenCostSourceId[];
+  commonListingAmbiguities: HiddenCostSourceId[];
+  rainyDayRisk: "low" | "medium" | "high";
+  roadAccessRisk: "low" | "medium" | "high";
+  utilityClarityRisk: "low" | "medium" | "high";
+  brokerPresence: "low" | "medium" | "high";
+  tenantRestrictionFrequency: "low" | "medium" | "high";
+  localNotes: string[];
 };
 
 export type AreaProfile = {
@@ -121,6 +179,9 @@ export type AreaProfile = {
   mainTradeoff: string;
   latitude: number;
   longitude: number;
+  hiddenCostProfile?: AreaHiddenCostProfile;
+  topSchools?: string[];
+  topHospitals?: string[];
 };
 
 export type FirstMonthCost = {
@@ -148,6 +209,23 @@ export type ParsedListing = {
   availability: string | null;
   missingFields: string[];
   confidence: "high" | "medium" | "low";
+  hiddenCostMentions?: {
+    advanceTerms?: string;
+    serviceCharge?: string;
+    brokerFee?: string;
+    gasType?: string;
+    electricityBilling?: string;
+    waterBilling?: string;
+    liftGeneratorCharge?: string;
+    maintenanceSecurityCleaning?: string;
+    parking?: string;
+    repairCleaningPaint?: string;
+    roadAccess?: string;
+    waterlogging?: string;
+    tenantRestriction?: string;
+    agreementReceiptTerms?: string;
+    rentIncreaseTerms?: string;
+  };
 };
 
 export type ScanSummary = {

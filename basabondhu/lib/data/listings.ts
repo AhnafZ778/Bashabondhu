@@ -52,7 +52,27 @@ const baseListings: Listing[] = [
     missingFields: [],
     imageUrl: propertyImages[5],
     isActive: true,
-    isDemo: true
+    parkingAvailable: true,
+    facing: "south",
+    distanceToHospitalMins: 10,
+    distanceToMarketMins: 5,
+    environment: "residential",
+    isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
   },
   {
     id: "banasree-2",
@@ -90,7 +110,27 @@ const baseListings: Listing[] = [
     missingFields: ["Service Charge Details", "Broker Fee status"],
     imageUrl: propertyImages[3],
     isActive: true,
-    isDemo: true
+    parkingAvailable: true,
+    facing: "south",
+    distanceToHospitalMins: 10,
+    distanceToMarketMins: 5,
+    environment: "residential",
+    isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
   },
   {
     id: "mohakhali-1",
@@ -128,7 +168,27 @@ const baseListings: Listing[] = [
     missingFields: [],
     imageUrl: propertyImages[0],
     isActive: true,
-    isDemo: true
+    parkingAvailable: true,
+    facing: "south",
+    distanceToHospitalMins: 10,
+    distanceToMarketMins: 5,
+    environment: "residential",
+    isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
   },
   {
     id: "bashundhara-1",
@@ -166,7 +226,27 @@ const baseListings: Listing[] = [
     missingFields: [],
     imageUrl: propertyImages[1],
     isActive: true,
-    isDemo: true
+    parkingAvailable: true,
+    facing: "south",
+    distanceToHospitalMins: 10,
+    distanceToMarketMins: 5,
+    environment: "residential",
+    isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
   },
   {
     id: "dhanmondi-1",
@@ -204,7 +284,27 @@ const baseListings: Listing[] = [
     missingFields: [],
     imageUrl: propertyImages[2],
     isActive: true,
-    isDemo: true
+    parkingAvailable: true,
+    facing: "south",
+    distanceToHospitalMins: 10,
+    distanceToMarketMins: 5,
+    environment: "residential",
+    isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
   },
   {
     id: "mirpur-1",
@@ -242,7 +342,27 @@ const baseListings: Listing[] = [
     missingFields: [],
     imageUrl: propertyImages[4],
     isActive: true,
-    isDemo: true
+    parkingAvailable: true,
+    facing: "south",
+    distanceToHospitalMins: 10,
+    distanceToMarketMins: 5,
+    environment: "residential",
+    isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
   },
   {
     id: "lalmatia-1",
@@ -280,7 +400,27 @@ const baseListings: Listing[] = [
     missingFields: [],
     imageUrl: propertyImages[6],
     isActive: true,
-    isDemo: true
+    parkingAvailable: true,
+    facing: "south",
+    distanceToHospitalMins: 10,
+    distanceToMarketMins: 5,
+    environment: "residential",
+    isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
   },
   {
     id: "mohammadpur-1",
@@ -318,7 +458,27 @@ const baseListings: Listing[] = [
     missingFields: [],
     imageUrl: propertyImages[7],
     isActive: true,
-    isDemo: true
+    parkingAvailable: true,
+    facing: "south",
+    distanceToHospitalMins: 10,
+    distanceToMarketMins: 5,
+    environment: "residential",
+    isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
   }
 ];
 
@@ -334,17 +494,22 @@ function generateListings(): Listing[] {
   ];
 
   areas.forEach((area, index) => {
-    // Generate 9 listings per area
-    for (let i = 1; i <= 9; i++) {
+    // Generate 60 listings per area for realistic density
+    for (let i = 1; i <= 60; i++) {
       const id = `${area.id}-gen-${i}`;
       const bedrooms = (i % 3) + 1; // 1, 2, or 3 beds
       const bathrooms = Math.max(1, bedrooms - (i % 2));
       
-      const baseRent = area.rentLow + Math.round((area.rentHigh - area.rentLow) * (i / 10));
-      const rent = Math.round(baseRent / 1000) * 1000;
-      
       const pref = preferences[(i + index) % preferences.length];
       const source = sources[(i * 3) % sources.length];
+
+      let baseRent = area.rentLow + Math.round((area.rentHigh - area.rentLow) * ((i - 1) / 59));
+      if (pref === "female" || pref === "student" || pref === "bachelor") {
+        baseRent = baseRent * 0.35; // 35% of full flat rent for sublets
+      } else if (bedrooms === 1) {
+        baseRent = baseRent * 0.50; // 50% of full flat rent for 1-beds
+      }
+      const rent = Math.round(baseRent / 1000) * 1000;
       
       const lift = bedrooms >= 3 || (i % 2 === 0);
       const generator = lift && (i % 3 !== 0);
@@ -355,8 +520,23 @@ function generateListings(): Listing[] {
       
       const brokerFee = source === "broker" ? rent : (source === "bproperty" ? Math.round(rent * 0.5) : 0);
 
-      const title = `${area.name} ${bedrooms}-Bed ${pref === "family" ? "Family Flat" : (pref === "female" ? "Female Sublet" : "Apartment")}`;
-      const rawText = `${area.name} apartment for rent. ${bedrooms} bed, ${bathrooms} bath. Rent: ${rent}. Service charge: ${serviceCharge}. ${lift ? "Lift" : "No lift"}. Gas: ${gasType}. Tenant preference: ${pref}. Contact soon.`;
+      const buildingPrefixes = [
+        "Amina", "Rahman", "Niloy", "Green", "Comfort", "Dream", "Orchid", "Maple", 
+        "Rose", "Tulip", "Silver", "Golden", "Blue", "Summit", "Skyline", "Ocean",
+        "Crown", "Regal", "Elite", "Grand", "Metro", "Royal", "Classic", "Premier",
+        "Peace", "Grace", "Zaman", "Karim", "Haque", "Chowdhury"
+      ];
+      const buildingSuffixes = [
+        "Tower", "Mansion", "Heights", "Apartments", "Neer", "Villa", "Palace", "Residency",
+        "Haven", "Retreat", "Castle", "Manor", "Garden", "Plaza", "Vista", "Crest",
+        "View", "Terrace", "Point", "Square"
+      ];
+      const prefIndex = (i * 7 + index * 3) % buildingPrefixes.length;
+      const suffIndex = (i * 11 + index * 5) % buildingSuffixes.length;
+      const buildingName = `${buildingPrefixes[prefIndex]} ${buildingSuffixes[suffIndex]}`;
+
+      const title = `${buildingName} - ${area.name} ${bedrooms}-Bed ${pref === "family" ? "Family Flat" : (pref === "female" ? "Female Sublet" : "Apartment")}`;
+      const rawText = `${buildingName} apartment in ${area.name} for rent. ${bedrooms} bed, ${bathrooms} bath. Rent: ${rent}. Service charge: ${serviceCharge}. ${lift ? "Lift" : "No lift"}. Gas: ${gasType}. Tenant preference: ${pref}. Contact soon.`;
 
       const imageIndex = (index * 9 + i) % propertyImages.length;
 
@@ -368,8 +548,9 @@ function generateListings(): Listing[] {
         area: area.name,
         addressHint: `Sector ${i}, Road ${i * 2 + 1}`,
         city: "Dhaka",
-        latitude: area.latitude + (i * 0.001) - 0.005,
-        longitude: area.longitude + (i * 0.001) - 0.005,
+        // Pseudo-random scatter within ~1.5km radius of area center
+        latitude: area.latitude + (Math.sin(i * 13.7 + index) * 0.012),
+        longitude: area.longitude + (Math.cos(i * 19.3 + index) * 0.012),
         rent,
         bedrooms,
         bathrooms,
@@ -396,8 +577,28 @@ function generateListings(): Listing[] {
         missingFields: [],
         imageUrl: propertyImages[imageIndex],
         isActive: true,
-        isDemo: true
-      });
+        parkingAvailable: bedrooms >= 2 || (i % 2 === 0),
+        facing: i % 4 === 0 ? "south" : (i % 4 === 1 ? "east" : (i % 4 === 2 ? "north" : "west")),
+        distanceToHospitalMins: 5 + (i * 2),
+        distanceToMarketMins: 2 + (i % 5),
+        environment: i % 3 === 0 ? "quiet" : (i % 3 === 1 ? "commercial" : "residential"),
+        isDemo: true,
+    hiddenCostSignals: {
+      mentionedScopes: ["gas_type", "broker_fee", "road_access"],
+      unclearScopes: ["service_charge", "broker_fee"],
+      missingImportantScopes: ["electricity_billing", "agreement_receipt_terms"],
+      contradictionScopes: [],
+      sourceType: "unknown",
+      paymentBeforeVisitRisk: false,
+      proofAvailable: {
+        photos: true,
+        video: false,
+        utilityInfo: false,
+        serviceChargeBreakdown: false,
+        ownerContact: false
+      }
+    }
+  });
     }
   });
 

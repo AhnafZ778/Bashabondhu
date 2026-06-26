@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://www.qr-code-generator.com/
+HostUrl=https://public-api.qr-code-generator.com/v1/create/extended?image_format=PNG&image_width=300&qr_code_text=https%3A%2F%2Fwww.facebook.com%2Fshare%2Fp%2F14pK1iNWdKv%2F&foreground_color=%23000000&background_color=%23FFFFFF&frame_name=no-frame

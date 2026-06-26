@@ -16,7 +16,6 @@ import {
   Minus, 
   Building, 
   ArrowRight, 
-  SlidersHorizontal, 
   Phone, 
   Copy, 
   Calculator, 
@@ -26,15 +25,18 @@ import {
   Check,
   AlertOctagon
 } from "lucide-react";
+import ProofRequestPanel from "./ProofRequestPanel";
+import HiddenCostScopeRadar from "./HiddenCostScopeRadar";
+import DrawerMap from "./DrawerMap";
 
 export default function ListingGrid() {
   const { 
     profile, 
     scoredListings, 
     selectedForCompare, 
-    toggleCompare, 
-    activeAdjustments, 
-    toggleAdjustment 
+    toggleCompare,
+    showNeighborhoodFactors,
+    setShowNeighborhoodFactors
   } = useSearch();
 
   const [showAvoided, setShowAvoided] = useState(false);
@@ -42,6 +44,7 @@ export default function ListingGrid() {
   const [activeTab, setActiveTab] = useState<"analysis" | "costs" | "script">("analysis");
   const [copiedText, setCopiedText] = useState(false);
   const [includeBrokerFee, setIncludeBrokerFee] = useState(true);
+  const [showAllOther, setShowAllOther] = useState(false);
 
   if (!profile || scoredListings.length === 0) return null;
 
@@ -109,38 +112,7 @@ export default function ListingGrid() {
 
   return (
     <div className="w-full transition-colors duration-300">
-      {/* Dynamic Adjustment Filters Panel */}
-      <div className="mb-8 bg-bg border border-border-light rounded-2xl p-4 transition-colors duration-300">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <div className="flex items-center gap-1.5 shrink-0">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#C9952B]" />
-            <span className="text-[10px] font-black text-[#C9952B] uppercase tracking-wider">Refine:</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { value: "shorter-commute", label: "Shorter Commute" },
-              { value: "lower-rent", label: "Lower Rent" },
-              { value: "avoid-broker", label: "Direct Owner Only" },
-              { value: "avoid-waterlogging", label: "Dry Areas Only" }
-            ].map((adj) => {
-              const isActive = activeAdjustments.includes(adj.value);
-              return (
-                <button
-                  key={adj.value}
-                  onClick={() => toggleAdjustment(adj.value)}
-                  className={`px-3 py-1.5 rounded-lg border text-[11px] font-bold tracking-tight transition-all duration-300 cursor-pointer ${
-                    isActive
-                      ? "bg-[#C9952B] border-[#C9952B] text-white shadow-sm"
-                      : "bg-card border-border-light text-text-main hover:border-[#C9952B]/40 hover:bg-bg-alt"
-                  }`}
-                >
-                  {adj.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+
 
       {/* Main Results Showcase */}
       <div className="mb-12">
@@ -281,15 +253,26 @@ export default function ListingGrid() {
       {/* Other matches with clean, visual card format */}
       {otherListings.length > 0 && (
         <div className="mb-12">
-          <h3 className="font-bold text-text-main text-base mb-5 flex items-center gap-2 transition-colors">
-            <Building className="w-4 h-4 text-primary" />
-            Other Worthy Matches ({otherListings.length})
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {otherListings.map((listing) => {
-              const isSelected = selectedForCompare.includes(listing.id);
-              const firstMonthCost = calculateFirstMonthCost(listing);
-              const styles = getVerdictStyles(listing.verdict);
+          {!showAllOther ? (
+             <div className="flex justify-center mt-4 border-t border-border-light pt-8">
+                <button
+                  onClick={() => setShowAllOther(true)}
+                  className="px-8 py-3 rounded-xl border-2 border-[#C9952B] text-[#C9952B] font-extrabold uppercase tracking-wider text-xs hover:bg-[#C9952B] hover:text-white transition-all shadow-sm cursor-pointer"
+                >
+                  Show More ({otherListings.length} other matches)
+                </button>
+             </div>
+          ) : (
+            <>
+              <h3 className="font-bold text-text-main text-base mb-5 flex items-center gap-2 transition-colors border-t border-border-light pt-8">
+                <Building className="w-4 h-4 text-primary" />
+                Other Worthy Matches ({otherListings.length})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {otherListings.map((listing) => {
+                  const isSelected = selectedForCompare.includes(listing.id);
+                  const firstMonthCost = calculateFirstMonthCost(listing);
+                  const styles = getVerdictStyles(listing.verdict);
               
               return (
                 <div
@@ -353,6 +336,8 @@ export default function ListingGrid() {
               );
             })}
           </div>
+          </>
+          )}
         </div>
       )}
 
@@ -399,8 +384,23 @@ export default function ListingGrid() {
 
       {/* Details Slide-over Drawer */}
       {selectedListingDetail && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-card w-full max-w-lg h-full border-l border-border-light shadow-2xl flex flex-col justify-between animate-slide-in">
+        <div className="fixed inset-0 z-50 flex bg-zinc-950/80 backdrop-blur-xs animate-fade-in">
+          {/* Left Column: Interactive Tilted Map tabletop display */}
+          <div className="hidden md:flex flex-1 flex-col items-center justify-center p-12 bg-zinc-950 relative overflow-hidden">
+            {/* Tabletop label overlay */}
+            <div className="absolute top-8 left-8 text-left z-10">
+              <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest block">Geospatial Environment View</span>
+              <h2 className="text-xl font-extrabold text-white mt-1">3D Tabletop Projection</h2>
+              <p className="text-xs text-zinc-400 mt-1 max-w-sm leading-relaxed">
+                Visualizing target apartment location relative to nearby schools, hospitals, and landmarks.
+              </p>
+            </div>
+            
+            <DrawerMap listing={selectedListingDetail} />
+          </div>
+
+          {/* Right Column: Drawer Details */}
+          <div className="bg-card w-full max-w-lg h-full border-l border-border-light shadow-2xl flex flex-col justify-between animate-slide-in shrink-0 relative z-20">
             {/* Header */}
             <div className="p-5 border-b border-border-light flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
@@ -497,35 +497,27 @@ export default function ListingGrid() {
                     </div>
                   )}
 
-                  {/* Dhaka-Specific Environmental Risks */}
+                  {/* Dynamic Neighborhood Factors Toggler in Sidebar */}
                   <div className="bg-bg-alt border border-border-light rounded-2xl p-4.5">
-                    <h4 className="font-bold text-xs text-text-main uppercase tracking-wider mb-2">Neighborhood Factors</h4>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between text-xs text-text-muted mb-1">
-                          <span>Monsoon Waterlogging Risk</span>
-                          <span className="font-bold capitalize text-text-main">{selectedListingDetail.waterloggingRisk}</span>
-                        </div>
-                        <div className="w-full bg-border-light h-1.5 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full ${
-                              selectedListingDetail.waterloggingRisk === "high" ? "bg-rose-500" :
-                              selectedListingDetail.waterloggingRisk === "medium" ? "bg-amber-500" : "bg-emerald-500"
-                            }`} 
-                            style={{ width: selectedListingDetail.waterloggingRisk === "high" ? "100%" : selectedListingDetail.waterloggingRisk === "medium" ? "50%" : "15%" }}
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-xs text-text-muted mb-1">
-                          <span>Commute Anchors (Avg Transit Time)</span>
-                          <span className="font-bold text-text-main">Estimated</span>
-                        </div>
-                        <p className="text-xs text-text-muted font-medium">
-                          {selectedListingDetail.commuteNotes}
-                        </p>
-                      </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-bold text-xs text-text-main uppercase tracking-wider">Neighborhood Factors</h4>
+                      <span className="text-[9px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 px-1.5 py-0.5 rounded font-black uppercase tracking-wider animate-pulse">
+                        Interactive Map
+                      </span>
                     </div>
+                    <p className="text-[11px] text-text-muted font-semibold leading-relaxed mb-3">
+                      AI dynamically analyzes your profile constraints to compute accessibility paths to neighborhood infrastructures on the map.
+                    </p>
+                    <button
+                      onClick={() => setShowNeighborhoodFactors(!showNeighborhoodFactors)}
+                      className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold transition-all duration-300 border flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider ${
+                        showNeighborhoodFactors
+                          ? "bg-indigo-600/20 text-indigo-400 border-indigo-500/40 hover:bg-indigo-600/30"
+                          : "bg-indigo-600 text-white border-indigo-500 hover:bg-indigo-500 shadow-md shadow-indigo-600/10"
+                      }`}
+                    >
+                      <span>{showNeighborhoodFactors ? "Deactivate Map Routing Paths" : "Compute & Draw Paths on Map"}</span>
+                    </button>
                   </div>
 
                   {/* Good points */}
@@ -612,20 +604,10 @@ export default function ListingGrid() {
                     </div>
                   </div>
 
-                  {/* Cost Warnings */}
-                  {costData.warnings.length > 0 && (
-                    <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4.5">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <AlertTriangle className="w-4 h-4 text-amber-600" />
-                        <h4 className="font-bold text-xs text-amber-800 uppercase tracking-wider">Hidden Cost Warnings</h4>
-                      </div>
-                      <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-700">
-                        {costData.warnings.map((w, idx) => (
-                          <li key={idx} className="font-semibold">{w}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  {/* New Hidden Cost Scope Radar */}
+                  <div className="mt-4">
+                    <HiddenCostScopeRadar scopes={selectedListingDetail.hiddenCostScopes || []} />
+                  </div>
                 </div>
                 );
               })()}
@@ -668,6 +650,9 @@ export default function ListingGrid() {
                       ))}
                     </ul>
                   </div>
+
+                  {/* Proof Request Panel */}
+                  <ProofRequestPanel scopes={selectedListingDetail.hiddenCostScopes || []} />
 
                   {/* Dial landlord direct */}
                   <a 

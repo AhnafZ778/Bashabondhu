@@ -18,7 +18,17 @@ export const personas: (SearchProfile & { name: string; description: string; ava
       { label: "Rafi's Office", area: "Banani" }
     ],
     priorities: ["commute", "family-friendly", "lift", "rent"],
-    dealBreakers: ["broker", "high-advance", "heavy-waterlogging"]
+    dealBreakers: ["broker", "high-advance", "heavy-waterlogging"],
+    hiddenCostSensitivity: {
+      advanceTerms: "high",
+      serviceChargeClarity: "high",
+      gasClarity: "high",
+      brokerFeeAvoidance: "high",
+      utilityBillingClarity: "medium",
+      roadAccessConcern: "high",
+      waterloggingConcern: "high",
+      agreementReceiptImportance: "medium"
+    }
   },
   {
     id: "nusrat-student",

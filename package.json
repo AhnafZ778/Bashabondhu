@@ -1,0 +1,11 @@
+{
+  "name": "bashabondhu-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix basabondhu",
+    "build": "npm run build --prefix basabondhu",
+    "start": "npm run start --prefix basabondhu",
+    "lint": "npm run lint --prefix basabondhu"
+  }
+}

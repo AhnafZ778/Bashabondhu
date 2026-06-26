@@ -14,9 +14,8 @@ import { PersonaIcon } from "@/components/PersonaIcons";
 import { generateScanSummary } from "@/lib/services/demo-scan.service";
 
 export default function PortalPage() {
-  const { profile, planSearch, scoredListings, resetSearch } = useSearch();
+  const { profile, planSearch, scoredListings, resetSearch, isSimulating, setIsSimulating } = useSearch();
   const [scanComplete, setScanComplete] = useState(false);
-  const [showAnimation, setShowAnimation] = useState(false);
 
   // Count high compatibility matches
   const highCompatCount = scoredListings.filter(l => l.scores.total >= 80).length;
@@ -35,14 +34,14 @@ export default function PortalPage() {
       dealBreakers: p.dealBreakers
     };
     planSearch(newProfile);
-    setShowAnimation(true);
+    setIsSimulating(true);
     setScanComplete(false);
   };
 
   const handleScanComplete = useCallback(() => {
     setScanComplete(true);
-    setShowAnimation(false);
-  }, []);
+    setIsSimulating(false);
+  }, [setIsSimulating]);
 
   // If search profile doesn't exist, show a clean onboarding screen with persona quick selectors
   if (!profile) {
@@ -205,11 +204,13 @@ export default function PortalPage() {
   }
 
   // Show scan animation after profile is set
-  if (profile && showAnimation) {
-    const scanSummary = generateScanSummary(listings, profile);
+  if (profile && isSimulating) {
+    const scanSummary = generateScanSummary(scoredListings, profile);
     return (
       <DemoScanAnimation
         scanSummary={scanSummary}
+        profile={profile}
+        listings={scoredListings}
         onComplete={handleScanComplete}
       />
     );

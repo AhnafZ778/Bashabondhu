@@ -2,7 +2,7 @@ import { ParsedListing } from "./types";
 
 const DHAKA_AREAS = [
   "Banasree", "Badda", "Mohakhali", "Tejgaon", "Mohammadpur", 
-  "Lalmatia", "Mirpur", "Uttara", "Bashundhara", "Dhanmondi"
+  "Lalmatia", "Mirpur", "Uttara", "Bashundhara", "Dhanmondi", "Banani"
 ];
 
 export function parseMessyListing(rawText: string): ParsedListing {
@@ -125,6 +125,32 @@ export function parseMessyListing(rawText: string): ParsedListing {
   if (lift === null) missingFields.push("Lift Facility");
   if (generator === null) missingFields.push("Generator Backup");
 
+  // Hidden Cost Mentions Extraction
+  const patterns = {
+    serviceCharge: /(service\s*charge|sc|maintenance|building charge|caretaker|security|cleaning|discuss|pore bola hobe)/i,
+    brokerFee: /(broker|agent|commission|fee|media fee|dalal|broker fee lagbe|direct owner|owner post)/i,
+    gas: /(gas|titas|line gas|cylinder|lpg|gas nai|no gas)/i,
+    electricity: /(electricity|current bill|prepaid|meter|separate meter|shared meter|desco|dpdc)/i,
+    water: /(water|pani|wasa|pump|water bill|pani problem)/i,
+    road: /(inside road|narrow road|main road|goli|lane|rickshaw|cng|truck|broken road)/i,
+    waterlogging: /(waterlogging|jolabadha|pani jome|rain problem|drain|flood|borsha)/i,
+    tenantRestriction: /(family only|bachelor not allowed|bachelor allowed|female only|male bachelor|student|job holder|couple|small family)/i,
+    agreement: /(agreement|contract|receipt|rent increase|notice|vacate|document|nid|police form)/i,
+    payBeforeVisit: /(booking money|advance before visit|send money|bkash first|pay first|visit er age payment)/i,
+    advanceTerms: /(advance|deposit|security|jamano|\d\s*months?\s*advance|negotiable advance)/i,
+    liftGeneratorCharge: /(lift|generator|backup|power backup|ips|load shedding)/i,
+    parking: /(parking|garage|car parking|bike parking)/i,
+    repairCleaningPaint: /(paint|repair|renovation|cleaning|ready flat|used flat|newly painted|condition)/i,
+  };
+
+  const hiddenCostMentions: ParsedListing["hiddenCostMentions"] = {};
+  for (const [key, regex] of Object.entries(patterns)) {
+    const match = rawText.match(regex);
+    if (match) {
+      (hiddenCostMentions as any)[key === 'payBeforeVisit' ? 'agreementReceiptTerms' : key] = match[0];
+    }
+  }
+
   // Determine confidence
   let confidence: "high" | "medium" | "low" = "high";
   const missingCount = missingFields.length;
@@ -145,6 +171,7 @@ export function parseMessyListing(rawText: string): ParsedListing {
     brokerFee,
     availability,
     missingFields,
-    confidence
+    confidence,
+    hiddenCostMentions
   };
 }

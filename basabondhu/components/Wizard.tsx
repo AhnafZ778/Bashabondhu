@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSearch } from "@/context/SearchContext";
 import { personas } from "@/lib/data/personas";
 import { SearchProfile, HouseholdType, Priority, DealBreaker } from "@/lib/types";
-import { ArrowRight, ArrowLeft, Check, Sparkles, Info, Lightbulb, Home, Heart, Users, GraduationCap, Shield } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Sparkles, Info, Lightbulb, Home, Heart, Users, GraduationCap, Shield, MapPin, Wallet } from "lucide-react";
 import { PersonaIcon } from "./PersonaIcons";
 
 const HOUSEHOLD_OPTIONS: { value: HouseholdType; label: string; desc: string; iconId: string }[] = [
@@ -38,13 +38,13 @@ const DEAL_BREAKERS_OPTIONS: { value: DealBreaker; label: string; desc: string }
 ];
 
 const DHAKA_AREAS = [
-  "Banani", "Gulshan", "Banasree", "Badda", "Mohakhali", "Tejgaon", 
+  "Banani", "Gulshan", "Banasree", "Badda", "Merul Badda", "Mohakhali", "Tejgaon", 
   "Mohammadpur", "Lalmatia", "Mirpur", "Uttara", "Bashundhara", "Dhanmondi"
 ];
 
 export default function Wizard() {
   const router = useRouter();
-  const { planSearch } = useSearch();
+  const { planSearch, setIsSimulating } = useSearch();
   const [step, setStep] = useState(0);
 
   // Form State
@@ -55,6 +55,51 @@ export default function Wizard() {
   const [commuteAnchor, setCommuteAnchor] = useState<string>("Banani");
   const [priorities, setPriorities] = useState<Priority[]>(["commute"]);
   const [dealBreakers, setDealBreakers] = useState<DealBreaker[]>([]);
+
+  // Load from URL query parameters if present (for Facebook Fetcher integration)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const qArea = params.get("area");
+      const qRent = params.get("rent");
+      const qHousehold = params.get("household");
+      const qLift = params.get("lift");
+      const qGenerator = params.get("generator");
+      const qGas = params.get("gasType");
+      const qTenant = params.get("tenantPreference");
+
+      if (qArea) {
+        // Validate if area is in the list (case insensitive or direct matching)
+        const matchedArea = DHAKA_AREAS.find(a => a.toLowerCase() === qArea.toLowerCase());
+        if (matchedArea) setCommuteAnchor(matchedArea);
+      }
+      if (qRent) {
+        const rentNum = parseInt(qRent);
+        if (!isNaN(rentNum)) {
+          setBudgetMonthly(rentNum);
+          setMaxFirstMonthCash(rentNum * 2.5); // set fallback max first month cash (usually rent + 1.5 months advance)
+        }
+      }
+      if (qHousehold) {
+        const hType = qHousehold.toLowerCase();
+        if (["family", "couple", "bachelor", "student", "working-woman"].includes(hType)) {
+          setHouseholdType(hType as HouseholdType);
+        }
+      } else if (qTenant) {
+        const tPref = qTenant.toLowerCase();
+        if (tPref === "bachelor") setHouseholdType("bachelor");
+        else if (tPref === "student") setHouseholdType("student");
+        else if (tPref === "female") setHouseholdType("working-woman");
+        else setHouseholdType("family");
+      }
+      
+      const newPriorities: Priority[] = ["commute"];
+      if (qLift === "true") newPriorities.push("lift");
+      if (qGenerator === "true") newPriorities.push("generator");
+      if (qGas === "line") newPriorities.push("gas");
+      setPriorities(newPriorities);
+    }
+  }, []);
 
   // Prepopulate using a demo persona
   const selectPersona = (p: typeof personas[0]) => {
@@ -82,6 +127,7 @@ export default function Wizard() {
       dealBreakers: p.dealBreakers
     };
     planSearch(profile);
+    setIsSimulating(true);
     router.push("/portal");
   };
 
@@ -103,6 +149,7 @@ export default function Wizard() {
         dealBreakers
       };
       planSearch(profile);
+      setIsSimulating(true);
       router.push("/portal");
     }
   };
@@ -129,22 +176,50 @@ export default function Wizard() {
       {step === 0 && (
         <div className="mb-8">
           <div className="flex items-center gap-1.5 mb-3">
-            <Sparkles className="w-4 h-4 text-gold fill-gold" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted">Quick Demo Personas</h3>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {personas.slice(0, 4).map((p) => (
               <button
                 key={p.id}
                 onClick={() => selectPersona(p)}
-                className="flex items-start text-left p-3.5 rounded-2xl border border-border-light bg-card hover:border-primary/45 hover:shadow-md transition-all group cursor-pointer"
+                className="flex items-start text-left p-4 rounded-2xl border border-border-light bg-card hover:border-primary/45 hover:shadow-md transition-all group cursor-pointer"
               >
-                <div className="w-8 h-8 mr-3 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                  <PersonaIcon iconId={p.iconId} className="w-5 h-5 text-primary" />
+                <div className="w-10 h-10 mr-3.5 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                  <PersonaIcon iconId={p.iconId} className="w-6 h-6 text-primary" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold text-primary group-hover:text-secondary transition-colors">{p.name}</h4>
-                  <p className="text-xs text-text-muted mt-0.5 line-clamp-2">{p.description}</p>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-[17px] font-extrabold text-primary group-hover:text-secondary transition-colors truncate">{p.name}</h4>
+                  
+                  <div className="mt-3 grid grid-cols-2 gap-y-2.5 gap-x-3 text-[14px]">
+                    <div className="flex items-center text-text-muted">
+                      <Home className="w-[18px] h-[18px] mr-2 shrink-0 opacity-70" />
+                      <span className="truncate">{p.lookingFor === 'full-flat' ? 'Full Flat' : 'Room/Sublet'}</span>
+                    </div>
+                    <div className="flex items-center text-text-muted">
+                      <Wallet className="w-[18px] h-[18px] mr-2 shrink-0 opacity-70" />
+                      <span className="truncate font-semibold">৳{p.budgetMonthly.toLocaleString()}</span>
+                    </div>
+                    {p.commuteAnchors.length > 0 && (
+                      <div className="flex items-center text-text-muted col-span-2">
+                        <MapPin className="w-[18px] h-[18px] mr-2 shrink-0 opacity-70 text-rose-500" />
+                        <span className="truncate">Target: <span className="font-medium text-text-main">{p.commuteAnchors[0].area}</span></span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {p.priorities.slice(0, 2).map(priority => (
+                      <span key={priority} className="text-[11px] px-2.5 py-1.5 rounded-md bg-emerald-600 text-white font-bold uppercase tracking-wider shadow-sm">
+                        {priority.replace(/-/g, ' ')}
+                      </span>
+                    ))}
+                    {p.dealBreakers.slice(0, 1).map(db => (
+                      <span key={db} className="text-[11px] px-2.5 py-1.5 rounded-md bg-rose-600 text-white font-bold uppercase tracking-wider shadow-sm">
+                        NO {db.replace(/-/g, ' ')}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </button>
             ))}

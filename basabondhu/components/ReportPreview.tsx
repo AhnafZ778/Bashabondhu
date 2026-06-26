@@ -171,7 +171,7 @@ export default function ReportPreview({ report }: ReportPreviewProps) {
 
       {/* Section 6: Risks */}
       {report.mainRisks.length > 0 && (
-        <ReportSection title="⚠️ Key Risks" delay={0.35}>
+        <ReportSection title="Key Risks" delay={0.35}>
           <ul style={{ paddingLeft: "1.25rem", lineHeight: 1.8 }}>
             {report.mainRisks.map((risk, i) => (
               <li key={i} style={{ color: "var(--text-primary, #1a1a2e)", fontSize: "0.9rem" }}>{risk}</li>
@@ -182,7 +182,7 @@ export default function ReportPreview({ report }: ReportPreviewProps) {
 
       {/* Section 7: Questions */}
       {report.questionsToAsk.length > 0 && (
-        <ReportSection title="📞 Questions to Ask" delay={0.4}>
+        <ReportSection title="Questions to Ask" delay={0.4}>
           <ol style={{ paddingLeft: "1.25rem", lineHeight: 1.8 }}>
             {report.questionsToAsk.map((q, i) => (
               <li key={i} style={{ color: "var(--text-primary, #1a1a2e)", fontSize: "0.9rem" }}>{q}</li>
@@ -193,7 +193,7 @@ export default function ReportPreview({ report }: ReportPreviewProps) {
 
       {/* Section 8: Visit Checklist */}
       {report.visitChecklist.length > 0 && (
-        <ReportSection title="✅ Visit Checklist" delay={0.45}>
+        <ReportSection title="Visit Checklist" delay={0.45}>
           {report.visitChecklist.slice(0, 3).map((section, i) => (
             <ChecklistSectionView key={i} section={section} />
           ))}
@@ -201,7 +201,7 @@ export default function ReportPreview({ report }: ReportPreviewProps) {
       )}
 
       {/* Section 9: Final Recommendation */}
-      <ReportSection title="🎯 Final Recommendation" delay={0.5}>
+      <ReportSection title="Final Recommendation" delay={0.5}>
         <div style={{
           padding: "1.25rem",
           background: "linear-gradient(135deg, #f0fdf4, #ecfdf5)",
