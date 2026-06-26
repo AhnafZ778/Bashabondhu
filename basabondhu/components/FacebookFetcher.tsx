@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { 
   Link as LinkIcon, 
@@ -140,24 +140,39 @@ const QR_CODES = [
 
 const TOUR_STEPS = [
   {
-    title: "1. Autofill or Paste a Post",
-    desc: "Scan one of our sandbox QR codes using your phone, click 'Autofill & Scan' on any listing card below, or paste a raw Facebook property URL in the input field.",
-    stepName: "Input Selection"
+    title: "1. Sandbox Examples & QR Codes",
+    desc: "Scan a QR code with your phone or click 'Autofill & Scan' to instantly load one of our simulated Dhaka rental posts.",
+    targetId: "tour-sandbox",
+    stepName: "Demo Sandbox",
+    placement: "bottom"
   },
   {
-    title: "2. Fetch & AI Extract",
-    desc: "Click 'Fetch & Extract'. BasaBondhu's Social Crawler contacts our proxy endpoint to grab metadata, then utilizes Gemini 2.5 to automatically structure details.",
-    stepName: "AI Extraction"
+    title: "2. Paste Facebook URL",
+    desc: "Paste any public Facebook rental post URL in this input field. Our crawler can target groups and user posts.",
+    targetId: "tour-input",
+    stepName: "URL Input",
+    placement: "bottom"
   },
   {
-    title: "3. Verify Structured Output",
-    desc: "Review the structured financial and specifications table. Omitted listings details (e.g. missing service charges or gas utility types) are flagged in yellow warnings.",
-    stepName: "Data Validation"
+    title: "3. Fetch & AI Extract",
+    desc: "Click 'Fetch & Extract' to begin. The BasaBondhu Social Crawler retrieves the post metadata and runs Gemini 2.5 NLP parser.",
+    targetId: "tour-fetch",
+    stepName: "AI Scraper",
+    placement: "bottom"
   },
   {
-    title: "4. Add to Your Search Plan",
-    desc: "Click 'Add Your Planning' to carry these parsed criteria directly into your commute and budget checklist to compare against other matched rentals.",
-    stepName: "Plan Matching"
+    title: "4. Structured Listing Output",
+    desc: "Inspect the parsed results side-by-side. Cleaned financial specifications and missing fields are validated automatically.",
+    targetId: "tour-output",
+    stepName: "Parsed Details",
+    placement: "bottom"
+  },
+  {
+    title: "5. Add to Plan Checklist",
+    desc: "Click 'Add your planning' to carry these metrics directly into the commute and budget matching checklist.",
+    targetId: "tour-planning",
+    stepName: "Checklist Matching",
+    placement: "top"
   }
 ];
 
@@ -177,10 +192,76 @@ export default function FacebookFetcher() {
   const [showTour, setShowTour] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
+  // Overlay spotlight positioning state
+  const [coords, setCoords] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+
   const handleStartTour = () => {
+    // Fill mockup preview so sections are visible during guide tour
+    if (!parsed) {
+      setCrawledText(FB_EXAMPLES[0].text);
+      setParsed({
+        area: "Uttara",
+        rent: 32000,
+        bedrooms: 3,
+        bathrooms: 3,
+        tenantPreference: "family",
+        advanceMonths: 2,
+        lift: true,
+        generator: true,
+        gasType: "line",
+        serviceCharge: "৳5,000",
+        brokerFee: "no-fee",
+        availability: "1st July",
+        missingFields: ["Upfront Advance/Deposit"],
+        confidence: "high"
+      });
+    }
     setShowTour(true);
     setCurrentStep(0);
   };
+
+  // Follow active target elements in viewport
+  useEffect(() => {
+    if (!showTour) {
+      setCoords(null);
+      return;
+    }
+
+    const updateCoords = () => {
+      const targetId = TOUR_STEPS[currentStep].targetId;
+      const el = document.getElementById(targetId);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        setCoords({
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height
+        });
+      } else {
+        setCoords(null);
+      }
+    };
+
+    // Scroll element into view when active step changes
+    const targetId = TOUR_STEPS[currentStep].targetId;
+    const el = document.getElementById(targetId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    updateCoords();
+    const timer = setTimeout(updateCoords, 400);
+
+    window.addEventListener("resize", updateCoords);
+    window.addEventListener("scroll", updateCoords);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateCoords);
+      window.removeEventListener("scroll", updateCoords);
+    };
+  }, [showTour, currentStep, parsed]);
 
   const handleCopy = (text: string, index: number) => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -348,6 +429,41 @@ export default function FacebookFetcher() {
     }
   };
 
+  const getTooltipStyle = () => {
+    if (!coords) return {};
+    const step = TOUR_STEPS[currentStep];
+    const cardWidth = 350;
+    const cardHeight = 240; // approximate height of the tooltip card
+    
+    let left = coords.left + (coords.width / 2) - (cardWidth / 2);
+    
+    // Clamp left to screen boundaries
+    if (typeof window !== "undefined") {
+      const screenWidth = window.innerWidth;
+      if (left < 16) {
+        left = 16;
+      } else if (left + cardWidth > screenWidth - 16) {
+        left = screenWidth - cardWidth - 16;
+      }
+    } else {
+      if (left < 16) left = 16;
+    }
+    
+    let top = 0;
+    if (step.placement === "top") {
+      top = coords.top - cardHeight - 16;
+    } else {
+      top = coords.top + coords.height + 16;
+    }
+    
+    return {
+      position: "fixed" as const,
+      top: `${top}px`,
+      left: `${left}px`,
+      width: `${cardWidth}px`,
+    };
+  };
+
   const handleAddPlanning = () => {
     if (!parsed) return;
     // Build query params
@@ -363,462 +479,479 @@ export default function FacebookFetcher() {
   };
 
   return (
-    <div className="w-full py-4 text-left transition-colors duration-300">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
-        
-        {/* Left Side: Onboarding Companion Guide (Spans 5 columns on desktop) */}
-        <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-4">
+    <div className="w-full py-4 text-left transition-colors duration-300 relative">
+      
+      {/* Top Welcome Banner & Tour Trigger */}
+      <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300 relative overflow-hidden bg-gradient-to-br from-card via-card to-emerald-500/[0.02] flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div className="space-y-3 max-w-3xl">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-emerald-600 animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-base sm:text-lg font-black text-text-main">
+                BasaBondhu Companion
+              </h3>
+              <p className="text-[10px] sm:text-xs text-text-muted">
+                Guided Scraper Walkthrough
+              </p>
+            </div>
+          </div>
           
-          {/* Storytelling & Interactive Tour Guide Card */}
-          <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300 relative overflow-hidden bg-gradient-to-br from-card via-card to-emerald-500/[0.02] min-h-[380px] flex flex-col justify-between">
-            {!showTour ? (
-              // Onboarding Welcome / Intro view
-              <div className="flex-1 flex flex-col justify-between space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-emerald-600 animate-pulse" />
-                    </div>
-                    <div>
-                      <h3 className="text-base sm:text-lg font-black text-text-main">
-                        BasaBondhu Companion
-                      </h3>
-                      <p className="text-[10px] sm:text-xs text-text-muted">
-                        Guided Scraper Walkthrough
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <h4 className="text-xl sm:text-2xl font-serif uppercase tracking-wider font-bold text-text-main">
-                      🕵️‍♂️ The Dhaka Rental Quest
-                    </h4>
-                    <p className="text-sm text-text-muted leading-relaxed font-semibold">
-                      In Dhaka, finding a place to live is a chaotic scavenger hunt. Landlords post properties on Facebook with messy, unstructured, and often incomplete captions.
-                    </p>
-                    <p className="text-xs text-text-muted leading-relaxed font-medium">
-                      Let BasaBondhu's Social Crawler act as your digital detective. Learn how to extract, analyze, and map Facebook listing details in seconds!
-                    </p>
-                  </div>
-                </div>
+          <div className="space-y-1">
+            <h4 className="text-lg sm:text-xl font-serif uppercase tracking-wider font-bold text-text-main flex items-center gap-2">
+              <span>🕵️‍♂️ The Dhaka Rental Quest</span>
+            </h4>
+            <p className="text-xs sm:text-sm text-text-muted leading-relaxed font-semibold">
+              In Dhaka, finding a place to live is a chaotic scavenger hunt. Landlords post properties on Facebook with messy, unstructured, and often incomplete captions. Let BasaBondhu's Social Crawler act as your digital detective. Learn how to extract, analyze, and map Facebook listing details in seconds!
+            </p>
+          </div>
+        </div>
 
-                <button
-                  onClick={handleStartTour}
-                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-wider rounded-2xl shadow-lg shadow-emerald-600/15 flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] cursor-pointer text-xs"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  Start Interactive Tour
-                </button>
-              </div>
-            ) : (
-              // Stepper Interactive View
-              <div className="flex-1 flex flex-col justify-between space-y-6 h-full">
-                {/* Step header & indicator */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-black/[0.04] pb-3">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
-                      {TOUR_STEPS[currentStep].stepName}
-                    </span>
-                    <span className="text-xs font-bold text-text-muted">
-                      Step {currentStep + 1} of {TOUR_STEPS.length}
-                    </span>
-                  </div>
+        <div className="shrink-0">
+          <button
+            onClick={handleStartTour}
+            className="w-full md:w-auto px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-wider rounded-2xl shadow-lg shadow-emerald-600/15 flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] cursor-pointer text-xs"
+          >
+            <Play className="w-4 h-4 fill-current" />
+            Start Interactive Tour
+          </button>
+        </div>
+      </div>
 
-                  {/* Progress Line */}
-                  <div className="w-full h-1 bg-black/[0.04] rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-emerald-500 transition-all duration-300"
-                      style={{ width: `${((currentStep + 1) / TOUR_STEPS.length) * 100}%` }}
+      {/* Main Operations Dashboard */}
+      <div className="w-full space-y-8">
+        
+        {/* Sample QR Codes Card for Judges */}
+        <div id="tour-sandbox" className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300 space-y-6">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[#C9952B]/10 border border-[#C9952B]/20 flex items-center justify-center">
+              <QrCode className="w-4 h-4 text-[#C9952B]" />
+            </div>
+            <div>
+              <h3 className="text-base sm:text-lg font-black text-text-main">
+                Judge & Tester Sandbox: QR Codes & Links
+              </h3>
+              <p className="text-xs text-text-muted">
+                Scan these QR codes to inspect the source Facebook posts, or use the direct buttons below.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {QR_CODES.map((item, idx) => (
+              <div key={idx} className="bg-bg border border-border-light rounded-2xl p-4 flex flex-col justify-between space-y-4 hover:border-[#1877F2]/20 transition-all duration-300">
+                <div className="space-y-3">
+                  {/* QR Code Container */}
+                  <div className="relative group overflow-hidden bg-white border border-border-light rounded-xl p-3 flex items-center justify-center transition-all duration-300 hover:shadow-md">
+                    <img 
+                      src={item.src} 
+                      alt={item.label} 
+                      className="w-32 h-32 object-contain transition-transform duration-300 group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
                   </div>
 
-                  {/* Card Step Body */}
-                  <div className="space-y-3 pt-2">
-                    <h4 className="text-lg sm:text-xl font-black text-text-main flex items-center gap-2 uppercase tracking-wide">
-                      {TOUR_STEPS[currentStep].title}
+                  {/* Badge and Title */}
+                  <div>
+                    <span className={`px-2.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider ${item.badgeColor}`}>
+                      {item.badge}
+                    </span>
+                    <h4 className="font-extrabold text-[15px] text-text-main mt-1.5 line-clamp-1">
+                      {item.label}
                     </h4>
-                    <p className="text-sm text-text-muted leading-relaxed font-semibold">
-                      {TOUR_STEPS[currentStep].desc}
+                  </div>
+
+                  {/* Listing Structure Type & Description */}
+                  <div className="bg-bg-alt border border-border-light rounded-xl p-2.5 space-y-1.5">
+                    <div className="flex items-center gap-1">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${item.structureColor}`}>
+                        {item.structureType}
+                      </span>
+                    </div>
+                    <p className="text-[12px] text-text-muted leading-relaxed font-semibold">
+                      {item.structureDesc}
                     </p>
+                  </div>
+
+                  {/* Truncated URL Display */}
+                  <div className="flex items-center gap-1.5 bg-bg-alt border border-border-light/60 px-2.5 py-1.5 rounded-lg">
+                    <span className="text-xs font-mono text-text-muted truncate flex-1">
+                      {item.url}
+                    </span>
+                    <a 
+                      href={item.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-text-muted hover:text-[#1877F2] transition-colors"
+                      title="Open original post"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
                   </div>
                 </div>
 
-                {/* Bottom Stepper Controls */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-3 border-t border-black/[0.04] pt-4">
-                    <button
-                      onClick={() => currentStep > 0 && setCurrentStep(prev => prev - 1)}
-                      disabled={currentStep === 0}
-                      className="px-4 py-3 bg-bg-alt hover:bg-zinc-100 disabled:opacity-40 disabled:hover:bg-bg-alt text-text-main font-bold rounded-xl border border-border-light flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer select-none"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      Back
-                    </button>
-
-                    <div className="flex gap-1.5">
-                      {TOUR_STEPS.map((_, idx) => (
-                        <div 
-                          key={idx} 
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            idx === currentStep ? "bg-emerald-500 scale-125" : "bg-black/[0.08]"
-                          }`}
-                        />
-                      ))}
-                    </div>
-
-                    {currentStep < TOUR_STEPS.length - 1 ? (
-                      <button
-                        onClick={() => setCurrentStep(prev => prev + 1)}
-                        className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer select-none"
-                      >
-                        Next
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setShowTour(false)}
-                        className="px-4 py-3 bg-[#1877F2] hover:bg-[#155fc2] text-white font-black rounded-xl flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer select-none"
-                      >
-                        Finish
-                        <Check className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-
+                {/* Action Buttons */}
+                <div className="space-y-2 pt-2 border-t border-black/[0.04]">
                   <button
-                    onClick={() => setShowTour(false)}
-                    className="w-full text-center text-xs font-bold text-text-muted hover:text-text-main transition-colors cursor-pointer block pb-1 border-0 bg-transparent"
+                    onClick={() => handleCopy(item.url, idx)}
+                    className="w-full py-2 px-3 bg-bg-alt hover:bg-zinc-100 text-text-main font-bold rounded-lg border border-border-light flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer"
                   >
-                    End Walkthrough / Back to Story
+                    {copiedIndex === idx ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-500" />
+                        <span className="text-emerald-500 font-bold">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5 text-text-muted" />
+                        <span>Copy Post Link</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => startCrawlAndParse(item.url, item.text)}
+                    className="w-full py-2 px-3 bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] font-black rounded-lg flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Autofill & Scan</span>
                   </button>
                 </div>
               </div>
-            )}
+            ))}
           </div>
-          
         </div>
 
-        {/* Right Side: Operations Dashboard (Spans 7 columns on desktop) */}
-        <div className="lg:col-span-7 space-y-8">
-          
-          {/* Sample QR Codes Card for Judges */}
-          <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300 space-y-6">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-[#C9952B]/10 border border-[#C9952B]/20 flex items-center justify-center">
-                <QrCode className="w-4 h-4 text-[#C9952B]" />
-              </div>
+        {/* Search Input Box */}
+        <div id="tour-input" className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-[#1877F2]/10 border border-[#1877F2]/20 flex items-center justify-center">
+              <LinkIcon className="w-4 h-4 text-[#1877F2]" />
+            </div>
+            <h3 className="text-base sm:text-lg font-black text-text-main">
+              Paste Facebook Listing URL (QR Scanner Input)
+            </h3>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="e.g., https://www.facebook.com/groups/dhakarents/posts/..."
+              className="flex-1 bg-bg border border-border-light rounded-xl px-4 py-3.5 text-base text-text-main placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-[#1877F2]/50 transition-all font-semibold"
+            />
+            <button
+              id="tour-fetch"
+              onClick={() => startCrawlAndParse(url)}
+              disabled={isCrawling || !url.trim()}
+              className="bg-[#1877F2] hover:bg-[#155fc2] disabled:bg-[#1877F2]/50 text-white font-extrabold px-6 py-3.5 rounded-xl shadow-md active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm uppercase tracking-wider"
+            >
+              {isCrawling ? (
+                <>
+                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Fetching...
+                </>
+              ) : (
+                <>
+                  Fetch & Extract
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Crawling Loader State */}
+        {isCrawling && (
+          <div className="bg-card border border-border-light rounded-3xl p-8 shadow-xl flex flex-col items-center justify-center space-y-4 animate-pulse transition-all duration-300">
+            <div className="w-12 h-12 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin" />
+            <div className="text-center space-y-1">
+              <h4 className="font-extrabold text-sm text-text-main uppercase tracking-wider">Connecting to Facebook API...</h4>
+              <p className="text-xs text-text-muted">Crawling raw caption and normalizing listing payload...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Structured Output Cards */}
+        {parsed && !isCrawling && (
+          <div id="tour-output" className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 transition-all duration-300 animate-in fade-in duration-300">
+            
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/[0.04] pb-4">
               <div>
-                <h3 className="text-base sm:text-lg font-black text-text-main">
-                  Judge & Tester Sandbox: QR Codes & Links
-                </h3>
-                <p className="text-xs text-text-muted">
-                  Scan these QR codes to inspect the source Facebook posts, or use the direct buttons below.
-                </p>
+                <span className="text-emerald-500 font-extrabold text-[10px] uppercase tracking-widest flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  NLP Parser Normalization Complete
+                </span>
+                <h4 className="text-lg font-black text-text-main mt-1 uppercase tracking-wide">
+                  Fetched vs Structured Information
+                </h4>
               </div>
+              {parsed.confidence && (
+                <span className={`px-2.5 py-1 rounded text-[9px] font-black uppercase tracking-wider ${
+                  parsed.confidence === "high" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                }`}>
+                  Extraction Confidence: {parsed.confidence}
+                </span>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {QR_CODES.map((item, idx) => (
-                <div key={idx} className="bg-bg border border-border-light rounded-2xl p-4 flex flex-col justify-between space-y-4 hover:border-[#1877F2]/20 transition-all duration-300">
-                  <div className="space-y-3">
-                    {/* QR Code Container */}
-                    <div className="relative group overflow-hidden bg-white border border-border-light rounded-xl p-3 flex items-center justify-center transition-all duration-300 hover:shadow-md">
-                      <img 
-                        src={item.src} 
-                        alt={item.label} 
-                        className="w-32 h-32 object-contain transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
-                    </div>
+            {/* Side-by-side layout: Raw fetched text (left) and Structured text (right) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              
+              {/* Left side: Fetched raw Facebook Caption (spans 5 cols) */}
+              <div className="lg:col-span-5 bg-bg border border-border-light rounded-2xl p-5 space-y-3 h-full">
+                <h5 className="text-xs font-black uppercase tracking-wider text-text-muted border-b border-black/[0.03] pb-2 flex items-center gap-1.5">
+                  <Copy className="w-4 h-4 text-[#1877F2]" />
+                  Original Crawled Caption
+                </h5>
+                <div className="text-xs sm:text-sm text-text-main leading-relaxed font-semibold bg-bg-alt border border-border-light/60 p-4 rounded-xl max-h-[350px] overflow-y-auto whitespace-pre-wrap select-all">
+                  {crawledText}
+                </div>
+              </div>
 
-                    {/* Badge and Title */}
-                    <div>
-                      <span className={`px-2.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider ${item.badgeColor}`}>
-                        {item.badge}
-                      </span>
-                      <h4 className="font-extrabold text-[15px] text-text-main mt-1.5 line-clamp-1">
-                        {item.label}
-                      </h4>
-                    </div>
-
-                    {/* Listing Structure Type & Description */}
-                    <div className="bg-bg-alt border border-border-light rounded-xl p-2.5 space-y-1.5">
-                      <div className="flex items-center gap-1">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${item.structureColor}`}>
-                          {item.structureType}
+              {/* Right side: Structured Data tables (spans 7 cols) */}
+              <div className="lg:col-span-7 space-y-6">
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  {/* Financial Details */}
+                  <div className="bg-[#fbfbfb] border border-black/5 rounded-2xl p-5 space-y-4">
+                    <h5 className="text-xs font-black uppercase tracking-wider text-text-muted border-b border-black/[0.03] pb-2 flex items-center gap-1.5">
+                      <Coins className="w-4 h-4 text-emerald-500" />
+                      Financial Information
+                    </h5>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-[10px] font-black text-text-muted uppercase block">Monthly Rent</span>
+                        <span className="font-extrabold text-base text-text-main mt-0.5 block">
+                          {parsed.rent ? `৳${parsed.rent.toLocaleString()}` : "Not Listed"}
                         </span>
                       </div>
-                      <p className="text-[12px] text-text-muted leading-relaxed font-semibold">
-                        {item.structureDesc}
-                      </p>
-                    </div>
-
-                    {/* Truncated URL Display */}
-                    <div className="flex items-center gap-1.5 bg-bg-alt border border-border-light/60 px-2.5 py-1.5 rounded-lg">
-                      <span className="text-xs font-mono text-text-muted truncate flex-1">
-                        {item.url}
-                      </span>
-                      <a 
-                        href={item.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="text-text-muted hover:text-[#1877F2] transition-colors"
-                        title="Open original post"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
+                      <div>
+                        <span className="text-[10px] font-black text-text-muted uppercase block">Service Charge</span>
+                        <span className="font-extrabold text-base text-text-main mt-0.5 block">
+                          {parsed.serviceCharge || "Not Specified"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-black text-text-muted uppercase block">Advance Deposit</span>
+                        <span className="font-extrabold text-base text-text-main mt-0.5 block">
+                          {parsed.advanceMonths ? `${parsed.advanceMonths} Month(s)` : "Not Specified"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-black text-text-muted uppercase block">Broker Fee Status</span>
+                        <span className="font-extrabold text-base text-text-main mt-0.5 block capitalize">
+                          {parsed.brokerFee || "Direct Owner"}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="space-y-2 pt-2 border-t border-black/[0.04]">
-                    <button
-                      onClick={() => handleCopy(item.url, idx)}
-                      className="w-full py-2 px-3 bg-bg-alt hover:bg-zinc-100 text-text-main font-bold rounded-lg border border-border-light flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer"
-                    >
-                      {copiedIndex === idx ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 text-emerald-500" />
-                          <span className="text-emerald-500 font-bold">Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5 text-text-muted" />
-                          <span>Copy Post Link</span>
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => startCrawlAndParse(item.url, item.text)}
-                      className="w-full py-2 px-3 bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] font-black rounded-lg flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Autofill & Scan</span>
-                    </button>
+                  {/* Specs & Infrastructure */}
+                  <div className="bg-[#fbfbfb] border border-black/5 rounded-2xl p-5 space-y-4">
+                    <h5 className="text-xs font-black uppercase tracking-wider text-text-muted border-b border-black/[0.03] pb-2 flex items-center gap-1.5">
+                      <Layers className="w-4 h-4 text-[#1877F2]" />
+                      Specs & Amenities
+                    </h5>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-[10px] font-black text-text-muted uppercase block">Locality / Area</span>
+                        <span className="font-extrabold text-base text-[#1877F2] mt-0.5 block flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5 text-rose-500" />
+                          {parsed.area || "Unknown"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-black text-text-muted uppercase block">Apartment Layout</span>
+                        <span className="font-extrabold text-base text-text-main mt-0.5 block">
+                          {parsed.bedrooms ? `${parsed.bedrooms} Bed` : "Not Listed"}
+                          {parsed.bathrooms ? `, ${parsed.bathrooms} Bath` : ""}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-black text-text-muted uppercase block">Line Gas Connection</span>
+                        <span className={`font-extrabold text-sm px-2 py-0.5 rounded-md mt-1 inline-block ${
+                          parsed.gasType === "line" ? "bg-emerald-100 text-emerald-800" : parsed.gasType === "cylinder" ? "bg-amber-100 text-amber-800" : "bg-zinc-100 text-zinc-800"
+                        }`}>
+                          {parsed.gasType === "line" ? "Line Gas (Titas)" : parsed.gasType === "cylinder" ? "Cylinder Gas" : "Unknown"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-black text-text-muted uppercase block">Building Facilities</span>
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${parsed.lift ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20"}`}>
+                            Lift: {parsed.lift ? "YES" : "NO"}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${parsed.generator ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20"}`}>
+                            Gen: {parsed.generator ? "YES" : "NO"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Search Input Box */}
-          <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-[#1877F2]/10 border border-[#1877F2]/20 flex items-center justify-center">
-                <LinkIcon className="w-4 h-4 text-[#1877F2]" />
-              </div>
-              <h3 className="text-base sm:text-lg font-black text-text-main">
-                Paste Facebook Listing URL (QR Scanner Input)
-              </h3>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="e.g., https://www.facebook.com/groups/dhakarents/posts/..."
-                className="flex-1 bg-bg border border-border-light rounded-xl px-4 py-3.5 text-base text-text-main placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-[#1877F2]/50 transition-all font-semibold"
-              />
-              <button
-                onClick={() => startCrawlAndParse(url)}
-                disabled={isCrawling || !url.trim()}
-                className="bg-[#1877F2] hover:bg-[#155fc2] disabled:bg-[#1877F2]/50 text-white font-extrabold px-6 py-3.5 rounded-xl shadow-md active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm uppercase tracking-wider"
-              >
-                {isCrawling ? (
-                  <>
-                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Fetching...
-                  </>
-                ) : (
-                  <>
-                    Fetch & Extract
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </>
+                {/* Missing Fields Signals */}
+                {parsed.missingFields && parsed.missingFields.length > 0 && (
+                  <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex gap-3 text-sm">
+                    <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0" />
+                    <div>
+                      <span className="font-extrabold text-amber-800 uppercase text-[10px] tracking-wider block">Omitted Listing Specifications</span>
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        {parsed.missingFields.map((field, idx) => (
+                          <span key={idx} className="bg-amber-100/60 text-amber-800 border border-amber-200/50 px-2 py-0.5 rounded text-[10px] font-bold">
+                            {field}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 )}
+
+              </div>
+
+            </div>
+
+            {/* Action Trigger Buttons */}
+            <div className="pt-4 border-t border-black/[0.04] flex flex-col sm:flex-row gap-3">
+              <button
+                id="tour-planning"
+                onClick={handleAddPlanning}
+                className="flex-1 py-4.5 px-6 bg-[#C9952B] hover:bg-[#b08020] text-white font-black uppercase tracking-wider rounded-2xl shadow-lg shadow-gold/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 cursor-pointer text-sm font-black"
+              >
+                <Sparkles className="w-4 h-4 text-white" />
+                Add your planning
+              </button>
+              <button
+                onClick={() => {
+                  setParsed(null);
+                  setUrl("");
+                }}
+                className="py-3 px-6 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-extrabold uppercase tracking-wider rounded-2xl transition-colors cursor-pointer text-xs"
+              >
+                Reset / Fetch Another
               </button>
             </div>
+
           </div>
-
-          {/* Crawling Loader State */}
-          {isCrawling && (
-            <div className="bg-card border border-border-light rounded-3xl p-8 shadow-xl flex flex-col items-center justify-center space-y-4 animate-pulse transition-all duration-300">
-              <div className="w-12 h-12 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin" />
-              <div className="text-center space-y-1">
-                <h4 className="font-extrabold text-sm text-text-main uppercase tracking-wider">Connecting to Facebook API...</h4>
-                <p className="text-xs text-text-muted">Crawling raw caption and normalizing listing payload...</p>
-              </div>
-            </div>
-          )}
-
-          {/* Structured Output Cards */}
-          {parsed && !isCrawling && (
-            <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 transition-all duration-300 animate-in fade-in duration-300">
-              
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/[0.04] pb-4">
-                <div>
-                  <span className="text-emerald-500 font-extrabold text-[10px] uppercase tracking-widest flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    NLP Parser Normalization Complete
-                  </span>
-                  <h4 className="text-lg font-black text-text-main mt-1 uppercase tracking-wide">
-                    Fetched vs Structured Information
-                  </h4>
-                </div>
-                {parsed.confidence && (
-                  <span className={`px-2.5 py-1 rounded text-[9px] font-black uppercase tracking-wider ${
-                    parsed.confidence === "high" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                  }`}>
-                    Extraction Confidence: {parsed.confidence}
-                  </span>
-                )}
-              </div>
-
-              {/* Side-by-side layout: Raw fetched text (left) and Structured text (right) */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                
-                {/* Left side: Fetched raw Facebook Caption (spans 5 cols) */}
-                <div className="lg:col-span-5 bg-bg border border-border-light rounded-2xl p-5 space-y-3 h-full">
-                  <h5 className="text-xs font-black uppercase tracking-wider text-text-muted border-b border-black/[0.03] pb-2 flex items-center gap-1.5">
-                    <Copy className="w-4 h-4 text-[#1877F2]" />
-                    Original Crawled Caption
-                  </h5>
-                  <div className="text-xs sm:text-sm text-text-main leading-relaxed font-semibold bg-bg-alt border border-border-light/60 p-4 rounded-xl max-h-[350px] overflow-y-auto whitespace-pre-wrap select-all">
-                    {crawledText}
-                  </div>
-                </div>
-
-                {/* Right side: Structured Data tables (spans 7 cols) */}
-                <div className="lg:col-span-7 space-y-6">
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    {/* Financial Details */}
-                    <div className="bg-[#fbfbfb] border border-black/5 rounded-2xl p-5 space-y-4">
-                      <h5 className="text-xs font-black uppercase tracking-wider text-text-muted border-b border-black/[0.03] pb-2 flex items-center gap-1.5">
-                        <Coins className="w-4 h-4 text-emerald-500" />
-                        Financial Information
-                      </h5>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-[10px] font-black text-text-muted uppercase block">Monthly Rent</span>
-                          <span className="font-extrabold text-base text-text-main mt-0.5 block">
-                            {parsed.rent ? `৳${parsed.rent.toLocaleString()}` : "Not Listed"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-black text-text-muted uppercase block">Service Charge</span>
-                          <span className="font-extrabold text-base text-text-main mt-0.5 block">
-                            {parsed.serviceCharge || "Not Specified"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-black text-text-muted uppercase block">Advance Deposit</span>
-                          <span className="font-extrabold text-base text-text-main mt-0.5 block">
-                            {parsed.advanceMonths ? `${parsed.advanceMonths} Month(s)` : "Not Specified"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-black text-text-muted uppercase block">Broker Fee Status</span>
-                          <span className="font-extrabold text-base text-text-main mt-0.5 block capitalize">
-                            {parsed.brokerFee || "Direct Owner"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Specs & Infrastructure */}
-                    <div className="bg-[#fbfbfb] border border-black/5 rounded-2xl p-5 space-y-4">
-                      <h5 className="text-xs font-black uppercase tracking-wider text-text-muted border-b border-black/[0.03] pb-2 flex items-center gap-1.5">
-                        <Layers className="w-4 h-4 text-[#1877F2]" />
-                        Specs & Amenities
-                      </h5>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-[10px] font-black text-text-muted uppercase block">Locality / Area</span>
-                          <span className="font-extrabold text-base text-[#1877F2] mt-0.5 block flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5 text-rose-500" />
-                            {parsed.area || "Unknown"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-black text-text-muted uppercase block">Apartment Layout</span>
-                          <span className="font-extrabold text-base text-text-main mt-0.5 block">
-                            {parsed.bedrooms ? `${parsed.bedrooms} Bed` : "Not Listed"}
-                            {parsed.bathrooms ? `, ${parsed.bathrooms} Bath` : ""}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-black text-text-muted uppercase block">Line Gas Connection</span>
-                          <span className={`font-extrabold text-sm px-2 py-0.5 rounded-md mt-1 inline-block ${
-                            parsed.gasType === "line" ? "bg-emerald-100 text-emerald-800" : parsed.gasType === "cylinder" ? "bg-amber-100 text-amber-800" : "bg-zinc-100 text-zinc-800"
-                          }`}>
-                            {parsed.gasType === "line" ? "Line Gas (Titas)" : parsed.gasType === "cylinder" ? "Cylinder Gas" : "Unknown"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-black text-text-muted uppercase block">Building Facilities</span>
-                          <div className="flex flex-wrap gap-1.5 mt-1">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${parsed.lift ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20"}`}>
-                              Lift: {parsed.lift ? "YES" : "NO"}
-                            </span>
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${parsed.generator ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20"}`}>
-                              Gen: {parsed.generator ? "YES" : "NO"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  {/* Missing Fields Signals */}
-                  {parsed.missingFields && parsed.missingFields.length > 0 && (
-                    <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex gap-3 text-sm">
-                      <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0" />
-                      <div>
-                        <span className="font-extrabold text-amber-800 uppercase text-[10px] tracking-wider block">Omitted Listing Specifications</span>
-                        <div className="flex flex-wrap gap-1.5 mt-1.5">
-                          {parsed.missingFields.map((field, idx) => (
-                            <span key={idx} className="bg-amber-100/60 text-amber-800 border border-amber-200/50 px-2 py-0.5 rounded text-[10px] font-bold">
-                              {field}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                </div>
-
-              </div>
-
-              {/* Action Trigger Buttons */}
-              <div className="pt-4 border-t border-black/[0.04] flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={handleAddPlanning}
-                  className="flex-1 py-4.5 px-6 bg-[#C9952B] hover:bg-[#b08020] text-white font-black uppercase tracking-wider rounded-2xl shadow-lg shadow-gold/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 cursor-pointer text-sm font-black"
-                >
-                  <Sparkles className="w-4 h-4 text-white" />
-                  Add your planning
-                </button>
-                <button
-                  onClick={() => {
-                    setParsed(null);
-                    setUrl("");
-                  }}
-                  className="py-3 px-6 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-extrabold uppercase tracking-wider rounded-2xl transition-colors cursor-pointer text-xs"
-                >
-                  Reset / Fetch Another
-                </button>
-              </div>
-
-            </div>
-          )}
-
-        </div>
+        )}
 
       </div>
+
+      {/* Spotlight Overlay & Floating Tooltip */}
+      {showTour && coords && (
+        <>
+          {/* Spotlight Highlight Box Overlay */}
+          <div 
+            className="fixed border-4 border-emerald-500 rounded-3xl shadow-[0_0_15px_rgba(16,185,129,0.5),0_0_0_9999px_rgba(15,23,42,0.75)] z-[999] pointer-events-none transition-all duration-300"
+            style={{
+              top: coords.top - 4,
+              left: coords.left - 4,
+              width: coords.width + 8,
+              height: coords.height + 8,
+            }}
+          />
+
+          {/* Floating step card */}
+          <div 
+            className="fixed bg-card border border-border-light rounded-3xl p-6 shadow-2xl z-[1000] pointer-events-auto transition-all duration-300 select-none animate-in fade-in zoom-in-95 duration-200"
+            style={getTooltipStyle()}
+          >
+            {/* Tooltip Arrow */}
+            <div 
+              className={`absolute w-3 h-3 bg-card border-t border-l border-border-light rotate-45 left-1/2 -translate-x-1/2 transition-all ${
+                TOUR_STEPS[currentStep].placement === "top" ? "bottom-[-6px] border-t-0 border-l-0 border-b border-r" : "top-[-6px]"
+              }`}
+            />
+
+            <div className="flex flex-col justify-between space-y-4 h-full">
+              {/* Step header & indicator */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between border-b border-black/[0.04] pb-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
+                    {TOUR_STEPS[currentStep].stepName}
+                  </span>
+                  <span className="text-xs font-bold text-text-muted">
+                    Step {currentStep + 1} of {TOUR_STEPS.length}
+                  </span>
+                </div>
+
+                {/* Progress Line */}
+                <div className="w-full h-1 bg-black/[0.04] rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-emerald-500 transition-all duration-300"
+                    style={{ width: `${((currentStep + 1) / TOUR_STEPS.length) * 100}%` }}
+                  />
+                </div>
+
+                {/* Card Step Body */}
+                <div className="space-y-2 pt-1 text-left">
+                  <h4 className="text-base font-black text-text-main uppercase tracking-wide">
+                    {TOUR_STEPS[currentStep].title}
+                  </h4>
+                  <p className="text-xs text-text-muted leading-relaxed font-semibold">
+                    {TOUR_STEPS[currentStep].desc}
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom Stepper Controls */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3 border-t border-black/[0.04] pt-3">
+                  <button
+                    onClick={() => currentStep > 0 && setCurrentStep(prev => prev - 1)}
+                    disabled={currentStep === 0}
+                    className="px-3 py-2 bg-bg-alt hover:bg-zinc-100 disabled:opacity-40 disabled:hover:bg-bg-alt text-text-main font-bold rounded-xl border border-border-light flex items-center justify-center gap-1 text-[11px] active:scale-98 transition-all cursor-pointer select-none"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    Back
+                  </button>
+
+                  <div className="flex gap-1">
+                    {TOUR_STEPS.map((_, idx) => (
+                      <div 
+                        key={idx} 
+                        className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                          idx === currentStep ? "bg-emerald-500 scale-125" : "bg-black/[0.08]"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {currentStep < TOUR_STEPS.length - 1 ? (
+                    <button
+                      onClick={() => setCurrentStep(prev => prev + 1)}
+                      className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl flex items-center justify-center gap-1 text-[11px] active:scale-98 transition-all cursor-pointer select-none"
+                    >
+                      Next
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowTour(false)}
+                      className="px-3 py-2 bg-[#1877F2] hover:bg-[#155fc2] text-white font-black rounded-xl flex items-center justify-center gap-1 text-[11px] active:scale-98 transition-all cursor-pointer select-none"
+                    >
+                      Finish
+                      <Check className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => setShowTour(false)}
+                  className="w-full text-center text-[10px] font-bold text-text-muted hover:text-text-main transition-colors cursor-pointer block border-0 bg-transparent"
+                >
+                  End Walkthrough
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
     </div>
   );
 }
