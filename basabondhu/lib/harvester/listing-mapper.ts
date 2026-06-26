@@ -21,7 +21,7 @@ export function mapHarvestedListingToListing(h: HarvestedListing): Listing {
 
   // Default property image
   const defaultImage =
-    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80";
+    "/DhakaImages/highly-populated-dhaka-city-crammed-with-unplanned-buildings-KDCB15.jpg";
 
   return {
     id: h.id,

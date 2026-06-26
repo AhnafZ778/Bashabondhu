@@ -1,9 +1,24 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { HousingReport, ScoredListing, ChecklistSection } from "@/lib/types";
 import VerdictBadge from "./VerdictBadge";
 import { motion } from "framer-motion";
+import { 
+  FileText, 
+  MapPin, 
+  Search, 
+  Home, 
+  Coins, 
+  AlertTriangle, 
+  HelpCircle, 
+  CheckSquare, 
+  ThumbsUp, 
+  Printer, 
+  Link2, 
+  Check, 
+  User 
+} from "lucide-react";
 
 type ReportPreviewProps = {
   report: HousingReport;
@@ -11,6 +26,7 @@ type ReportPreviewProps = {
 
 export default function ReportPreview({ report }: ReportPreviewProps) {
   const reportRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
 
   const handlePrint = () => {
     window.print();
@@ -18,94 +34,80 @@ export default function ReportPreview({ report }: ReportPreviewProps) {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
-    alert("Report link copied!");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div ref={reportRef} style={{ maxWidth: "800px", margin: "0 auto", padding: "1.5rem" }}>
+    <div ref={reportRef} className="max-w-3xl mx-auto px-4 py-8 space-y-8 select-none print:py-0 print:px-0">
       {/* Header */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        style={{
-          textAlign: "center",
-          marginBottom: "2rem",
-          paddingBottom: "1.5rem",
-          borderBottom: "3px solid var(--accent-primary, #0f3460)",
-        }}
+        className="text-center pb-8 border-b-2 border-[#C9952B] space-y-4 print:pb-4"
       >
-        <h1 style={{
-          fontSize: "1.75rem",
-          fontWeight: 800,
-          color: "var(--text-primary, #1a1a2e)",
-          marginBottom: "0.5rem",
-        }}>
-          🏠 BasaBondhu Housing Report
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#C9952B]/10 border border-[#C9952B]/20 rounded-full text-[10px] font-black uppercase tracking-widest text-[#C9952B]">
+          <FileText className="w-3.5 h-3.5" />
+          Insight Housing Report
+        </div>
+        
+        <h1 className="text-3xl font-black text-text-main uppercase tracking-wider print:text-2xl">
+          BasaBondhu Report
         </h1>
-        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary, #64748b)" }}>
+        
+        <p className="text-xs text-text-muted">
           Generated: {new Date(report.generatedAt).toLocaleDateString("en-GB", {
             day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
           })}
         </p>
 
         {/* Action buttons - hidden in print */}
-        <div className="no-print" style={{ display: "flex", gap: "0.75rem", justifyContent: "center", marginTop: "1rem" }}>
+        <div className="flex gap-3 justify-center pt-2 print:hidden">
           <button
             onClick={handlePrint}
-            style={{
-              padding: "0.5rem 1.25rem",
-              background: "var(--accent-primary, #0f3460)",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              fontWeight: 600,
-              cursor: "pointer",
-              fontSize: "0.85rem",
-            }}
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-secondary text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
           >
-            🖨️ Print / PDF
+            <Printer className="w-4 h-4" />
+            Print / PDF
           </button>
+          
           <button
             onClick={handleCopyLink}
-            style={{
-              padding: "0.5rem 1.25rem",
-              background: "var(--surface-secondary, #f1f5f9)",
-              color: "var(--text-primary, #1a1a2e)",
-              border: "1px solid var(--border, #e2e8f0)",
-              borderRadius: "8px",
-              fontWeight: 600,
-              cursor: "pointer",
-              fontSize: "0.85rem",
-            }}
+            className="flex items-center gap-2 px-5 py-2.5 bg-card border border-border-light hover:bg-black/[0.02] text-text-main text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer"
           >
-            📋 Copy Link
+            {copied ? (
+              <>
+                <Check className="w-4 h-4 text-emerald-500" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Link2 className="w-4 h-4" />
+                Copy Link
+              </>
+            )}
           </button>
         </div>
       </motion.div>
 
       {/* Section 1: Profile Summary */}
-      <ReportSection title="📝 Your Profile" delay={0.1}>
-        <p style={{ lineHeight: 1.7, color: "var(--text-primary, #1a1a2e)" }}>
+      <ReportSection title="Your Profile" icon={User} delay={0.1}>
+        <p className="text-xs sm:text-sm text-text-main leading-relaxed font-medium bg-black/[0.01] p-4 rounded-2xl border border-black/[0.02]">
           {report.profileSummary}
         </p>
       </ReportSection>
 
       {/* Section 2: Recommended Areas */}
-      {report.recommendedAreas.length > 0 && (
-        <ReportSection title="📍 Recommended Areas" delay={0.15}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "0.75rem" }}>
+      {report.recommendedAreas && report.recommendedAreas.length > 0 && (
+        <ReportSection title="Recommended Areas" icon={MapPin} delay={0.15}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {report.recommendedAreas.map(area => (
               <div
                 key={area.id}
-                style={{
-                  padding: "0.75rem",
-                  background: "var(--surface-secondary, #f8f9fa)",
-                  borderRadius: "10px",
-                  border: "1px solid var(--border, #e2e8f0)",
-                }}
+                className="p-4 bg-card border border-border-light rounded-2xl transition-all duration-300 hover:border-[#C9952B]/40"
               >
-                <div style={{ fontWeight: 700, fontSize: "0.95rem" }}>{area.name}</div>
-                <div style={{ fontSize: "0.8rem", color: "var(--text-secondary, #64748b)" }}>
+                <div className="font-extrabold text-text-main text-xs uppercase tracking-wider">{area.name}</div>
+                <div className="text-[10px] text-text-muted mt-1 font-bold">
                   {area.rentRange} • {area.bestFor[0]}
                 </div>
               </div>
@@ -115,116 +117,118 @@ export default function ReportPreview({ report }: ReportPreviewProps) {
       )}
 
       {/* Section 3: Scan Summary */}
-      <ReportSection title="🔍 Scan Summary" delay={0.2}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
-          gap: "0.75rem",
-          textAlign: "center",
-        }}>
-          <StatCard label="Scanned" value={report.scanSummary.scanned} color="#3b82f6" />
-          <StatCard label="Over Budget" value={report.scanSummary.removedBudget} color="#ef4444" />
-          <StatCard label="Bad Commute" value={report.scanSummary.removedCommute} color="#f97316" />
-          <StatCard label="Hidden Cost" value={report.scanSummary.removedHiddenCost} color="#eab308" />
-          <StatCard label="Selected" value={report.scanSummary.selected} color="#10b981" />
+      <ReportSection title="Scan Summary" icon={Search} delay={0.2}>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <StatCard label="Scanned" value={report.scanSummary.scanned} type="blue" />
+          <StatCard label="Over Budget" value={report.scanSummary.removedBudget} type="red" />
+          <StatCard label="Bad Commute" value={report.scanSummary.removedCommute} type="orange" />
+          <StatCard label="Hidden Cost" value={report.scanSummary.removedHiddenCost} type="yellow" />
+          <StatCard label="Selected" value={report.scanSummary.selected} type="green" />
         </div>
       </ReportSection>
 
       {/* Section 4: Top Listings */}
-      <ReportSection title="🏠 Top Listings" delay={0.25}>
-        {report.topListings.map((listing, i) => (
-          <ListingCard key={listing.id} listing={listing} rank={i + 1} />
-        ))}
+      <ReportSection title="Top Listings" icon={Home} delay={0.25}>
+        <div className="space-y-4">
+          {report.topListings.map((listing, i) => (
+            <ListingCard key={listing.id} listing={listing} rank={i + 1} />
+          ))}
+        </div>
       </ReportSection>
 
       {/* Section 5: Cost Comparison */}
-      {report.costSummaries.length > 0 && (
-        <ReportSection title="💰 First-Month Costs" delay={0.3}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
-            <thead>
-              <tr style={{ borderBottom: "2px solid var(--border, #e2e8f0)" }}>
-                <th style={thStyle}>Listing</th>
-                <th style={thStyle}>Rent</th>
-                <th style={thStyle}>Advance</th>
-                <th style={thStyle}>Broker</th>
-                <th style={thStyle}>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {report.topListings.map((listing, i) => {
-                const cost = report.costSummaries[i];
-                if (!cost) return null;
-                return (
-                  <tr key={listing.id} style={{ borderBottom: "1px solid var(--border, #e2e8f0)" }}>
-                    <td style={tdStyle}>{listing.title.slice(0, 30)}...</td>
-                    <td style={tdStyle}>৳{cost.rent.toLocaleString()}</td>
-                    <td style={tdStyle}>৳{cost.advance.toLocaleString()}</td>
-                    <td style={tdStyle}>৳{cost.brokerFee.toLocaleString()}</td>
-                    <td style={{ ...tdStyle, fontWeight: 700 }}>৳{cost.total.toLocaleString()}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {report.costSummaries && report.costSummaries.length > 0 && (
+        <ReportSection title="First-Month Costs" icon={Coins} delay={0.3}>
+          <div className="overflow-x-auto border border-border-light rounded-2xl bg-card">
+            <table className="w-full border-collapse text-left text-xs">
+              <thead>
+                <tr className="border-b border-border-light bg-black/[0.01]">
+                  <th className="p-4 font-black uppercase tracking-wider text-text-muted text-[10px]">Listing</th>
+                  <th className="p-4 font-black uppercase tracking-wider text-text-muted text-[10px]">Rent</th>
+                  <th className="p-4 font-black uppercase tracking-wider text-text-muted text-[10px]">Advance</th>
+                  <th className="p-4 font-black uppercase tracking-wider text-text-muted text-[10px]">Broker</th>
+                  <th className="p-4 font-black uppercase tracking-wider text-text-muted text-[10px]">Total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-black/[0.03]">
+                {report.topListings.map((listing, i) => {
+                  const cost = report.costSummaries[i];
+                  if (!cost) return null;
+                  return (
+                    <tr key={listing.id} className="hover:bg-black/[0.01] transition-colors">
+                      <td className="p-4 font-bold text-text-main truncate max-w-[180px]">{listing.title}</td>
+                      <td className="p-4 font-semibold text-text-main">৳{cost.rent.toLocaleString()}</td>
+                      <td className="p-4 font-semibold text-text-main">৳{cost.advance.toLocaleString()}</td>
+                      <td className="p-4 font-semibold text-text-main">৳{cost.brokerFee.toLocaleString()}</td>
+                      <td className="p-4 font-black text-primary">৳{cost.total.toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </ReportSection>
       )}
 
       {/* Section 6: Risks */}
-      {report.mainRisks.length > 0 && (
-        <ReportSection title="Key Risks" delay={0.35}>
-          <ul style={{ paddingLeft: "1.25rem", lineHeight: 1.8 }}>
+      {report.mainRisks && report.mainRisks.length > 0 && (
+        <ReportSection title="Key Risks" icon={AlertTriangle} delay={0.35}>
+          <div className="space-y-2.5">
             {report.mainRisks.map((risk, i) => (
-              <li key={i} style={{ color: "var(--text-primary, #1a1a2e)", fontSize: "0.9rem" }}>{risk}</li>
+              <div key={i} className="flex gap-2.5 items-start bg-rose-500/5 border border-rose-500/10 p-3 rounded-xl">
+                <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                <span className="text-xs font-semibold text-text-main leading-relaxed">{risk}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </ReportSection>
       )}
 
       {/* Section 7: Questions */}
-      {report.questionsToAsk.length > 0 && (
-        <ReportSection title="Questions to Ask" delay={0.4}>
-          <ol style={{ paddingLeft: "1.25rem", lineHeight: 1.8 }}>
+      {report.questionsToAsk && report.questionsToAsk.length > 0 && (
+        <ReportSection title="Questions to Ask" icon={HelpCircle} delay={0.4}>
+          <div className="space-y-3">
             {report.questionsToAsk.map((q, i) => (
-              <li key={i} style={{ color: "var(--text-primary, #1a1a2e)", fontSize: "0.9rem" }}>{q}</li>
+              <div key={i} className="flex gap-3 items-start bg-black/[0.01] border border-black/[0.03] p-3 rounded-xl">
+                <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 text-primary flex items-center justify-center font-black text-[10px] shrink-0">
+                  {i + 1}
+                </div>
+                <span className="text-xs font-semibold text-text-main leading-relaxed">{q}</span>
+              </div>
             ))}
-          </ol>
+          </div>
         </ReportSection>
       )}
 
       {/* Section 8: Visit Checklist */}
-      {report.visitChecklist.length > 0 && (
-        <ReportSection title="Visit Checklist" delay={0.45}>
-          {report.visitChecklist.slice(0, 3).map((section, i) => (
-            <ChecklistSectionView key={i} section={section} />
-          ))}
+      {report.visitChecklist && report.visitChecklist.length > 0 && (
+        <ReportSection title="Visit Checklist" icon={CheckSquare} delay={0.45}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {report.visitChecklist.slice(0, 4).map((section, i) => (
+              <ChecklistSectionView key={i} section={section} />
+            ))}
+          </div>
         </ReportSection>
       )}
 
       {/* Section 9: Final Recommendation */}
-      <ReportSection title="Final Recommendation" delay={0.5}>
-        <div style={{
-          padding: "1.25rem",
-          background: "linear-gradient(135deg, #f0fdf4, #ecfdf5)",
-          borderRadius: "12px",
-          border: "1px solid #bbf7d0",
-        }}>
-          <p style={{ lineHeight: 1.7, color: "#166534", fontWeight: 500, fontSize: "0.95rem" }}>
+      <ReportSection title="Final Recommendation" icon={ThumbsUp} delay={0.5}>
+        <div className="p-6 bg-gradient-to-br from-emerald-500/5 to-emerald-600/10 border border-emerald-500/15 rounded-3xl flex gap-4 items-start shadow-xs">
+          <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 rounded-2xl shrink-0">
+            <ThumbsUp className="w-5 h-5" />
+          </div>
+          <p className="text-xs sm:text-sm leading-relaxed text-emerald-800 dark:text-emerald-300 font-semibold mt-1">
             {report.finalRecommendation}
           </p>
         </div>
       </ReportSection>
 
       {/* Footer */}
-      <div style={{
-        textAlign: "center",
-        marginTop: "3rem",
-        paddingTop: "1.5rem",
-        borderTop: "2px solid var(--border, #e2e8f0)",
-        color: "var(--text-secondary, #64748b)",
-        fontSize: "0.8rem",
-      }}>
-        <p style={{ fontWeight: 600 }}>BasaBondhu — From messy listings to 3 homes worth visiting.</p>
-        <p>This report was generated from your search data and does not constitute professional advice.</p>
+      <div className="text-center pt-8 border-t border-border-light text-[10px] text-text-muted font-bold uppercase tracking-wider space-y-1 print:pt-4">
+        <p>BasaBondhu — Dhaka House-Hunting Helper</p>
+        <p className="normal-case font-medium text-text-muted/70">
+          This report is synthesized from custom renter profile matches and is designed for guidance purposes.
+        </p>
       </div>
     </div>
   );
@@ -232,84 +236,78 @@ export default function ReportPreview({ report }: ReportPreviewProps) {
 
 // Sub-components
 
-function ReportSection({ title, delay, children }: { title: string; delay: number; children: React.ReactNode }) {
+function ReportSection({ 
+  title, 
+  icon: Icon, 
+  delay, 
+  children 
+}: { 
+  title: string; 
+  icon: React.ComponentType<{ className?: string }>; 
+  delay: number; 
+  children: React.ReactNode 
+}) {
   return (
     <motion.section
       initial={{ y: 15, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay, duration: 0.4 }}
-      style={{
-        marginBottom: "2rem",
-        padding: "1.25rem",
-        background: "var(--surface-primary, #ffffff)",
-        border: "1px solid var(--border, #e2e8f0)",
-        borderRadius: "12px",
-      }}
+      className="bg-card border border-border-light rounded-3xl p-6 shadow-xs space-y-4 transition-colors duration-300 print:border-none print:shadow-none print:p-0"
     >
-      <h2 style={{
-        fontSize: "1.1rem",
-        fontWeight: 700,
-        color: "var(--text-primary, #1a1a2e)",
-        marginBottom: "1rem",
-        paddingBottom: "0.5rem",
-        borderBottom: "1px solid var(--border, #e2e8f0)",
-      }}>
-        {title}
-      </h2>
+      <div className="flex items-center gap-2 pb-3 border-b border-border-light">
+        <Icon className="w-4 h-4 text-[#C9952B]" />
+        <h2 className="text-xs font-black uppercase text-text-main tracking-wider">{title}</h2>
+      </div>
       {children}
     </motion.section>
   );
 }
 
-function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
+function StatCard({ 
+  label, 
+  value, 
+  type 
+}: { 
+  label: string; 
+  value: number; 
+  type: "blue" | "red" | "orange" | "yellow" | "green" 
+}) {
+  const colorMap = {
+    blue: "bg-blue-500/5 border-blue-500/10 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400",
+    red: "bg-rose-500/5 border-rose-500/10 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400",
+    orange: "bg-amber-500/5 border-amber-500/10 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400",
+    yellow: "bg-yellow-500/5 border-yellow-500/10 text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-400",
+    green: "bg-emerald-500/5 border-emerald-500/10 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
+  };
+
   return (
-    <div style={{
-      padding: "0.75rem",
-      background: `${color}08`,
-      borderRadius: "10px",
-      border: `1px solid ${color}20`,
-    }}>
-      <div style={{ fontSize: "1.5rem", fontWeight: 800, color }}>{value}</div>
-      <div style={{ fontSize: "0.75rem", color: "var(--text-secondary, #64748b)" }}>{label}</div>
+    <div className={`p-4 border rounded-2xl text-center space-y-1 shadow-xs transition-all duration-300 ${colorMap[type]}`}>
+      <div className="text-2xl font-black">{value}</div>
+      <div className="text-[9px] uppercase tracking-wider font-extrabold opacity-80">{label}</div>
     </div>
   );
 }
 
 function ListingCard({ listing, rank }: { listing: ScoredListing; rank: number }) {
+  const rankColors = rank === 1 ? "bg-gold text-white" : rank === 2 ? "bg-slate-400 text-white" : "bg-amber-700 text-white";
+
   return (
-    <div style={{
-      display: "flex",
-      gap: "1rem",
-      padding: "1rem",
-      marginBottom: "0.75rem",
-      background: "var(--surface-secondary, #f8f9fa)",
-      borderRadius: "10px",
-      border: "1px solid var(--border, #e2e8f0)",
-      alignItems: "flex-start",
-    }}>
-      <div style={{
-        minWidth: "32px",
-        height: "32px",
-        borderRadius: "50%",
-        background: rank === 1 ? "#d4a853" : rank === 2 ? "#94a3b8" : "#cd7f32",
-        color: "white",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontWeight: 800,
-        fontSize: "0.85rem",
-      }}>
+    <div className="flex gap-4 p-5 bg-card border border-border-light rounded-2xl transition-all duration-300 hover:border-[#C9952B]/40">
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs shrink-0 ${rankColors}`}>
         #{rank}
       </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
-          <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>{listing.title}</span>
+      
+      <div className="space-y-2 flex-1 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <h3 className="font-extrabold text-text-main text-sm truncate">{listing.title}</h3>
           <VerdictBadge verdict={listing.verdict} size="sm" />
         </div>
-        <div style={{ fontSize: "0.8rem", color: "var(--text-secondary, #64748b)", marginBottom: "0.25rem" }}>
-          {listing.area} • ৳{listing.rent.toLocaleString()}/mo • Score: {listing.scores.total}/100
+        
+        <div className="text-[10px] text-text-muted font-bold uppercase tracking-wider">
+          {listing.area} • ৳{listing.rent.toLocaleString()}/mo • Fit Score: {listing.scores.total}/100
         </div>
-        <p style={{ fontSize: "0.8rem", color: "var(--text-primary, #1a1a2e)", lineHeight: 1.5, margin: 0 }}>
+        
+        <p className="text-xs text-text-main leading-relaxed font-semibold">
           {listing.whyItFits}
         </p>
       </div>
@@ -319,28 +317,20 @@ function ListingCard({ listing, rank }: { listing: ScoredListing; rank: number }
 
 function ChecklistSectionView({ section }: { section: ChecklistSection }) {
   return (
-    <div style={{ marginBottom: "1rem" }}>
-      <h4 style={{ fontSize: "0.9rem", fontWeight: 700, marginBottom: "0.5rem" }}>{section.category}</h4>
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+    <div className="space-y-3 bg-black/[0.01] border border-black/[0.02] p-4 rounded-2xl">
+      <h4 className="font-extrabold text-text-main text-xs uppercase tracking-wider border-b border-black/[0.03] pb-2">
+        {section.category}
+      </h4>
+      <div className="space-y-2.5">
         {section.items.slice(0, 3).map((item, i) => (
-          <div key={i} style={{ fontSize: "0.8rem", display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
-            <span>☐</span>
-            <span><strong>{item.label}</strong> — {item.description}</span>
+          <div key={i} className="flex gap-2.5 items-start text-xs text-text-main font-semibold leading-relaxed">
+            <span className="text-[#C9952B] mt-0.5 shrink-0">☐</span>
+            <span>
+              <strong className="text-text-main">{item.label}</strong> — {item.description}
+            </span>
           </div>
         ))}
       </div>
     </div>
   );
 }
-
-const thStyle: React.CSSProperties = {
-  textAlign: "left",
-  padding: "0.5rem",
-  fontWeight: 700,
-  color: "var(--text-secondary, #64748b)",
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: "0.5rem",
-  color: "var(--text-primary, #1a1a2e)",
-};

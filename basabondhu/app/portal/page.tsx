@@ -49,10 +49,10 @@ export default function PortalPage() {
       <div className="space-y-8 animate-fade-in py-4">
         {/* Header Section */}
         <div className="space-y-2 text-center md:text-left">
-          <span className="text-[#C9952B] font-serif text-[10px] sm:text-xs uppercase tracking-[0.3em] block font-bold">
+          <span className="text-[#C9952B] font-sans text-[10px] sm:text-xs uppercase tracking-[0.3em] block font-bold">
             Match Portal
           </span>
-          <h2 className="text-3xl sm:text-4xl font-serif uppercase tracking-[0.08em] text-text-main font-black">
+          <h2 className="text-3xl sm:text-4xl font-sans uppercase tracking-[0.08em] text-text-main font-black">
             Set Up Your Profile
           </h2>
           <p className="text-xs sm:text-sm text-text-muted max-w-xl leading-relaxed">
@@ -65,7 +65,7 @@ export default function PortalPage() {
           {/* Option A: Custom Guided Matcher (Spans 2 columns on desktop) */}
           <div className="relative md:col-span-2 h-[320px] rounded-3xl overflow-hidden group shadow-md border border-black/[0.03]">
             {/* Background Image */}
-            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-103" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80')` }} />
+            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-103" style={{ backgroundImage: `url('/DhakaImages/highly-populated-dhaka-city-crammed-with-unplanned-buildings-KDCB15.jpg')` }} />
             {/* Dark Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             
@@ -77,7 +77,7 @@ export default function PortalPage() {
               
               <div className="space-y-4 w-full">
                 <div className="space-y-1">
-                  <h3 className="text-2xl font-serif uppercase tracking-wider font-bold">
+                  <h3 className="text-2xl font-sans uppercase tracking-wider font-bold">
                     Guided Matcher
                   </h3>
                   <p className="text-xs text-white/70 max-w-sm font-medium">
@@ -118,7 +118,7 @@ export default function PortalPage() {
                   </div>
                   
                   <div className="space-y-1">
-                    <h4 className="text-base font-serif uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
+                    <h4 className="text-base font-sans uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
                       {p.name.split(" (")[0]}
                     </h4>
                     <p className="text-[10px] text-[#C9952B] font-bold uppercase tracking-wider">
@@ -153,7 +153,7 @@ export default function PortalPage() {
                   </div>
                   
                   <div className="space-y-1">
-                    <h4 className="text-base font-serif uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
+                    <h4 className="text-base font-sans uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
                       {p.name.split(" (")[0]}
                     </h4>
                     <p className="text-[10px] text-[#C9952B] font-bold uppercase tracking-wider">
@@ -182,7 +182,7 @@ export default function PortalPage() {
                       Executive
                     </span>
                     <div className="space-y-1">
-                      <h4 className="text-lg md:text-xl font-serif uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
+                      <h4 className="text-lg md:text-xl font-sans uppercase tracking-wide font-bold group-hover:text-[#C9952B] transition-colors">
                         {p.name.split(" (")[0]}
                       </h4>
                       <p className="text-[10px] text-[#C9952B] font-bold uppercase tracking-wider">

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSearch } from "@/context/SearchContext";
 import { 
   Link as LinkIcon, 
   ArrowRight, 
@@ -148,16 +149,24 @@ But you have **BasaBondhu**! Our Social Crawler acts as your digital detective.
 
 export default function FacebookFetcher() {
   const router = useRouter();
-  const [url, setUrl] = useState("");
-  const [crawledText, setCrawledText] = useState("");
-  const [parsed, setParsed] = useState<ParsedListing | null>(null);
-  
-  // Crawler Simulation States
-  const [isCrawling, setIsCrawling] = useState(false);
-  const [crawlLogs, setCrawlLogs] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    fbUrl: url,
+    setFbUrl: setUrl,
+    fbCrawledText: crawledText,
+    setFbCrawledText: setCrawledText,
+    fbParsed: parsed,
+    setFbParsed: setParsed,
+    fbIsCrawling: isCrawling,
+    setFbIsCrawling: setIsCrawling,
+    fbCrawlLogs: crawlLogs,
+    setFbCrawlLogs: setCrawlLogs,
+    fbError: error,
+    setFbError: setError,
+    fbSkipTour: skipTour,
+    setFbSkipTour: setSkipTour
+  } = useSearch();
+
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  const [skipTour, setSkipTour] = useState(false);
   const [tourKey, setTourKey] = useState(0);
 
   const handleReplayTour = () => {
