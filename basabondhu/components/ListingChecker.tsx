@@ -20,18 +20,26 @@ import {
 } from "lucide-react";
 
 export default function ListingChecker() {
-  const { profile } = useSearch();
-  const [rawText, setRawText] = useState("");
-  const [parsed, setParsed] = useState<ParsedListing | null>(null);
+  const { 
+    profile,
+    checkerRawText: rawText,
+    setCheckerRawText: setRawText,
+    checkerParsed: parsed,
+    setCheckerParsed: setParsed,
+    checkerOverrideRent: overrideRent,
+    setCheckerOverrideRent: setOverrideRent,
+    checkerOverrideAdvance: overrideAdvance,
+    setCheckerOverrideAdvance: setOverrideAdvance,
+    checkerOverrideServiceCharge: overrideServiceCharge,
+    setCheckerOverrideServiceCharge: setOverrideServiceCharge,
+    checkerOverrideBrokerFee: overrideBrokerFee,
+    setCheckerOverrideBrokerFee: setOverrideBrokerFee,
+    checkerApiError: apiError,
+    setCheckerApiError: setApiError
+  } = useSearch();
+
   const [isParsing, setIsParsing] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
   const [copiedText, setCopiedText] = useState(false);
-  
-  // Custom manual overrides for parsed values
-  const [overrideRent, setOverrideRent] = useState<number>(0);
-  const [overrideAdvance, setOverrideAdvance] = useState<number>(0);
-  const [overrideServiceCharge, setOverrideServiceCharge] = useState<number>(0);
-  const [overrideBrokerFee, setOverrideBrokerFee] = useState<number>(0);
 
   const updateTextAndParse = (text: string) => {
     setRawText(text);
@@ -50,7 +58,7 @@ export default function ListingChecker() {
     const scNum = result.serviceCharge ? parseInt(result.serviceCharge.replace(/\D/g, "")) : 0;
     setOverrideServiceCharge(isNaN(scNum) ? 2000 : scNum);
     
-    const bfNum = result.brokerFee && result.brokerFee !== "no-fee" ? 10000 : 0;
+    const bfNum = result.brokerFee && result.brokerFee !== "no-fee" ? Math.round((result.rent ?? 20000) * 0.5) : 0;
     setOverrideBrokerFee(bfNum);
   };
 
@@ -73,7 +81,7 @@ export default function ListingChecker() {
         setOverrideAdvance(data.advanceMonths ?? 1);
         const scNum = data.serviceCharge ? parseInt(data.serviceCharge.replace(/\D/g, "")) : 0;
         setOverrideServiceCharge(isNaN(scNum) ? 2000 : scNum);
-        const bfNum = data.brokerFee && data.brokerFee !== "no-fee" ? 10000 : 0;
+        const bfNum = data.brokerFee && data.brokerFee !== "no-fee" ? Math.round((data.rent ?? 20000) * 0.5) : 0;
         setOverrideBrokerFee(bfNum);
       }
     } catch {

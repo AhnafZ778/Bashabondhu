@@ -99,21 +99,31 @@ function RadarSimulation({ active }: { active: boolean }) {
 }
 
 export default function DemoScanAnimation({ scanSummary, profile, listings, onComplete }: DemoScanAnimationProps) {
-  const [hasStartedScan, setHasStartedScan] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
+  const {
+    setRefinedScoredListings,
+    scanStarted: hasStartedScan,
+    setScanStarted: setHasStartedScan,
+    scanStep: currentStep,
+    setScanStep: setCurrentStep,
+    scanComplete: isComplete,
+    setScanComplete: setIsComplete,
+    scanAnswers: answers,
+    setScanAnswers: setAnswers,
+    scanAiResponse: aiResponse,
+    setScanAiResponse: setAiResponse,
+    scanAiStepPage: aiStepPage,
+    setScanAiStepPage
+  } = useSearch();
+
+  const setAiStepPage = setScanAiStepPage;
+
   const [showLogistics, setShowLogistics] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [selectedSpeculatorListing, setSelectedSpeculatorListing] = useState<any | null>(null);
 
   const [activeTab, setActiveTab] = useState<"summary" | "ai">("summary");
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [aiResponse, setAiResponse] = useState("");
   const [isRefining, setIsRefining] = useState(false);
   const [refinementSuccess, setRefinementSuccess] = useState(false);
-  const [aiStepPage, setAiStepPage] = useState(0);
-
-  const { setRefinedScoredListings } = useSearch();
 
   const handleRefineSearch = async () => {
     setIsRefining(true);

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSearch } from "@/context/SearchContext";
 import { 
   Link as LinkIcon, 
   ArrowRight, 
@@ -28,7 +29,6 @@ import {
 } from "lucide-react";
 import { ParsedListing } from "@/lib/types";
 import Typewriter from "@/components/Typewriter";
-import { useSearch } from "@/context/SearchContext";
 
 // Mock Facebook URL examples for direct click testing
 const FB_EXAMPLES = [
@@ -180,16 +180,27 @@ const TOUR_STEPS = [
 
 export default function FacebookFetcher() {
   const router = useRouter();
-  const { planSearch, setIsSimulating } = useSearch();
-  const [url, setUrl] = useState("");
-  const [crawledText, setCrawledText] = useState("");
-  const [parsed, setParsed] = useState<ParsedListing | null>(null);
-  
-  // Crawler Simulation States
-  const [isCrawling, setIsCrawling] = useState(false);
-  const [crawlLogs, setCrawlLogs] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    planSearch,
+    setIsSimulating,
+    fbUrl: url,
+    setFbUrl: setUrl,
+    fbCrawledText: crawledText,
+    setFbCrawledText: setCrawledText,
+    fbParsed: parsed,
+    setFbParsed: setParsed,
+    fbIsCrawling: isCrawling,
+    setFbIsCrawling: setIsCrawling,
+    fbCrawlLogs: crawlLogs,
+    setFbCrawlLogs: setCrawlLogs,
+    fbError: error,
+    setFbError: setError,
+    fbSkipTour: skipTour,
+    setFbSkipTour: setSkipTour
+  } = useSearch();
+
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [tourKey, setTourKey] = useState(0);
   
   // Interactive Stepper Tour States
   const [showTour, setShowTour] = useState(false);

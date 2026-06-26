@@ -2,17 +2,21 @@ import { Listing } from "../types";
 import { areas } from "./areas";
 
 const propertyImages = [
-  "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1560185127-6a2806647f81?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80"
+  "/DhakaImages/images.jpg",
+  "/DhakaImages/highly-populated-dhaka-city-crammed-with-unplanned-buildings-KDCB15.jpg",
+  "/DhakaImages/8images.jpg",
+  "/DhakaImages/im88ages.jpg",
+  "/DhakaImages/im99ages.jpg",
+  "/DhakaImages/ima9ges.jpg",
+  "/DhakaImages/imag22es.jpg",
+  "/DhakaImages/imag999es.jpg",
+  "/DhakaImages/imag9es.jpg",
+  "/DhakaImages/image5s.jpg",
+  "/DhakaImages/image88s.jpg",
+  "/DhakaImages/image99s.jpg",
+  "/DhakaImages/istockphoto-2153844423-612x612.jpg"
 ];
+
 
 // 20 high-fidelity anchor listings for specific demo scenarios
 const baseListings: Listing[] = [

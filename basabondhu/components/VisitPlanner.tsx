@@ -24,7 +24,7 @@ export default function VisitPlanner() {
       {visitListings.length === 0 ? (
         <div className="bg-card border border-border-light rounded-3xl p-8 text-center shadow-xs transition-colors duration-300">
           <Calendar className="w-10 h-10 text-[#C9952B]/20 mx-auto mb-3" />
-          <h3 className="font-serif uppercase tracking-wider text-xs font-bold text-text-main">No Shortlisted Homes</h3>
+          <h3 className="font-sans uppercase tracking-wider text-xs font-bold text-text-main">No Shortlisted Homes</h3>
           <p className="text-[11px] text-text-muted mt-1 max-w-xs mx-auto">
             Select listings from top recommendations to generate verification scripts.
           </p>

@@ -186,6 +186,57 @@ export default function ListingComparison() {
               ))}
             </tr>
 
+            {/* Apartment Facing */}
+            <tr className="border-b border-border-light hover:bg-bg-alt/50">
+              <td className="py-3 px-4 text-text-muted font-medium">Apartment Facing</td>
+              {listingsToCompare.map((l) => (
+                <td key={l.id} className="py-3 px-4 text-text-main font-semibold capitalize">
+                  {l.facing ? `${l.facing} Facing` : "Facing not specified"}
+                </td>
+              ))}
+            </tr>
+
+            {/* Car Parking */}
+            <tr className="border-b border-border-light hover:bg-bg-alt/50">
+              <td className="py-3 px-4 text-text-muted font-medium">Car Parking</td>
+              {listingsToCompare.map((l) => (
+                <td key={l.id} className="py-3 px-4">
+                  {l.parkingAvailable !== undefined ? (
+                    <span className={`font-semibold ${l.parkingAvailable ? "text-visit" : "text-text-muted"}`}>
+                      {l.parkingAvailable ? "Parking Available" : "No Parking"}
+                    </span>
+                  ) : (
+                    <span className="text-text-muted italic">Confirm with Owner</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+
+            {/* Tenant Preference & House Rules */}
+            <tr className="border-b border-border-light hover:bg-bg-alt/50">
+              <td className="py-3 px-4 text-text-muted font-medium">Restrictions & House Rules</td>
+              {listingsToCompare.map((l) => (
+                <td key={l.id} className="py-3 px-4 space-y-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="inline-block px-1.5 py-0.5 bg-bg-alt border border-border-light text-[9px] font-bold rounded uppercase text-text-main">
+                      Pref: {l.tenantPreference || "Any"}
+                    </span>
+                  </div>
+                  {l.houseRules && l.houseRules.length > 0 ? (
+                    <ul className="list-disc list-inside text-[10px] text-text-muted space-y-0.5 mt-1 max-w-[200px]">
+                      {l.houseRules.map((rule, idx) => (
+                        <li key={idx} className="truncate" title={rule}>
+                          {rule}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-[10px] text-text-muted italic block mt-1">Standard house rules</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+
             {/* Disadvantages */}
             <tr className="border-b border-border-light hover:bg-bg-alt/50">
               <td className="py-3 px-4 text-text-muted font-medium">Biggest Risk / Red Flag</td>

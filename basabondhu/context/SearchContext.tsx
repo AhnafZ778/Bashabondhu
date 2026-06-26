@@ -16,6 +16,7 @@ type SearchContextType = {
   planSearch: (profile: SearchProfile) => void;
   toggleAdjustment: (adjustment: string) => void;
   toggleCompare: (id: string) => void;
+  setCompareListings: (ids: string[]) => void;
   clearCompare: () => void;
   setParsedListing: (parsed: ParsedListing | null) => void;
   resetSearch: () => void;
@@ -29,6 +30,52 @@ type SearchContextType = {
   setRefinedScoredListings: (listings: ScoredListing[] | null) => void;
   showNeighborhoodFactors: boolean;
   setShowNeighborhoodFactors: (show: boolean) => void;
+
+  // Scanning progress state
+  scanStarted: boolean;
+  setScanStarted: React.Dispatch<React.SetStateAction<boolean>>;
+  scanStep: number;
+  setScanStep: React.Dispatch<React.SetStateAction<number>>;
+  scanComplete: boolean;
+  setScanComplete: React.Dispatch<React.SetStateAction<boolean>>;
+  scanAnswers: Record<string, string>;
+  setScanAnswers: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  scanAiResponse: string;
+  setScanAiResponse: React.Dispatch<React.SetStateAction<string>>;
+  scanAiStepPage: number;
+  setScanAiStepPage: React.Dispatch<React.SetStateAction<number>>;
+
+  // Messy Listing Checker state
+  checkerRawText: string;
+  setCheckerRawText: React.Dispatch<React.SetStateAction<string>>;
+  checkerParsed: ParsedListing | null;
+  setCheckerParsed: React.Dispatch<React.SetStateAction<ParsedListing | null>>;
+  checkerOverrideRent: number;
+  setCheckerOverrideRent: React.Dispatch<React.SetStateAction<number>>;
+  checkerOverrideAdvance: number;
+  setCheckerOverrideAdvance: React.Dispatch<React.SetStateAction<number>>;
+  checkerOverrideServiceCharge: number;
+  setCheckerOverrideServiceCharge: React.Dispatch<React.SetStateAction<number>>;
+  checkerOverrideBrokerFee: number;
+  setCheckerOverrideBrokerFee: React.Dispatch<React.SetStateAction<number>>;
+  checkerApiError: string | null;
+  setCheckerApiError: React.Dispatch<React.SetStateAction<string | null>>;
+
+  // Facebook Fetcher state
+  fbUrl: string;
+  setFbUrl: React.Dispatch<React.SetStateAction<string>>;
+  fbCrawledText: string;
+  setFbCrawledText: React.Dispatch<React.SetStateAction<string>>;
+  fbParsed: ParsedListing | null;
+  setFbParsed: React.Dispatch<React.SetStateAction<ParsedListing | null>>;
+  fbIsCrawling: boolean;
+  setFbIsCrawling: React.Dispatch<React.SetStateAction<boolean>>;
+  fbCrawlLogs: string[];
+  setFbCrawlLogs: React.Dispatch<React.SetStateAction<string[]>>;
+  fbError: string | null;
+  setFbError: React.Dispatch<React.SetStateAction<string | null>>;
+  fbSkipTour: boolean;
+  setFbSkipTour: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -48,6 +95,34 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [refinedScoredListings, setRefinedScoredListings] = useState<ScoredListing[] | null>(null);
   const [showNeighborhoodFactors, setShowNeighborhoodFactors] = useState(false);
 
+  // Scanning progress state hooks
+  const [scanStarted, setScanStarted] = useState(false);
+  const [scanStep, setScanStep] = useState(0);
+  const [scanComplete, setScanComplete] = useState(false);
+  const [scanAnswers, setScanAnswers] = useState<Record<string, string>>({});
+  const [scanAiResponse, setScanAiResponse] = useState("");
+  const [scanAiStepPage, setScanAiStepPage] = useState(0);
+
+  // Messy Listing Checker state hooks
+  const [checkerRawText, setCheckerRawText] = useState("");
+  const [checkerParsed, setCheckerParsed] = useState<ParsedListing | null>(null);
+  const [checkerOverrideRent, setCheckerOverrideRent] = useState<number>(0);
+  const [checkerOverrideAdvance, setCheckerOverrideAdvance] = useState<number>(0);
+  const [checkerOverrideServiceCharge, setCheckerOverrideServiceCharge] = useState<number>(0);
+  const [checkerOverrideBrokerFee, setCheckerOverrideBrokerFee] = useState<number>(0);
+  const [checkerApiError, setCheckerApiError] = useState<string | null>(null);
+
+  // Facebook Fetcher state hooks
+  const [fbUrl, setFbUrl] = useState("");
+  const [fbCrawledText, setFbCrawledText] = useState("");
+  const [fbParsed, setFbParsed] = useState<ParsedListing | null>(null);
+  const [fbIsCrawling, setFbIsCrawling] = useState(false);
+  const [fbCrawlLogs, setFbCrawlLogs] = useState<string[]>([]);
+  const [fbError, setFbError] = useState<string | null>(null);
+  const [fbSkipTour, setFbSkipTour] = useState(false);
+
+  const [isLoaded, setIsLoaded] = useState(false);
+
   // Fetch live published listings from the harvester database
   useEffect(() => {
     fetch("/api/harvester/published-listings")
@@ -60,6 +135,126 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
       })
       .catch((err) => console.warn("Failed to fetch dynamic listings:", err));
   }, [profile]); // re-fetch when starting a new search profile
+
+  // Load state from localStorage on client-side mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("basabondhu_search_state");
+      if (saved) {
+        const parsedState = JSON.parse(saved);
+        if (parsedState.profile) setProfile(parsedState.profile);
+        if (parsedState.selectedForCompare) setSelectedForCompare(parsedState.selectedForCompare);
+        if (parsedState.parsedListing) setParsedListing(parsedState.parsedListing);
+        if (parsedState.activeAdjustments) setActiveAdjustments(parsedState.activeAdjustments);
+        if (parsedState.viewMode) setViewMode(parsedState.viewMode);
+        if (parsedState.activeTab) setActiveTab(parsedState.activeTab);
+        if (parsedState.isSimulating !== undefined) setIsSimulating(parsedState.isSimulating);
+        if (parsedState.refinedScoredListings) setRefinedScoredListings(parsedState.refinedScoredListings);
+        if (parsedState.showNeighborhoodFactors !== undefined) setShowNeighborhoodFactors(parsedState.showNeighborhoodFactors);
+        
+        // Scanning states
+        if (parsedState.scanStarted !== undefined) setScanStarted(parsedState.scanStarted);
+        if (parsedState.scanStep !== undefined) setScanStep(parsedState.scanStep);
+        if (parsedState.scanComplete !== undefined) setScanComplete(parsedState.scanComplete);
+        if (parsedState.scanAnswers) setScanAnswers(parsedState.scanAnswers);
+        if (parsedState.scanAiResponse !== undefined) setScanAiResponse(parsedState.scanAiResponse);
+        if (parsedState.scanAiStepPage !== undefined) setScanAiStepPage(parsedState.scanAiStepPage);
+
+        // Checker states
+        if (parsedState.checkerRawText !== undefined) setCheckerRawText(parsedState.checkerRawText);
+        if (parsedState.checkerParsed) setCheckerParsed(parsedState.checkerParsed);
+        if (parsedState.checkerOverrideRent !== undefined) setCheckerOverrideRent(parsedState.checkerOverrideRent);
+        if (parsedState.checkerOverrideAdvance !== undefined) setCheckerOverrideAdvance(parsedState.checkerOverrideAdvance);
+        if (parsedState.checkerOverrideServiceCharge !== undefined) setCheckerOverrideServiceCharge(parsedState.checkerOverrideServiceCharge);
+        if (parsedState.checkerOverrideBrokerFee !== undefined) setCheckerOverrideBrokerFee(parsedState.checkerOverrideBrokerFee);
+        if (parsedState.checkerApiError !== undefined) setCheckerApiError(parsedState.checkerApiError);
+
+        // Facebook states
+        if (parsedState.fbUrl !== undefined) setFbUrl(parsedState.fbUrl);
+        if (parsedState.fbCrawledText !== undefined) setFbCrawledText(parsedState.fbCrawledText);
+        if (parsedState.fbParsed) setFbParsed(parsedState.fbParsed);
+        if (parsedState.fbIsCrawling !== undefined) setFbIsCrawling(parsedState.fbIsCrawling);
+        if (parsedState.fbCrawlLogs) setFbCrawlLogs(parsedState.fbCrawlLogs);
+        if (parsedState.fbError !== undefined) setFbError(parsedState.fbError);
+        if (parsedState.fbSkipTour !== undefined) setFbSkipTour(parsedState.fbSkipTour);
+      }
+    } catch (e) {
+      console.warn("Failed to load search state from localStorage", e);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save state to localStorage on state changes
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      const stateToSave = {
+        profile,
+        selectedForCompare,
+        parsedListing,
+        activeAdjustments,
+        viewMode,
+        activeTab,
+        isSimulating,
+        refinedScoredListings,
+        showNeighborhoodFactors,
+        scanStarted,
+        scanStep,
+        scanComplete,
+        scanAnswers,
+        scanAiResponse,
+        scanAiStepPage,
+        checkerRawText,
+        checkerParsed,
+        checkerOverrideRent,
+        checkerOverrideAdvance,
+        checkerOverrideServiceCharge,
+        checkerOverrideBrokerFee,
+        checkerApiError,
+        fbUrl,
+        fbCrawledText,
+        fbParsed,
+        fbIsCrawling,
+        fbCrawlLogs,
+        fbError,
+        fbSkipTour
+      };
+      localStorage.setItem("basabondhu_search_state", JSON.stringify(stateToSave));
+    } catch (e) {
+      console.warn("Failed to save search state to localStorage", e);
+    }
+  }, [
+    isLoaded,
+    profile,
+    selectedForCompare,
+    parsedListing,
+    activeAdjustments,
+    viewMode,
+    activeTab,
+    isSimulating,
+    refinedScoredListings,
+    showNeighborhoodFactors,
+    scanStarted,
+    scanStep,
+    scanComplete,
+    scanAnswers,
+    scanAiResponse,
+    scanAiStepPage,
+    checkerRawText,
+    checkerParsed,
+    checkerOverrideRent,
+    checkerOverrideAdvance,
+    checkerOverrideServiceCharge,
+    checkerOverrideBrokerFee,
+    checkerApiError,
+    fbUrl,
+    fbCrawledText,
+    fbParsed,
+    fbIsCrawling,
+    fbCrawlLogs,
+    fbError,
+    fbSkipTour
+  ]);
 
   // Compute scored and ranked listings dynamically when profile or adjustments change
   const scoredListings = React.useMemo(() => {
@@ -78,7 +273,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     // Filter strictly by the user's selected commute anchor area
     const targetArea = profile.commuteAnchors[0]?.area;
     const filteredListings = targetArea
-      ? listToScore.filter(l => l.area.toLowerCase() === targetArea.toLowerCase())
+       ? listToScore.filter(l => l.area.toLowerCase() === targetArea.toLowerCase())
       : listToScore;
 
     // Sort by total score descending, put "avoid" at the bottom
@@ -183,6 +378,14 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     setActiveAdjustments([]); // reset adjustments on new search
     setSelectedForCompare([]);
     setRefinedScoredListings(null);
+
+    // Reset scan states
+    setScanStarted(false);
+    setScanStep(0);
+    setScanComplete(false);
+    setScanAnswers({});
+    setScanAiResponse("");
+    setScanAiStepPage(0);
   };
 
   const toggleAdjustment = (adjustment: string) => {
@@ -207,6 +410,14 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const setCompareListings = (ids: string[]) => {
+    if (ids.length > 3) {
+      setSelectedForCompare(ids.slice(0, 3));
+    } else {
+      setSelectedForCompare(ids);
+    }
+  };
+
   const clearCompare = () => {
     setSelectedForCompare([]);
   };
@@ -219,6 +430,32 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     setRefinedScoredListings(null);
     setActiveTab("search");
     setShowNeighborhoodFactors(false);
+
+    // Reset scan states
+    setScanStarted(false);
+    setScanStep(0);
+    setScanComplete(false);
+    setScanAnswers({});
+    setScanAiResponse("");
+    setScanAiStepPage(0);
+
+    // Reset checker states
+    setCheckerRawText("");
+    setCheckerParsed(null);
+    setCheckerOverrideRent(0);
+    setCheckerOverrideAdvance(0);
+    setCheckerOverrideServiceCharge(0);
+    setCheckerOverrideBrokerFee(0);
+    setCheckerApiError(null);
+
+    // Reset Facebook states
+    setFbUrl("");
+    setFbCrawledText("");
+    setFbParsed(null);
+    setFbIsCrawling(false);
+    setFbCrawlLogs([]);
+    setFbError(null);
+    setFbSkipTour(false);
   };
 
   return (
@@ -233,6 +470,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         planSearch,
         toggleAdjustment,
         toggleCompare,
+        setCompareListings,
         clearCompare,
         setParsedListing,
         resetSearch,
@@ -245,7 +483,47 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         refinedScoredListings,
         setRefinedScoredListings,
         showNeighborhoodFactors,
-        setShowNeighborhoodFactors
+        setShowNeighborhoodFactors,
+        scanStarted,
+        setScanStarted,
+        scanStep,
+        setScanStep,
+        scanComplete,
+        setScanComplete,
+        scanAnswers,
+        setScanAnswers,
+        scanAiResponse,
+        setScanAiResponse,
+        scanAiStepPage,
+        setScanAiStepPage,
+        checkerRawText,
+        setCheckerRawText,
+        checkerParsed,
+        setCheckerParsed,
+        checkerOverrideRent,
+        setCheckerOverrideRent,
+        checkerOverrideAdvance,
+        setCheckerOverrideAdvance,
+        checkerOverrideServiceCharge,
+        setCheckerOverrideServiceCharge,
+        checkerOverrideBrokerFee,
+        setCheckerOverrideBrokerFee,
+        checkerApiError,
+        setCheckerApiError,
+        fbUrl,
+        setFbUrl,
+        fbCrawledText,
+        setFbCrawledText,
+        fbParsed,
+        setFbParsed,
+        fbIsCrawling,
+        setFbIsCrawling,
+        fbCrawlLogs,
+        setFbCrawlLogs,
+        fbError,
+        setFbError,
+        fbSkipTour,
+        setFbSkipTour
       }}
     >
       {children}

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useSearch } from "@/context/SearchContext";
+import { useRouter } from "next/navigation";
 import { ScoredListing } from "@/lib/types";
 import { calculateFirstMonthCost } from "@/lib/cost-calculator";
 import { getCostWithBrokerToggle } from "@/lib/services/cost.service";
@@ -23,18 +24,21 @@ import {
   X,
   Sparkles,
   Check,
-  AlertOctagon
+  AlertOctagon,
+  GitCompare
 } from "lucide-react";
 import ProofRequestPanel from "./ProofRequestPanel";
 import HiddenCostScopeRadar from "./HiddenCostScopeRadar";
 import DrawerMap from "./DrawerMap";
 
 export default function ListingGrid() {
+  const router = useRouter();
   const { 
     profile, 
     scoredListings, 
     selectedForCompare, 
     toggleCompare,
+    setCompareListings,
     showNeighborhoodFactors,
     setShowNeighborhoodFactors
   } = useSearch();
@@ -116,14 +120,26 @@ export default function ListingGrid() {
 
       {/* Main Results Showcase */}
       <div className="mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <div className="flex items-center gap-1.5 mb-0.5">
               <Sparkles className="w-3.5 h-3.5 text-[#C9952B]" />
-              <span className="text-[10px] font-extrabold text-[#C9952B] uppercase tracking-[0.2em] font-serif">Recommendations</span>
+              <span className="text-[10px] font-extrabold text-[#C9952B] uppercase tracking-[0.2em] font-sans">Recommendations</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-serif uppercase tracking-wider text-text-main font-black transition-colors">Top Matches</h2>
+            <h2 className="text-xl sm:text-2xl font-sans uppercase tracking-wider text-text-main font-black transition-colors">Top Matches</h2>
           </div>
+          {topRecommendations.length >= 2 && (
+            <button
+              onClick={() => {
+                const ids = topRecommendations.map(r => r.id);
+                setCompareListings(ids);
+                router.push("/portal/compare");
+              }}
+              className="px-4 py-2.5 bg-primary hover:bg-secondary text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer"
+            >
+              <GitCompare className="w-3.5 h-3.5 stroke-[2]" /> Compare Top {topRecommendations.length} Matches Side-by-Side
+            </button>
+          )}
         </div>
 
         {/* 3 Prominent Image-Driven Cards */}
@@ -679,6 +695,75 @@ export default function ListingGrid() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Floating Compare Tray */}
+      {selectedForCompare.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-zinc-950/95 backdrop-blur-md border border-white/15 rounded-3xl px-6 py-4 flex flex-col sm:flex-row items-center gap-4 shadow-2xl animate-slide-up w-[92%] max-w-xl text-white">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="bg-primary/20 p-2.5 rounded-2xl border border-primary/30 shrink-0">
+              <GitCompare className="w-5 h-5 text-primary stroke-[2]" />
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-gold">Compare Shortlist</p>
+              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wide">{selectedForCompare.length} of 3 selected</p>
+            </div>
+          </div>
+
+          {/* Mini thumbnails of selected properties */}
+          <div className="flex items-center gap-2 overflow-x-auto py-1 w-full sm:w-auto shrink-0 justify-start sm:justify-center">
+            {scoredListings
+              .filter((l) => selectedForCompare.includes(l.id))
+              .map((l) => (
+                <div key={l.id} className="relative group shrink-0" title={l.title}>
+                  <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 relative">
+                    <img
+                      src={l.imageUrl || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=100&q=80"}
+                      alt={l.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/25" />
+                  </div>
+                  <button
+                    onClick={() => toggleCompare(l.id)}
+                    className="absolute -top-1.5 -right-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-0.5 shadow-md cursor-pointer border border-white/10 transition-transform active:scale-75"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            {/* Empty slots */}
+            {Array.from({ length: 3 - selectedForCompare.length }).map((_, i) => (
+              <div key={i} className="w-10 h-10 rounded-xl border border-dashed border-zinc-800 flex items-center justify-center text-zinc-600 text-[10px] font-black shrink-0">
+                EMPTY
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
+            {selectedForCompare.length < 3 && topRecommendations.length > 0 && (
+              <button
+                onClick={() => {
+                  const ids = topRecommendations.map(r => r.id);
+                  setCompareListings(ids);
+                }}
+                className="text-[9px] uppercase tracking-widest font-black text-zinc-400 hover:text-white px-3 py-2 rounded-xl border border-white/5 hover:border-white/10 shrink-0 cursor-pointer transition-colors active:scale-95"
+              >
+                Select Top 3
+              </button>
+            )}
+            
+            <button
+              onClick={() => {
+                router.push("/portal/compare");
+              }}
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4.5 py-2.5 bg-primary hover:bg-secondary text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 cursor-pointer shrink-0"
+            >
+              Compare
+              <ArrowRight className="w-3.5 h-3.5 stroke-[2]" />
+            </button>
           </div>
         </div>
       )}
