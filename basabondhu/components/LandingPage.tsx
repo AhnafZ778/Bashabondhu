@@ -951,28 +951,7 @@ export default function LandingPage() {
         )}
       </section>
 
-      {/* ──────────────────────────────────────────────────
-          CTA — Solid Theme-Integrated Background
-          ────────────────────────────────────────────────── */}
-      <section className="bg-[#0f0f0f] border-t border-white/5 text-white py-20 px-6 sm:px-10 lg:px-16 xl:px-24">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 text-left">
-          <div className="space-y-3">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif uppercase tracking-[0.15em] font-bold text-white">
-              Stop Wasting Weekends on Bad Apartments
-            </h2>
-            <p className="text-zinc-400 text-sm sm:text-base max-w-2xl leading-relaxed font-semibold">
-              Parse confusing listings, calculate real day-one upfront costs, and verify critical details with landlords — all before you leave your home.
-            </p>
-          </div>
-          <button
-            onClick={() => { router.push("/portal"); }}
-            className="px-8 py-4.5 bg-gold hover:bg-[#b5955a] text-white font-serif text-xs sm:text-sm tracking-[0.2em] font-bold rounded-lg uppercase transition-all duration-300 shadow-lg shadow-gold/15 flex items-center gap-2 cursor-pointer shrink-0"
-          >
-            Get Started Free
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      </section>
+
     </div>
   );
 }
