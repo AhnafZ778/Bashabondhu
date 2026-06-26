@@ -214,32 +214,60 @@ export default function FacebookFetcher() {
 
     let textToParse = presetText;
     if (!textToParse) {
-      // Generate a realistic listing dynamically if they pasted a custom URL
-      const lowerUrl = targetUrl.toLowerCase();
-      let area = "Mirpur";
-      if (lowerUrl.includes("uttara") || lowerUrl.includes("18wsfhxoi3")) {
-        area = "Uttara";
-        textToParse = FB_EXAMPLES[0].text;
-      } else if (lowerUrl.includes("mohammadpur") || lowerUrl.includes("1bw8e4znhw")) {
-        area = "Mohammadpur";
-        textToParse = FB_EXAMPLES[1].text;
-      } else if (lowerUrl.includes("banani") || lowerUrl.includes("1bs3hbnzay")) {
-        area = "Banani";
-        textToParse = FB_EXAMPLES[2].text;
-      } else if (lowerUrl.includes("banasree")) {
-        area = "Banasree";
-      } else if (lowerUrl.includes("badda")) {
-        area = "Badda";
-      } else if (lowerUrl.includes("gulshan")) {
-        area = "Gulshan";
-      } else if (lowerUrl.includes("dhanmondi")) {
-        area = "Dhanmondi";
-      } else if (lowerUrl.includes("bashundhara")) {
-        area = "Bashundhara";
+      try {
+        setCrawlLogs(prev => [...prev, "🌐 Querying backend crawler for Facebook post content..."]);
+        const fetchRes = await fetch("/api/facebook/fetch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: targetUrl })
+        });
+        const fetchData = await fetchRes.json();
+        
+        if (fetchData.ok && fetchData.text) {
+          const caption = fetchData.text;
+          textToParse = caption;
+          setCrawlLogs(prev => [...prev, `✅ Post caption successfully fetched: "${caption.substring(0, 50)}..."`]);
+        } else {
+          setCrawlLogs(prev => [
+            ...prev, 
+            `⚠️ Real-time crawl failed: ${fetchData.error || "empty response"}. Using preset match / mock generator...`
+          ]);
+        }
+      } catch (e: any) {
+        setCrawlLogs(prev => [
+          ...prev, 
+          `⚠️ Crawler connection error: ${e.message}. Using preset match / mock generator...`
+        ]);
       }
 
       if (!textToParse) {
-        textToParse = `${area} apartment for rent. 3 Bedrooms, 3 Bathrooms, lift available, cylinder gas, no generator. Rent: 28000 BDT. Service charge: 3500. Family or bachelors allowed. 2 months advance. Shifting from July.`;
+        // Generate a realistic listing dynamically if they pasted a custom URL
+        const lowerUrl = targetUrl.toLowerCase();
+        let area = "Mirpur";
+        if (lowerUrl.includes("uttara") || lowerUrl.includes("18wsfhxoi3")) {
+          area = "Uttara";
+          textToParse = FB_EXAMPLES[0].text;
+        } else if (lowerUrl.includes("mohammadpur") || lowerUrl.includes("1bw8e4znhw")) {
+          area = "Mohammadpur";
+          textToParse = FB_EXAMPLES[1].text;
+        } else if (lowerUrl.includes("banani") || lowerUrl.includes("1bs3hbnzay")) {
+          area = "Banani";
+          textToParse = FB_EXAMPLES[2].text;
+        } else if (lowerUrl.includes("banasree")) {
+          area = "Banasree";
+        } else if (lowerUrl.includes("badda")) {
+          area = "Badda";
+        } else if (lowerUrl.includes("gulshan")) {
+          area = "Gulshan";
+        } else if (lowerUrl.includes("dhanmondi")) {
+          area = "Dhanmondi";
+        } else if (lowerUrl.includes("bashundhara")) {
+          area = "Bashundhara";
+        }
+
+        if (!textToParse) {
+          textToParse = `${area} apartment for rent. 3 Bedrooms, 3 Bathrooms, lift available, cylinder gas, no generator. Rent: 28000 BDT. Service charge: 3500. Family or bachelors allowed. 2 months advance. Shifting from July.`;
+        }
       }
     }
 
