@@ -82,7 +82,7 @@ export default function Navbar() {
             </>
           ) : (
             <Link
-              href="/portal"
+              href="/portal/wizard"
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gold hover:bg-[#b5955a] text-white text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-gold/15 border border-gold/20 cursor-pointer"
             >
               Launch Portal
