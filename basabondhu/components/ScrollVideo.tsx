@@ -9,7 +9,7 @@ const TOTAL_FRAMES = 236;
  */
 function getFrameUrl(index: number): string {
   const padded = String(index).padStart(3, "0");
-  return `/frames/ezgif-frame-${padded}.png`;
+  return `/frames/ezgif-frame-${padded}.webp`;
 }
 
 /**
@@ -57,8 +57,30 @@ export default function ScrollVideo() {
   const drawFrame = useCallback((frameIndex: number) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
-    const img = imagesRef.current[frameIndex];
-    if (!canvas || !ctx || !img || !img.complete || !img.naturalWidth) return;
+    if (!canvas || !ctx) return;
+
+    let img = imagesRef.current[frameIndex];
+    
+    // If target frame is not loaded, fall back to the closest loaded frame to avoid flickering
+    if (!img || !img.complete || !img.naturalWidth) {
+      let closestDist = Infinity;
+      let closestIndex = -1;
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        const candidate = imagesRef.current[i];
+        if (candidate && candidate.complete && candidate.naturalWidth) {
+          const dist = Math.abs(i - frameIndex);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestIndex = i;
+          }
+        }
+      }
+      if (closestIndex !== -1) {
+        img = imagesRef.current[closestIndex];
+      }
+    }
+
+    if (!img || !img.complete || !img.naturalWidth) return;
 
     // Match canvas internal resolution to its display size
     const dpr = window.devicePixelRatio || 1;
@@ -152,39 +174,73 @@ export default function ScrollVideo() {
   }, [animate]);
 
   /**
-   * Pre-load all frame images on mount.
+   * Pre-load all frame images progressively.
    */
   useEffect(() => {
     let loadedCount = 0;
     const images: HTMLImageElement[] = [];
 
+    // Instantiate all images so the array index access works
     for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = getFrameUrl(i + 1);
-      img.onload = () => {
-        loadedCount++;
-        setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
-        if (loadedCount === TOTAL_FRAMES) {
-          setIsLoaded(true);
-          drawFrame(0);
-        }
-      };
-      img.onerror = () => {
-        loadedCount++;
-        setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
-        if (loadedCount === TOTAL_FRAMES) {
-          setIsLoaded(true);
-          drawFrame(0);
-        }
-      };
-      images.push(img);
+      images.push(new Image());
     }
-
     imagesRef.current = images;
+
+    // Load first frame immediately to resolve preloader
+    const firstImg = images[0];
+    firstImg.onload = () => {
+      loadedCount++;
+      setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+      setIsLoaded(true);
+      drawFrame(0);
+
+      // Start background loading of all other frames
+      for (let i = 1; i < TOTAL_FRAMES; i++) {
+        const img = images[i];
+        img.onload = () => {
+          loadedCount++;
+          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+          if (!isAnimatingRef.current) {
+            drawFrame(Math.round(currentFrameRef.current));
+          }
+        };
+        img.onerror = () => {
+          loadedCount++;
+          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+        };
+        img.src = getFrameUrl(i + 1);
+      }
+    };
+    
+    firstImg.onerror = () => {
+      // If the first image fails to load, still make experience interactive
+      loadedCount++;
+      setIsLoaded(true);
+      
+      for (let i = 1; i < TOTAL_FRAMES; i++) {
+        const img = images[i];
+        img.onload = () => {
+          loadedCount++;
+          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+          if (!isAnimatingRef.current) {
+            drawFrame(Math.round(currentFrameRef.current));
+          }
+        };
+        img.onerror = () => {
+          loadedCount++;
+          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+        };
+        img.src = getFrameUrl(i + 1);
+      }
+    };
+
+    firstImg.src = getFrameUrl(1);
 
     return () => {
       images.forEach((img) => {
         img.src = "";
+        img.onload = null;
+        img.onerror = null;
       });
     };
   }, [drawFrame]);
