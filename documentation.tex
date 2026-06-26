@@ -1,0 +1,1833 @@
+% ============================================================================
+%  BasaBondhu — Complete Project Documentation
+%  Compiled with: pdflatex documentation.tex
+% ============================================================================
+
+\documentclass[12pt, a4paper, oneside]{report}
+
+% ── Packages ────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{parskip}
+\usepackage{multicol}
+\usepackage{pifont}
+\usepackage{amsmath}
+\usepackage{caption}
+
+% ── Colour Definitions ─────────────────────────────────────────────────────
+\definecolor{primary}{HTML}{C9952B}
+\definecolor{darkbg}{HTML}{1A1A2E}
+\definecolor{codeblue}{HTML}{4A90D9}
+\definecolor{codegray}{HTML}{5F6368}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{linkcolor}{HTML}{1A73E8}
+
+% ── Hyperref Setup ──────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true,
+  linkcolor=darkbg,
+  urlcolor=linkcolor,
+  citecolor=primary,
+  pdftitle={BasaBondhu -- Complete Project Documentation},
+  pdfauthor={BasaBondhu Development Team},
+  pdfsubject={Project Documentation},
+  pdfkeywords={BasaBondhu, Next.js, React, Dhaka, Housing, Renter Intelligence}
+}
+
+% ── Listings Configuration ──────────────────────────────────────────────────
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codeblue}\bfseries,
+  commentstyle=\color{codegray}\itshape,
+  stringstyle=\color{primary},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{codegray!30},
+  numbers=left,
+  numberstyle=\tiny\color{codegray},
+  numbersep=8pt,
+  tabsize=2,
+  showstringspaces=false,
+  captionpos=b
+}
+
+% ── Header / Footer ────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{codegray}{\leftmark}}
+\fancyhead[R]{\small\textcolor{primary}{BasaBondhu}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ── Section Formatting ──────────────────────────────────────────────────────
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{darkbg}}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+
+% ── Custom Commands ─────────────────────────────────────────────────────────
+\newcommand{\filepath}[1]{\texttt{\small\color{codeblue}#1}}
+\newcommand{\component}[1]{\textbf{\color{darkbg}#1}}
+\newcommand{\apiendpoint}[1]{\texttt{\small\color{primary}#1}}
+\newcommand{\typename}[1]{\texttt{\small\color{codeblue}#1}}
+
+% ============================================================================
+\begin{document}
+
+% ── Title Page ──────────────────────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+
+{\Huge\bfseries\textcolor{darkbg}{BasaBondhu}\par}
+\vspace{0.5cm}
+{\Large\textcolor{primary}{Guided House-Hunting in Bangladesh}\par}
+\vspace{1.5cm}
+
+{\large\textcolor{codegray}{Complete Project Documentation}\par}
+\vspace{0.3cm}
+{\textcolor{codegray}{Version 0.1.0}\par}
+
+\vfill
+
+{\large\textcolor{codegray}{From messy listings to 3 homes worth visiting.\\
+Check costs, trade-offs, and call scripts.}\par}
+
+\vspace{2cm}
+
+{\textcolor{codegray}{BasaBondhu Development Team}\par}
+{\textcolor{codegray}{\today}\par}
+\end{titlepage}
+
+% ── Table of Contents ───────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% ============================================================================
+% CHAPTER 1 — INTRODUCTION
+% ============================================================================
+\chapter{Introduction}
+
+\section{What is BasaBondhu?}
+
+BasaBondhu (literally ``House Friend'' in Bangla) is a \textbf{renter intelligence platform} purpose-built for house-hunters navigating the notoriously opaque Dhaka rental market. The platform transforms unstructured, scattered Facebook group listings into structured, scored, and actionable intelligence.
+
+BasaBondhu is \emph{not} a listing aggregator. It is a guided decision-making companion that helps users:
+
+\begin{itemize}[leftmargin=2em]
+  \item Parse and structure messy Bengali/Banglish Facebook listing text.
+  \item Score and rank flats against personal budget, commute, and lifestyle requirements.
+  \item Surface hidden costs and ambiguities that landlords or brokers routinely omit.
+  \item Generate phone call scripts and physical visit checklists before even leaving the house.
+  \item Compile a print-ready assessment report to carry during flat visits.
+\end{itemize}
+
+\section{Target Users}
+
+\begin{longtable}{p{3.5cm} p{10cm}}
+\toprule
+\textbf{User Persona} & \textbf{Description} \\
+\midrule
+\endhead
+Rafi \& Mita (Demo Couple) & Moving from Cumilla to Dhaka. Rafi works in Banani, Mita works from home. Seeking a safe, family-friendly flat. \\
+\midrule
+Nusrat (Female Student) & University student looking for a secure female-only sublet room or hostel near Dhanmondi. Extremely budget-conscious. \\
+\midrule
+Abrar (Single Professional) & Software engineer working in Mohakhali, looking for a bachelor-friendly shared room or small flat. Prefers direct owners. \\
+\midrule
+Haque Family (4 Members) & Shifting to be closer to their children's school in Mohammadpur. High importance on gas line and school access. \\
+\midrule
+Tasnim (Working Woman) & Corporate manager relocated to Gulshan/Banani. Security, generator backup, late-night entry access, and lift are absolute priorities. \\
+\midrule
+Arafat (Group Flatmates) & Group of 3 bachelors pooling rent in Bashundhara/Badda. Budget per head is low but collectively they afford a decent flat. \\
+\bottomrule
+\end{longtable}
+
+\section{Technology Stack}
+
+\begin{longtable}{p{4cm} p{9cm}}
+\toprule
+\textbf{Technology} & \textbf{Role} \\
+\midrule
+\endhead
+Next.js 16 (App Router) & Full-stack React framework with file-system routing, server components, and API routes. \\
+\midrule
+React 19 & UI rendering with hooks, context, and memoisation. \\
+\midrule
+TypeScript 5 & Static type safety across the entire codebase. \\
+\midrule
+Tailwind CSS 4 & Utility-first CSS framework for responsive, premium design. \\
+\midrule
+Framer Motion 12 & Declarative animations, page transitions, and micro-interactions. \\
+\midrule
+Leaflet + React-Leaflet 5 & Interactive 2D maps with custom marker badges for Dhaka areas. \\
+\midrule
+Lucide React & Icon library used across all UI components. \\
+\midrule
+Clsx + Tailwind-Merge & Conditional class name merging utilities. \\
+\midrule
+Google Fonts (Inter, Cormorant Garamond) & Premium typography pairing: Inter for UI, Cormorant Garamond for headings. \\
+\bottomrule
+\end{longtable}
+
+
+% ============================================================================
+% CHAPTER 2 — ARCHITECTURE
+% ============================================================================
+\chapter{Architecture Overview}
+
+\section{High-Level Flow}
+
+The application follows a linear yet branching pipeline:
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{Landing Page} --- Cinematic entrance with scroll-driven video simulation and dual entry paths.
+  \item \textbf{Entry Path A: Guided Wizard} --- Collect household details, budget, commute anchors, and deal-breakers.
+  \item \textbf{Entry Path B: Facebook Fetcher} --- Paste a Facebook URL, crawl the listing, and auto-extract structured data.
+  \item \textbf{Scan Simulator} --- Animated radar scanning simulation that matches, filters, and scores listings.
+  \item \textbf{Portal Dashboard} --- Multi-tab workspace containing all analysis tools.
+  \item \textbf{Assessment Report} --- Compiled printable output of the entire analysis.
+\end{enumerate}
+
+\section{Directory Structure}
+
+\begin{lstlisting}[language={}, caption={Project Directory Tree}]
+basabondhu/
+  app/
+    layout.tsx              # Root layout with SearchProvider
+    page.tsx                # Landing page entry
+    globals.css             # Global CSS and design tokens
+    portal/
+      layout.tsx            # Portal tab navigation shell
+      page.tsx              # Plan Search (main dashboard)
+      parser/page.tsx       # Check Listing page
+      fb-fetch/page.tsx     # Facebook Fetcher page
+      compare/page.tsx      # Compare Homes page
+      visit/page.tsx        # Prepare Visit page
+      report/page.tsx       # Assessment Report page
+      wizard/page.tsx       # Guided Matcher Wizard
+    api/
+      areas/                # Area data API
+      compare/              # Comparison engine API
+      demo/                 # Demo scan API
+      facebook/fetch/       # Facebook crawler API
+      harvester/            # Harvester data pipeline API
+      listings/             # Listings data API
+      parse/                # Text parser API
+      report/               # Report generation API
+      search/               # Search profile API
+  components/
+    LandingPage.tsx         # Cinematic landing page
+    ScrollVideo.tsx         # Scroll-driven video simulation
+    Wizard.tsx              # Guided matcher wizard
+    FacebookFetcher.tsx     # Facebook link crawler UI
+    ListingChecker.tsx      # Messy listing text checker
+    AreaRecommendations.tsx # Area recommendation cards
+    DemoScanAnimation.tsx   # Radar scan simulator
+    ListingGrid.tsx         # Scored listing result grid
+    DrawerMap.tsx           # Leaflet map wrapper
+    DrawerMapInner.tsx      # Map markers and badges
+    HiddenCostScopeRadar.tsx# Hidden cost visualisation
+    ListingComparison.tsx   # Side-by-side comparison
+    VisitPlanner.tsx        # Visit preparation workspace
+    ReportPreview.tsx       # Assessment report compilation
+    Navbar.tsx              # Top navigation bar
+    Skeletons.tsx           # Loading skeleton components
+    Typewriter.tsx          # Typing animation effect
+    VerdictBadge.tsx        # Verdict indicator badge
+    ErrorBoundary.tsx       # React error boundary
+    PersonaIcons.tsx        # SVG persona icon set
+    ModeSelector.tsx        # Mode selection component
+    ProofRequestPanel.tsx   # Proof request UI panel
+    MapScanner.tsx          # Map scanner wrapper
+    MapScannerInner.tsx     # Map scanner core logic
+    HousingProfileSummary.tsx # Profile summary card
+  context/
+    SearchContext.tsx        # Global state management
+  lib/
+    types.ts                 # Core TypeScript type definitions
+    parser.ts                # Regex-based listing text parser
+    scoring.ts               # Multi-factor scoring algorithm
+    cost-calculator.ts       # First-month cost calculator
+    domain/
+      hidden-cost-sources.ts # Hidden cost type definitions
+    data/
+      areas.ts               # 13 Dhaka area profiles
+      listings.ts            # Seed listing database
+      messy-examples.ts      # Sample messy listing texts
+      personas.ts            # Preset renter personas
+    services/
+      area-recommendation.service.ts
+      checklist.service.ts
+      compare.service.ts
+      cost.service.ts
+      demo-scan.service.ts
+      hidden-cost-scope.service.ts
+      listing-parser.service.ts
+      openrouter.service.ts
+      question.service.ts
+      recommendation.service.ts
+      report.service.ts
+      scoring.service.ts
+      search-profile.service.ts
+    repositories/
+      area.repository.ts
+      listing.repository.ts
+    utils/
+      currency.ts
+      text-normalizer.ts
+    harvester/               # Data harvester pipeline
+      chunk-builder.service.ts
+      dedupe.service.ts
+      enrichment.service.ts
+      extractor.service.ts
+      freshness.service.ts
+      google-sheet-importer.service.ts
+      harvester-orchestrator.service.ts
+      listing-mapper.ts
+      offer-snapshot.service.ts
+      openrouter-extractor.service.ts
+      partner-csv-importer.service.ts
+      public-url-ingestion.service.ts
+      quality.service.ts
+      raw-document.service.ts
+      source-registry.service.ts
+      structured-listing-builder.service.ts
+      text-normalizer.service.ts
+      user-paste-ingestion.service.ts
+    types/
+      harvester.ts           # Harvester-specific types
+\end{lstlisting}
+
+
+\section{State Management --- SearchContext}
+
+All application state is managed through a single React Context provider (\filepath{context/SearchContext.tsx}) that wraps the entire application. The context maintains:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Search Profile} --- User preferences, budget, commute anchors, and deal-breakers.
+  \item \textbf{Scored Listings} --- Dynamically computed ranked listings based on the active profile.
+  \item \textbf{Comparison Selections} --- Up to 3 listings selected for side-by-side comparison.
+  \item \textbf{Scan State} --- Progress tracking for the scan simulator animation.
+  \item \textbf{Checker State} --- Messy listing checker input, parsed output, and manual overrides.
+  \item \textbf{Facebook Fetcher State} --- URL, crawled text, parsed data, and crawl logs.
+  \item \textbf{View Mode} --- Toggles between ``landing'' and ``portal'' views.
+  \item \textbf{Active Tab} --- Current portal tab (search, check, compare, visit).
+  \item \textbf{LocalStorage Persistence} --- All state is serialised and restored from \texttt{localStorage} across page reloads.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 3 — LANDING PAGE
+% ============================================================================
+\chapter{Landing Page}
+
+\section{Overview}
+
+The landing page (\filepath{components/LandingPage.tsx}) serves as the cinematic entrance to BasaBondhu. It is designed with high-contrast typography, premium gold gradients, and an immersive scroll-driven experience.
+
+\section{Scroll-Driven Video Simulation}
+
+\component{ScrollVideo.tsx} implements a canvas-driven, frame-by-frame scroll animation that renders a sequence of pre-loaded Dhaka cityscape images. As the user scrolls, the canvas progresses through the frames, creating a cinematic video-like effect without requiring actual video playback.
+
+\subsection{How to Use}
+
+\begin{enumerate}[leftmargin=2em]
+  \item Open the application at the root URL (\texttt{/}).
+  \item Scroll down slowly to experience the frame-by-frame video simulation.
+  \item The animation progresses proportionally to scroll depth.
+\end{enumerate}
+
+\section{Navigation Entry Points}
+
+The landing page presents two primary call-to-action paths:
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{Start Planning (Guided Wizard)} --- Routes the user to the Guided Matcher Wizard at \texttt{/portal/wizard} where they configure their renter profile step by step.
+  \item \textbf{Crawl a Listing (Facebook Fetcher)} --- Routes the user to the Facebook Fetcher at \texttt{/portal/fb-fetch} where they can paste a Facebook listing URL for instant analysis.
+\end{enumerate}
+
+\section{Design Elements}
+
+\begin{itemize}[leftmargin=2em]
+  \item Gold accent colour (\texttt{\#C9952B}) used for brand highlights and CTAs.
+  \item Serif/sans-serif font pairing: Cormorant Garamond for hero headings, Inter for body text.
+  \item Dark gradient overlays on imagery for text readability.
+  \item Framer Motion animations for fade-in and slide-up transitions.
+  \item Fully responsive layout adapting to mobile, tablet, and desktop viewports.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 4 — GUIDED MATCHER WIZARD
+% ============================================================================
+\chapter{Guided Matcher Wizard}
+
+\section{Overview}
+
+The Guided Matcher Wizard (\filepath{components/Wizard.tsx}) collects all necessary information about a prospective renter through an animated multi-step form. This data is used to build a \typename{SearchProfile} that drives all downstream scoring and matching.
+
+\section{Steps}
+
+\subsection{Step 1: Household Details}
+
+Collects the user's household configuration. Options include:
+
+\begin{longtable}{p{4cm} p{9cm}}
+\toprule
+\textbf{Household Type} & \textbf{Description} \\
+\midrule
+\endhead
+\texttt{family} & Full family unit (parents + children). \\
+\texttt{couple} & Married or unmarried couple. \\
+\texttt{bachelor} & Single male living alone or sharing with others. \\
+\texttt{student} & University or college student (male or female). \\
+\texttt{working-woman} & Female professional living alone or sharing with females. \\
+\texttt{group} & Group of flatmates (typically 2--4 bachelors). \\
+\texttt{single-professional} & Single working professional (gender-neutral). \\
+\bottomrule
+\end{longtable}
+
+Also collects the \textbf{Looking For} preference:
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{full-flat} --- An entire flat/apartment.
+  \item \texttt{room-sublet} --- A single room in a shared flat.
+  \item \texttt{checking-listing} --- Just checking/analysing a listing (no active search).
+\end{itemize}
+
+\subsection{Step 2: Financial Boundaries}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Monthly Budget} (\texttt{budgetMonthly}) --- Maximum monthly rent the user can afford (in BDT).
+  \item \textbf{Max First Month Cash} (\texttt{maxFirstMonthCash}) --- Total available upfront cash including advance deposit, first month rent, broker fee, moving cost, and service charge.
+\end{itemize}
+
+\subsection{Step 3: Commute Anchors}
+
+Users specify their primary commute destinations (office, university, school). Each anchor is defined by:
+
+\begin{itemize}[leftmargin=2em]
+  \item A \textbf{label} (e.g., ``Rafi's Office'', ``University'', ``School'').
+  \item An \textbf{area} selected from 13 supported Dhaka areas.
+\end{itemize}
+
+Optional fields include: husband's job location, wife's job location, child's school location, healthcare proximity needs, car ownership, preferred flat facing direction (south/east/west/north), nearby market preference, and environment preference (quiet/commercial/any).
+
+\subsection{Step 4: Deal Breakers \& Priorities}
+
+\paragraph{Priorities} (ranked preferences):
+
+\begin{multicols}{2}
+\begin{itemize}[leftmargin=1em]
+  \item \texttt{commute} --- Short commute
+  \item \texttt{rent} --- Low rent
+  \item \texttt{school} --- Near schools
+  \item \texttt{safety} --- Safe neighbourhood
+  \item \texttt{gas} --- Gas line available
+  \item \texttt{lift} --- Lift/elevator
+  \item \texttt{generator} --- Generator backup
+  \item \texttt{no-waterlogging} --- Flood-free area
+  \item \texttt{bachelor-friendly} --- Bachelor allowed
+  \item \texttt{family-friendly} --- Family preferred
+  \item \texttt{quiet-area} --- Quiet surroundings
+  \item \texttt{direct-owner} --- No broker
+\end{itemize}
+\end{multicols}
+
+\paragraph{Deal Breakers} (hard disqualifiers):
+
+\begin{multicols}{2}
+\begin{itemize}[leftmargin=1em]
+  \item \texttt{broker} --- Broker involvement
+  \item \texttt{high-advance} --- 3+ months advance
+  \item \texttt{family-only} --- Family-only policy
+  \item \texttt{no-lift} --- No lift
+  \item \texttt{no-gas} --- No gas connection
+  \item \texttt{heavy-waterlogging} --- High flood risk
+  \item \texttt{far-from-transport} --- Far from transit
+\end{itemize}
+\end{multicols}
+
+\section{Persona Quick Selectors}
+
+Instead of filling the wizard manually, users can select from pre-built renter personas. Each persona pre-fills the entire \typename{SearchProfile} with realistic Dhaka renter parameters. Personas are defined in \filepath{lib/data/personas.ts} and include custom SVG icons rendered by \filepath{components/PersonaIcons.tsx}.
+
+\subsection{How to Use}
+
+\begin{enumerate}[leftmargin=2em]
+  \item Navigate to the Portal (\texttt{/portal}).
+  \item If no profile exists, the persona selection grid is displayed automatically.
+  \item Click any persona card to instantly load their profile.
+  \item Alternatively, click ``Custom Guided Matcher'' to start the step-by-step wizard.
+\end{enumerate}
+
+
+% ============================================================================
+% CHAPTER 5 — FACEBOOK FETCHER
+% ============================================================================
+\chapter{Facebook Crawler \& Structuring Fetcher}
+
+\section{Overview}
+
+The Facebook Fetcher (\filepath{components/FacebookFetcher.tsx}) allows users to paste a Facebook listing URL and receive structured, analysed data extracted from the raw post caption.
+
+\section{Architecture}
+
+\subsection{Frontend --- FacebookFetcher Component}
+
+The UI provides:
+
+\begin{itemize}[leftmargin=2em]
+  \item A URL input field with validation for Facebook domains.
+  \item A real-time crawl log display showing each stage of the fetching process.
+  \item Animated progress indicators during crawling.
+  \item A structured data card displaying all extracted fields after parsing.
+  \item A ``Start Scanning Similar Homes Now'' button that auto-fills the extracted data into a \typename{SearchProfile} and triggers the scan simulator.
+\end{itemize}
+
+\subsection{Backend --- API Route}
+
+The server-side route at \apiendpoint{/api/facebook/fetch} performs:
+
+\begin{enumerate}[leftmargin=2em]
+  \item Accepts a Facebook URL via POST request.
+  \item Simulates a Googlebot user-agent header to bypass Facebook's preview restrictions.
+  \item Extracts the raw post caption text from the HTML meta tags.
+  \item Returns the un-truncated text content to the frontend.
+\end{enumerate}
+
+\section{Auto-Fill Extraction Engine}
+
+After fetching raw text, the frontend invokes the regex-based parser (\filepath{lib/parser.ts}) to extract:
+
+\begin{longtable}{p{4cm} p{9cm}}
+\toprule
+\textbf{Field} & \textbf{Extraction Method} \\
+\midrule
+\endhead
+Area/Location & String matching against 13 known Dhaka areas. \\
+\midrule
+Rent & Regex patterns for ``28k'', ``28,000'', or ``rent/bhara'' labels. \\
+\midrule
+Bedrooms & Pattern ``N bed/bedroom/room'' extraction. \\
+\midrule
+Bathrooms & Pattern ``N bath/bathroom'' extraction. \\
+\midrule
+Tenant Preference & Keywords: ``family only'', ``bachelor'', ``female'', ``student'', ``any''. \\
+\midrule
+Advance Months & Pattern ``N month advance/security'' extraction. \\
+\midrule
+Lift & ``lift'' keyword presence/absence check. \\
+\midrule
+Generator & ``generator/gen backup/power backup'' keyword check. \\
+\midrule
+Gas Type & ``cylinder/LPG'' vs ``line gas/Titas'' differentiation. \\
+\midrule
+Service Charge & Amount extraction or ``extra/included'' classification. \\
+\midrule
+Broker Fee & ``direct owner'' vs ``broker fee'' detection. \\
+\midrule
+Availability & Date/month extraction from availability keywords. \\
+\bottomrule
+\end{longtable}
+
+The parser also supports \textbf{Bangla} keywords (e.g., ``bhara/ভাড়া'', ``ব্যাচেলর'', ``সিলিন্ডার'', ``লাইন গ্যাস'').
+
+\section{Scanning Trigger}
+
+Clicking ``Start Scanning Similar Homes Now'' performs:
+
+\begin{enumerate}[leftmargin=2em]
+  \item Constructs a \typename{SearchProfile} from the parsed fields.
+  \item Calls \texttt{planSearch()} on the SearchContext to initialise the profile.
+  \item Activates the scan simulator animation.
+  \item Redirects to the portal dashboard with matched results.
+\end{enumerate}
+
+
+% ============================================================================
+% CHAPTER 6 — LISTING CHECKER
+% ============================================================================
+\chapter{Raw Listing Checker}
+
+\section{Overview}
+
+The Listing Checker (\filepath{components/ListingChecker.tsx}) provides an alternate workflow for analysing any arbitrary listing text. Users paste raw text from Facebook groups, WhatsApp messages, or broker descriptions.
+
+\section{Features}
+
+\subsection{Text Parsing}
+
+The component sends the pasted text to \apiendpoint{/api/parse} which invokes \filepath{lib/parser.ts} to extract structured fields. It also accepts optional \textbf{manual overrides} for:
+
+\begin{itemize}[leftmargin=2em]
+  \item Rent amount
+  \item Advance months
+  \item Service charge
+  \item Broker fee
+\end{itemize}
+
+These overrides allow users to correct the parser's output when they have additional information.
+
+\subsection{Red Flags \& Warning Engine}
+
+After parsing, the checker surfaces warning bullet points for common issues:
+
+\begin{itemize}[leftmargin=2em]
+  \item ``Bachelor restrictions apply''
+  \item ``Unspecified service charge''
+  \item ``No gas pipeline mentioned''
+  \item ``High advance requirement (3+ months)''
+  \item ``Broker fee applicable''
+  \item ``Missing location information''
+\end{itemize}
+
+\subsection{Suitability Verdict Badge}
+
+The \component{VerdictBadge} component (\filepath{components/VerdictBadge.tsx}) renders a colour-coded badge:
+
+\begin{longtable}{p{3cm} p{3cm} p{7cm}}
+\toprule
+\textbf{Verdict} & \textbf{Colour} & \textbf{Meaning} \\
+\midrule
+\endhead
+\texttt{visit} & Green & This listing is worth a physical visit. \\
+\texttt{maybe} & Yellow/Amber & Potentially suitable but needs clarification. \\
+\texttt{call-first} & Orange & Hidden costs or ambiguities detected --- call before visiting. \\
+\texttt{avoid} & Red & Deal-breakers triggered or critically poor fit. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Messy Examples Library}
+
+The checker includes a library of sample messy listing texts (\filepath{lib/data/messy-examples.ts}) that users can load with a single click to test the parser. These examples replicate real-world Facebook group posts in Banglish.
+
+
+% ============================================================================
+% CHAPTER 7 — SCORING ENGINE
+% ============================================================================
+\chapter{Multi-Factor Scoring Engine}
+
+\section{Overview}
+
+The scoring engine (\filepath{lib/scoring.ts}) evaluates every listing against the user's \typename{SearchProfile} using a weighted multi-factor algorithm. Each listing receives a composite score out of 100.
+
+\section{Scoring Factors}
+
+\subsection{1. Budget Fit (Weight: 25\%)}
+
+\begin{equation}
+\text{budgetFit} = \max\!\left(0,\; 100 - \frac{(\text{rent} - \text{budgetMonthly})}{\text{budgetMonthly}} \times 200\right)
+\end{equation}
+
+If rent is within budget, the score is 100. Exceeding the budget results in a steep penalty.
+
+\subsection{2. First Month Fit (Weight: 10\%)}
+
+\begin{equation}
+\text{firstMonthFit} = \max\!\left(0,\; 100 - \frac{(\text{totalFirstMonthCost} - \text{maxFirstMonthCash})}{\text{maxFirstMonthCash}} \times 150\right)
+\end{equation}
+
+Evaluates whether the user can afford the total move-in cost (rent + advance + service charge + broker fee + moving estimate).
+
+\subsection{3. Commute Fit (Weight: 20\%)}
+
+Uses a 13$\times$13 \textbf{commute compatibility matrix} mapping all supported Dhaka areas. Scores range from 100 (same area) to 20 (very poor connectivity). If multiple commute anchors are defined, the average score is used.
+
+Supported areas: Banasree, Badda, Merul Badda, Mohakhali, Tejgaon, Mohammadpur, Lalmatia, Mirpur, Uttara, Bashundhara, Dhanmondi, Banani, Gulshan.
+
+\subsection{4. Household Fit (Weight: 15\%)}
+
+Cross-references the user's \texttt{householdType} with the listing's \texttt{tenantPreference}:
+
+\begin{itemize}[leftmargin=2em]
+  \item A bachelor looking at a ``family only'' listing scores 10/100.
+  \item A bachelor looking at a ``female'' listing scores 0/100 (strict fail).
+  \item A family looking at a ``family'' listing scores 100/100.
+  \item Listings with ``any'' preference score 75--80/100 for most types.
+\end{itemize}
+
+\subsection{5. Hidden Cost Penalty (Weight: 15\%)}
+
+For each hidden cost scope detected:
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Critical} seriousness: $-25$ points
+  \item \textbf{High} seriousness: $-15$ points
+  \item \textbf{Medium} seriousness: $-5$ points
+\end{itemize}
+Capped at a maximum penalty of 100.
+
+\subsection{6. Utility Clarity (Weight: 5\%)}
+
+\begin{itemize}[leftmargin=2em]
+  \item Clear utility information: 100
+  \item Partial information: 60
+  \item Unclear: 20
+\end{itemize}
+
+\subsection{7. Waterlogging Risk (Weight: 5\%)}
+
+\begin{itemize}[leftmargin=2em]
+  \item Low risk: 100
+  \item Unknown: 70
+  \item Medium risk: 50
+  \item High risk: 10
+\end{itemize}
+
+\subsection{8. Listing Trust (Weight: 5\%)}
+
+A trust score starting at 60, adjusted by:
+\begin{itemize}[leftmargin=2em]
+  \item +15 if rent is specified.
+  \item +15 if area is specified.
+  \item +10 if good points are present.
+  \item $-20$ if more than 3 red flags exist.
+\end{itemize}
+
+\section{Dynamic Weight Adjustments}
+
+Users can toggle adjustments that dynamically re-weight the scoring:
+
+\begin{longtable}{p{4cm} p{9cm}}
+\toprule
+\textbf{Adjustment} & \textbf{Effect} \\
+\midrule
+\endhead
+\texttt{shorter-commute} & Commute weight increases to 40\%; budget and household weights decrease. \\
+\midrule
+\texttt{lower-rent} & Budget weight increases to 40\%; commute and hidden cost weights decrease. \\
+\midrule
+\texttt{avoid-broker} & Applies a $-40$ point direct penalty to broker-sourced listings. \\
+\midrule
+\texttt{avoid-waterlogging} & Applies a $-50$ penalty for high waterlogging risk, $-25$ for medium. \\
+\bottomrule
+\end{longtable}
+
+\section{Deal Breaker Logic}
+
+If any deal-breaker is triggered, the listing is automatically assigned the \textbf{avoid} verdict regardless of score:
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{broker}: Listing source is ``broker''.
+  \item \texttt{high-advance}: Advance months $\geq 3$.
+  \item \texttt{family-only}: Family-only preference when user is bachelor/student.
+  \item \texttt{no-lift}: No lift available.
+  \item \texttt{no-gas}: Gas type is unknown.
+  \item \texttt{heavy-waterlogging}: Waterlogging risk is ``high''.
+\end{itemize}
+
+\section{Verdict Assignment}
+
+\begin{longtable}{p{3cm} p{10cm}}
+\toprule
+\textbf{Verdict} & \textbf{Condition} \\
+\midrule
+\endhead
+\texttt{avoid} & Deal-breaker triggered, total $< 40$, or household fit $= 0$. \\
+\texttt{visit} & Total $\geq 75$ and no high/critical hidden cost scopes. \\
+\texttt{maybe} & Total $\geq 55$ and $\leq 2$ high-severity scopes. \\
+\texttt{call-first} & Everything else --- clarification needed before visiting. \\
+\bottomrule
+\end{longtable}
+
+\section{Generated Contextual Outputs}
+
+Each scored listing also produces:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{whyItFits} --- A human-readable explanation of suitability.
+  \item \textbf{biggestRisk} --- The single most significant risk factor.
+  \item \textbf{questionsToAsk} --- A list of specific questions to ask the landlord/broker before visiting.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 8 — FIRST MONTH COST CALCULATOR
+% ============================================================================
+\chapter{First Month Cost Calculator}
+
+\section{Overview}
+
+The cost calculator (\filepath{lib/cost-calculator.ts}) computes the total ``Day 1'' financial outlay required to move into a flat.
+
+\section{Cost Components}
+
+\begin{equation}
+\text{Total} = \text{Rent} + (\text{Rent} \times \text{advanceMonths}) + \text{serviceCharge} + \text{brokerFee} + \text{movingEstimate}
+\end{equation}
+
+\subsection{Moving Cost Estimate}
+
+Based on the rent class:
+
+\begin{longtable}{p{4cm} p{4cm}}
+\toprule
+\textbf{Rent Range} & \textbf{Moving Estimate (BDT)} \\
+\midrule
+\endhead
+$\leq$ 15,000 & 3,000 \\
+$\leq$ 30,000 & 5,000 \\
+$>$ 30,000 & 8,000 \\
+\bottomrule
+\end{longtable}
+
+\section{Generated Warnings}
+
+The calculator surfaces contextual warnings:
+
+\begin{itemize}[leftmargin=2em]
+  \item Unclear service charge --- could add 2,000--5,000 BDT/month.
+  \item Unknown broker fee --- may add up to 1 month rent.
+  \item High advance requirement (2+ months).
+  \item Cylinder gas --- adds 1,500--2,500 BDT/month.
+  \item Heavy waterlogging risk during monsoons.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 9 — HIDDEN COST SCOPE RADAR
+% ============================================================================
+\chapter{Hidden Cost Scope Radar}
+
+\section{Overview}
+
+The Hidden Cost Scope Radar (\filepath{components/HiddenCostScopeRadar.tsx}) is a visual dashboard that surfaces all hidden, missing, unclear, or contradictory cost signals detected in a listing.
+
+\section{Detection Engine}
+
+The detection logic lives in \filepath{lib/services/hidden-cost-scope.service.ts}. It analyses the parsed listing, raw text, area profile, and user's search profile to detect scopes across 20 categories:
+
+\begin{longtable}{p{5cm} p{8cm}}
+\toprule
+\textbf{Hidden Cost Source ID} & \textbf{Description} \\
+\midrule
+\endhead
+\texttt{advance\_terms} & Advance payment amount and refund terms. \\
+\texttt{service\_charge} & Monthly building service/maintenance charge. \\
+\texttt{broker\_fee} & One-time broker or media fee. \\
+\texttt{gas\_type} & Gas connection type (line vs cylinder). \\
+\texttt{electricity\_billing} & Electricity meter type and billing method. \\
+\texttt{water\_billing} & Water supply source and billing clarity. \\
+\texttt{generator\_lift\_charge} & Generator and lift maintenance surcharges. \\
+\texttt{maintenance\_security\_cleaning} & Building security and cleaning fees. \\
+\texttt{parking} & Parking availability and charges. \\
+\texttt{internet\_setup} & Internet availability and setup costs. \\
+\texttt{repair\_cleaning\_paint} & Pre-move-in renovation requirements. \\
+\texttt{moving\_access} & Moving van/truck access to the building. \\
+\texttt{road\_access} & Road width and vehicle accessibility. \\
+\texttt{waterlogging} & Monsoon flooding risk. \\
+\texttt{tenant\_restriction} & Tenant type restrictions and policies. \\
+\texttt{agreement\_receipt\_terms} & Rental agreement and receipt availability. \\
+\texttt{rent\_increase\_terms} & Annual rent increase clauses. \\
+\texttt{furnishing\_appliance\_terms} & Existing furnishing condition and terms. \\
+\texttt{shared\_meter\_or\_utility} & Shared meter or utility billing risks. \\
+\texttt{building\_rules} & Building-specific rules and curfews. \\
+\bottomrule
+\end{longtable}
+
+\section{Status Levels}
+
+Each scope is assigned one of:
+
+\begin{longtable}{p{3.5cm} p{3cm} p{6.5cm}}
+\toprule
+\textbf{Status} & \textbf{Icon} & \textbf{Meaning} \\
+\midrule
+\endhead
+\texttt{clear} & Green & Information is explicitly stated and unambiguous. \\
+\texttt{mentioned} & Blue & Referenced in the listing but not fully detailed. \\
+\texttt{missing} & Red & Critical information entirely absent. \\
+\texttt{unclear} & Amber & Present but vague or contradictory. \\
+\texttt{contradictory} & Purple & Multiple conflicting statements detected. \\
+\texttt{not\_applicable} & Grey & Not relevant to this listing type. \\
+\bottomrule
+\end{longtable}
+
+\section{Seriousness Levels}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Critical} --- Can cause significant financial loss (e.g., high advance without agreement).
+  \item \textbf{High} --- May lead to unexpected monthly costs (e.g., missing service charge).
+  \item \textbf{Medium} --- Should be clarified but not a blocker (e.g., gas type unknown).
+  \item \textbf{Low} --- Minor informational gap.
+\end{itemize}
+
+\section{Visual Representation}
+
+The radar component renders:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Risk Ambiguity Index}: A top-level progress gauge showing overall ambiguity percentage.
+  \item \textbf{Continuous Severity Sliders}: Progress bar indicators showing individual threat score levels.
+  \item \textbf{Threat Status Pulses}: Animated colour-coded rings (sky, emerald, rose, amber) pulsing to indicate hazard level.
+  \item \textbf{Category Breakdown}: Grouped by categories (Water Quality, Electricity, Gas Connection, Safety).
+\end{itemize}
+
+\section{Per-Scope Data}
+
+Each detected scope provides:
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{whyItMatters} --- Explanation of financial or safety impact.
+  \item \texttt{userImpact} --- Direct impact on the user's situation.
+  \item \texttt{askBeforeVisit} --- Specific questions to ask the landlord before visiting.
+  \item \texttt{proofToRequest} --- Documents or evidence to request (e.g., agreement draft, service charge breakdown).
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 10 — AREA RECOMMENDATIONS
+% ============================================================================
+\chapter{Area Recommendations Engine}
+
+\section{Overview}
+
+The Area Recommendations engine (\filepath{components/AreaRecommendations.tsx}) suggests the best Dhaka residential areas based on the user's profile. It draws data from \filepath{lib/data/areas.ts} which contains profiles for 13 Dhaka areas.
+
+\section{Area Profile Data}
+
+Each area profile (\typename{AreaProfile}) contains:
+
+\begin{longtable}{p{5cm} p{8cm}}
+\toprule
+\textbf{Field} & \textbf{Description} \\
+\midrule
+\endhead
+\texttt{name} & Area name (e.g., ``Banasree'', ``Gulshan''). \\
+\texttt{rentRange} & Human-readable rent range string. \\
+\texttt{rentLow} / \texttt{rentHigh} & Numeric rent bounds in BDT. \\
+\texttt{bestFor} & List of user types best suited (e.g., ``families'', ``bachelors''). \\
+\texttt{avoidIf} & Conditions under which this area is unsuitable. \\
+\texttt{commuteNotes} & Transport connectivity description. \\
+\texttt{affordability} & Low / medium / high affordability rating. \\
+\texttt{familySuitability} & 0--10 score for family suitability. \\
+\texttt{bachelorSuitability} & 0--10 score for bachelor suitability. \\
+\texttt{femaleSuitability} & 0--10 score for female tenant suitability. \\
+\texttt{schoolAccess} & 0--10 score for proximity to schools. \\
+\texttt{waterloggingRisk} & Low / medium / high flood risk. \\
+\texttt{utilityReliability} & Low / medium / high utility service reliability. \\
+\texttt{mainTradeoff} & Key compromise for this area. \\
+\texttt{latitude} / \texttt{longitude} & Map coordinates for the area centre. \\
+\texttt{topSchools} & Nearby prominent schools. \\
+\texttt{topHospitals} & Nearby prominent hospitals. \\
+\bottomrule
+\end{longtable}
+
+\section{Recommendation Algorithm}
+
+Areas are ranked by a suitability score adjusted for the user type:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Family/Couple}: Uses \texttt{familySuitability} score.
+  \item \textbf{Bachelor/Student}: Uses \texttt{bachelorSuitability} score.
+  \item \textbf{Working Woman}: Uses \texttt{femaleSuitability} score.
+  \item A \textbf{budget penalty} of $-5$ is applied if the area's minimum rent exceeds the user's budget.
+  \item The top 4 areas are returned as recommendations.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 11 — SCAN SIMULATOR
+% ============================================================================
+\chapter{Interactive Scan Simulator}
+
+\section{Overview}
+
+The Scan Simulator (\filepath{components/DemoScanAnimation.tsx}) provides a dramatic, animated radar-style scanning effect when the user initiates a search. It creates an engaging transition between profile setup and results display.
+
+\section{Animation Stages}
+
+The simulator progresses through sequential phases:
+
+\begin{enumerate}[leftmargin=2em]
+  \item ``Analysing commute loads...''
+  \item ``Mapping waterlogging coordinates...''
+  \item ``Checking hidden cost patterns...''
+  \item ``Scoring household compatibility...''
+  \item ``Filtering deal-breaker violations...''
+  \item ``Ranking best matches...''
+\end{enumerate}
+
+Each stage includes animated counters showing:
+\begin{itemize}[leftmargin=2em]
+  \item Number of listings scanned.
+  \item Number removed for budget mismatch.
+  \item Number removed for commute mismatch.
+  \item Number removed for hidden cost risks.
+  \item Number removed for household mismatch.
+  \item Final number of selected matches.
+\end{itemize}
+
+\section{How to Use}
+
+\begin{enumerate}[leftmargin=2em]
+  \item Select a persona or complete the wizard to create a search profile.
+  \item The scan simulator activates automatically.
+  \item Wait for the animation to complete (approximately 8--12 seconds).
+  \item Results are displayed in the Listing Grid below.
+\end{enumerate}
+
+
+% ============================================================================
+% CHAPTER 12 — LISTING GRID
+% ============================================================================
+\chapter{Scored Listing Grid}
+
+\section{Overview}
+
+The Listing Grid (\filepath{components/ListingGrid.tsx}) displays all scored and ranked listings in a visually rich card layout. It is the primary results view after scanning.
+
+\section{Features}
+
+\subsection{Listing Cards}
+
+Each card displays:
+
+\begin{itemize}[leftmargin=2em]
+  \item Listing title and area.
+  \item Monthly rent in BDT with formatting.
+  \item Bedroom count, gas type, lift/generator availability.
+  \item Total composite score (0--100).
+  \item Verdict badge (Visit / Maybe / Call First / Avoid).
+  \item ``Why it fits'' explanation text.
+  \item Biggest risk warning.
+  \item Image thumbnail (from DhakaImages library, seeded for consistency).
+  \item Red flags and good points lists.
+  \item Questions to ask the landlord.
+\end{itemize}
+
+\subsection{Comparison Selection}
+
+Users can select up to 3 listings for side-by-side comparison by toggling the ``Compare'' checkbox on each card. The selection count is reflected in the portal tab navigation.
+
+\subsection{Interactive Map Drawer}
+
+Clicking ``View on Map'' opens a drawer containing a Leaflet 2D map (\filepath{components/DrawerMapInner.tsx}) showing:
+
+\begin{itemize}[leftmargin=2em]
+  \item Custom badge markers for each shortlisted listing.
+  \item Badges contain rent, area name, and bedroom count.
+  \item Markers are positioned using actual Dhaka coordinates from the listing data.
+  \item Click interaction on markers reveals full listing details.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 13 — COMPARISON MATRIX
+% ============================================================================
+\chapter{Side-by-Side Comparison Matrix}
+
+\section{Overview}
+
+The Comparison Matrix (\filepath{components/ListingComparison.tsx}) generates a detailed side-by-side specification table for up to 3 selected listings.
+
+\section{Compared Fields}
+
+\begin{multicols}{2}
+\begin{itemize}[leftmargin=1em]
+  \item Monthly rent
+  \item Total first-month cost
+  \item Advance months
+  \item Service charge
+  \item Broker fee
+  \item Bedrooms / Bathrooms
+  \item Gas type
+  \item Lift availability
+  \item Generator backup
+  \item Waterlogging risk
+  \item Tenant preference
+  \item Area
+  \item Composite score
+  \item Verdict
+\end{itemize}
+\end{multicols}
+
+\section{Highlight Badges}
+
+The comparison automatically identifies and highlights:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Cheapest Rent} --- The listing with the lowest monthly rent.
+  \item \textbf{Lowest Upfront Cash} --- The listing with the lowest total first-month cost.
+  \item \textbf{Best Commute} --- The listing with the highest commute fit score.
+\end{itemize}
+
+\section{Visit Order Sorting}
+
+Listings are ranked by their composite score and assigned a visit order:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{\#1 Visit First} --- Highest scored listing. This element functions as a clickable button that navigates the user to the Visit Preparation Workspace at \texttt{/portal/visit}.
+  \item \textbf{\#2 Visit 2nd} --- Second-highest scored listing.
+  \item \textbf{\#3 Visit 3rd} --- Third-highest scored listing.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 14 — VISIT PREPARATION WORKSPACE
+% ============================================================================
+\chapter{Visit Preparation Workspace}
+
+\section{Overview}
+
+The Visit Preparation Workspace (\filepath{components/VisitPlanner.tsx}) is a comprehensive multi-tab preparation toolkit accessed at \texttt{/portal/visit}. It provides everything a renter needs before, during, and after visiting a flat.
+
+\section{Tab 1: Calling Script Customiser}
+
+\subsection{Pre-Loaded Scripts}
+
+The workspace generates pre-written Banglish phone call dialogues tailored to the matched listing parameters. The scripts cover:
+
+\begin{itemize}[leftmargin=2em]
+  \item Introducing yourself and stating interest.
+  \item Asking about service charge breakdown.
+  \item Confirming gas type (line vs cylinder).
+  \item Negotiating advance months.
+  \item Asking about broker fees.
+  \item Confirming tenant preference policies.
+  \item Asking about parking, generator, and lift.
+  \item Requesting a visit appointment.
+\end{itemize}
+
+\subsection{Rich Text Editing}
+
+The script is fully editable with a formatting action bar:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Bold} --- Apply bold formatting to selected text.
+  \item \textbf{Italics} --- Apply italic formatting.
+  \item \textbf{Underline} --- Apply underline formatting.
+  \item \textbf{Template Reset} --- Reset the script to the original auto-generated template.
+  \item \textbf{Save/Edit Toggle} --- Switch between editing and read-only modes.
+\end{itemize}
+
+The editor uses \texttt{document.execCommand} for inline formatting and \texttt{contentEditable} divs for the editing surface.
+
+\subsection{How to Use}
+
+\begin{enumerate}[leftmargin=2em]
+  \item Navigate to \texttt{/portal/visit} (or click ``\#1 Visit First'' from the comparison table).
+  \item Review the auto-generated calling script.
+  \item Click ``Edit'' to modify the script. Add or remove questions as needed.
+  \item Use the formatting toolbar to highlight important points.
+  \item Click ``Save'' to lock the script for reference during the call.
+\end{enumerate}
+
+\section{Tab 2: Physical Inspection Blueprint}
+
+\subsection{Interactive Checklists}
+
+The inspection blueprint provides two pre-populated checklist categories:
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{Utilities \& Hardware}:
+  \begin{itemize}
+    \item Water pressure check (all taps).
+    \item Electricity meter type (shared/private, prepaid/postpaid).
+    \item Gas connection verification.
+    \item Generator/IPS backup test.
+    \item Lift functionality test.
+    \item Fan, light, and socket verification.
+  \end{itemize}
+
+  \item \textbf{Neighbourhood \& Building Environment}:
+  \begin{itemize}
+    \item Street width and vehicle access.
+    \item Nearest hospital and pharmacy distance.
+    \item Guard presence and night security.
+    \item Floor height and ventilation.
+    \item Natural light from windows.
+    \item Nearby mosque/market proximity.
+    \item Drainage and waterlogging signs.
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Square Checkbox Notes}
+
+All checklist items use \textbf{square-shaped checkboxes} (via CSS \texttt{appearance: none} with custom borders) so users clearly identify them as checkable inspection notes.
+
+\subsection{Drag-and-Drop Reordering}
+
+Users can \textbf{drag and drop} checklist items to reorder them according to their visit plan. The implementation uses native HTML5 drag-and-drop with:
+
+\begin{itemize}[leftmargin=2em]
+  \item Drag handles on each item.
+  \item Visual highlight overlays during the drag operation.
+  \item Automatic re-indexing after drops.
+\end{itemize}
+
+\subsection{Custom Checkpoint Addition}
+
+A form at the bottom of each checklist section allows users to \textbf{add their own checkpoints}. Users type a new item label and description, then click ``Add'' to append it to the list.
+
+\section{Tab 3: Landlord Negotiation Playbook}
+
+Information cards detailing guidelines on:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Curfews \& Gate Access} --- Understanding building gate closing times and late-night entry policies.
+  \item \textbf{Security Deposits} --- How to handle, negotiate, and document advance payments.
+  \item \textbf{Service Charges} --- What should and should not be included in the service charge.
+  \item \textbf{Maintenance Duties} --- Clarifying who is responsible for repairs, painting, and appliance maintenance.
+  \item \textbf{Monthly Official Receipts} --- Insisting on rent receipts for legal protection.
+\end{itemize}
+
+\section{Tab 4: Listing Creation Factors}
+
+Guidelines for tenants who are also creating their own listing:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Flat Orientation} --- Valuing south/east-facing flats for wind flow and natural light.
+  \item \textbf{Gas Type Importance} --- Always specifying whether gas is pipeline or cylinder.
+  \item \textbf{Notice Period} --- Standard practices for giving and receiving notice.
+  \item \textbf{Tenant Matching Constraints} --- How to specify tenant preferences clearly without discrimination.
+  \item \textbf{Photography Tips} --- What angles and rooms to photograph for effective listings.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 15 — ASSESSMENT REPORT
+% ============================================================================
+\chapter{Comprehensive Assessment Report}
+
+\section{Overview}
+
+The Assessment Report (\filepath{components/ReportPreview.tsx}) compiles a comprehensive, print-ready summary of the entire house-hunting session.
+
+\section{Report Sections}
+
+\subsection{Plan Summary Overview}
+
+\begin{itemize}[leftmargin=2em]
+  \item Renter profile summary (household type, budget, commute anchors).
+  \item Search parameters and deal-breakers.
+  \item Total listings scanned and filtered.
+  \item Number of shortlisted matches.
+\end{itemize}
+
+\subsection{Recommended Areas}
+
+\begin{itemize}[leftmargin=2em]
+  \item Top 4 recommended areas with rent ranges.
+  \item Suitability scores and trade-offs.
+  \item Commute connectivity notes.
+\end{itemize}
+
+\subsection{Shortlisted Listings \& Visit Order}
+
+\begin{itemize}[leftmargin=2em]
+  \item Ranked list of selected listings with scores.
+  \item Recommended visit order (1st, 2nd, 3rd).
+  \item Per-listing summary including rent, area, verdict, and biggest risk.
+\end{itemize}
+
+\subsection{Printable Output}
+
+The report can be printed or saved as PDF. It aggregates:
+
+\begin{itemize}[leftmargin=2em]
+  \item Visit checklists from the inspection blueprint.
+  \item Warning parameters and red flags.
+  \item Phone script transcripts.
+  \item Hidden cost scope summaries.
+  \item First-month cost breakdowns for each listing.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 16 — DATA HARVESTER PIPELINE
+% ============================================================================
+\chapter{Data Harvester Pipeline}
+
+\section{Overview}
+
+The harvester pipeline (\filepath{lib/harvester/}) is a modular data ingestion and processing system that feeds fresh listing data into BasaBondhu's matching engine. It runs server-side through API routes at \apiendpoint{/api/harvester/}.
+
+\section{Pipeline Components}
+
+\begin{longtable}{p{6cm} p{7cm}}
+\toprule
+\textbf{Service} & \textbf{Responsibility} \\
+\midrule
+\endhead
+\texttt{harvester-orchestrator} & Coordinates the full pipeline: ingest $\to$ normalise $\to$ extract $\to$ score $\to$ publish. \\
+\midrule
+\texttt{source-registry} & Manages and registers data source configurations. \\
+\midrule
+\texttt{raw-document} & Handles raw document storage and retrieval. \\
+\midrule
+\texttt{text-normalizer} & Cleans and normalises raw Bangla/Banglish text. \\
+\midrule
+\texttt{chunk-builder} & Splits large documents into processable chunks. \\
+\midrule
+\texttt{extractor} & Regex-based field extraction from chunks. \\
+\midrule
+\texttt{openrouter-extractor} & AI-powered extraction via OpenRouter API for complex listings. \\
+\midrule
+\texttt{enrichment} & Enriches extracted data with area metadata and coordinates. \\
+\midrule
+\texttt{quality} & Quality scoring and validation of extracted listings. \\
+\midrule
+\texttt{dedupe} & Deduplication of listings by title and content similarity. \\
+\midrule
+\texttt{freshness} & Tracks listing freshness and expiry dates. \\
+\midrule
+\texttt{structured-listing-builder} & Builds final structured listing objects from extracted data. \\
+\midrule
+\texttt{offer-snapshot} & Creates point-in-time snapshots of listing offers. \\
+\midrule
+\texttt{listing-mapper} & Maps harvested listing format to the application's \typename{Listing} type. \\
+\midrule
+\texttt{google-sheet-importer} & Imports listings from Google Sheets. \\
+\midrule
+\texttt{partner-csv-importer} & Imports listings from partner CSV files. \\
+\midrule
+\texttt{public-url-ingestion} & Ingests listings from public URLs. \\
+\midrule
+\texttt{user-paste-ingestion} & Processes user-pasted raw text through the pipeline. \\
+\bottomrule
+\end{longtable}
+
+
+% ============================================================================
+% CHAPTER 17 — API ROUTES
+% ============================================================================
+\chapter{API Routes}
+
+\section{Overview}
+
+All API routes are implemented as Next.js App Router route handlers under \filepath{app/api/}.
+
+\begin{longtable}{p{5cm} p{2cm} p{6cm}}
+\toprule
+\textbf{Endpoint} & \textbf{Method} & \textbf{Description} \\
+\midrule
+\endhead
+\texttt{/api/areas} & GET & Returns all 13 Dhaka area profiles. \\
+\midrule
+\texttt{/api/listings} & GET & Returns all seed listings. \\
+\midrule
+\texttt{/api/search} & POST & Creates a search profile and returns scored listings. \\
+\midrule
+\texttt{/api/parse} & POST & Parses raw listing text and returns structured fields. \\
+\midrule
+\texttt{/api/facebook/fetch} & POST & Crawls a Facebook URL and returns raw caption text. \\
+\midrule
+\texttt{/api/compare} & POST & Computes comparison result for selected listings. \\
+\midrule
+\texttt{/api/report} & POST & Generates a full housing assessment report. \\
+\midrule
+\texttt{/api/demo} & GET & Returns demo scan animation data. \\
+\midrule
+\texttt{/api/harvester/*} & Various & Harvester pipeline endpoints for data ingestion. \\
+\bottomrule
+\end{longtable}
+
+
+% ============================================================================
+% CHAPTER 18 — TYPE SYSTEM
+% ============================================================================
+\chapter{Type System}
+
+\section{Overview}
+
+The entire application is strictly typed using TypeScript. Core type definitions are in \filepath{lib/types.ts} with domain-specific types in \filepath{lib/domain/} and \filepath{lib/types/}.
+
+\section{Core Types}
+
+\subsection{SearchProfile}
+
+The central data structure representing a user's renter profile:
+
+\begin{lstlisting}[language=Java, caption={SearchProfile Type}]
+type SearchProfile = {
+  id: string;
+  mode: "plan" | "check" | "compare" | "visit";
+  rentingOrBuying: "renting" | "buying";
+  householdType: HouseholdType;
+  lookingFor: "full-flat" | "room-sublet" | "checking-listing";
+  budgetMonthly: number;
+  maxFirstMonthCash: number;
+  commuteAnchors: { label: string; area: string }[];
+  priorities: Priority[];
+  dealBreakers: DealBreaker[];
+  hiddenCostSensitivity?: HiddenCostSensitivity;
+  // Optional fields for advanced matching
+  husbandJobLocation?: string;
+  wifeJobLocation?: string;
+  childSchoolLocation?: string;
+  needsHealthcare?: boolean;
+  ownsCar?: boolean;
+  preferredFacing?: "south" | "east" | "west" | "north" | "any";
+  wantsNearbyMarket?: boolean;
+  environmentPreference?: "quiet" | "commercial" | "any";
+};
+\end{lstlisting}
+
+\subsection{Listing}
+
+Represents a single rental listing with 30+ fields covering location, pricing, amenities, risks, and metadata. Key fields include:
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{id}, \texttt{title}, \texttt{rawText}, \texttt{sourceType}
+  \item \texttt{area}, \texttt{addressHint}, \texttt{latitude}, \texttt{longitude}
+  \item \texttt{rent}, \texttt{bedrooms}, \texttt{bathrooms}, \texttt{sizeSqft}
+  \item \texttt{tenantPreference}, \texttt{familyAllowed}, \texttt{bachelorAllowed}
+  \item \texttt{advanceMonths}, \texttt{brokerFee}, \texttt{serviceCharge}
+  \item \texttt{gasType}, \texttt{lift}, \texttt{generator}
+  \item \texttt{waterloggingRisk}, \texttt{utilityClarity}
+  \item \texttt{commuteNotes}, \texttt{houseRules}, \texttt{redFlags}, \texttt{goodPoints}
+  \item \texttt{hiddenCostSignals}
+\end{itemize}
+
+\subsection{ScoredListing}
+
+Extends \typename{Listing} with:
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{scores} --- Object containing all 9 individual score components plus total.
+  \item \texttt{hiddenCostScopes} --- Array of detected hidden cost sources.
+  \item \texttt{verdict} --- Final verdict (visit/maybe/call-first/avoid).
+  \item \texttt{whyItFits} --- Human-readable suitability explanation.
+  \item \texttt{biggestRisk} --- Primary risk factor description.
+  \item \texttt{questionsToAsk} --- Array of questions for the landlord.
+\end{itemize}
+
+\subsection{Other Types}
+
+\begin{itemize}[leftmargin=2em]
+  \item \typename{ParsedListing} --- Output of the text parser with extracted fields and confidence level.
+  \item \typename{AreaProfile} --- Complete area metadata including suitability scores and hidden cost profiles.
+  \item \typename{FirstMonthCost} --- Cost breakdown with warnings.
+  \item \typename{ComparisonResult} --- Comparison output with rankings and best-of badges.
+  \item \typename{ChecklistSection} --- Inspection checklist category and items.
+  \item \typename{HousingReport} --- Complete assessment report data structure.
+  \item \typename{ScanSummary} --- Scan statistics (scanned, removed by category, selected).
+  \item \typename{HiddenCostSource} --- Individual hidden cost detection with metadata.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 19 — UI COMPONENTS
+% ============================================================================
+\chapter{UI Components Library}
+
+\section{Navbar}
+
+\filepath{components/Navbar.tsx} --- Sticky top navigation bar with:
+\begin{itemize}[leftmargin=2em]
+  \item Brand logo and name.
+  \item Navigation links to portal sections.
+  \item Responsive mobile menu.
+  \item Glassmorphism backdrop blur effect.
+\end{itemize}
+
+\section{ErrorBoundary}
+
+\filepath{components/ErrorBoundary.tsx} --- React class-based error boundary that:
+\begin{itemize}[leftmargin=2em]
+  \item Catches JavaScript errors in child components.
+  \item Renders a fallback UI with an error title and reset button.
+  \item Logs error details to the console.
+\end{itemize}
+
+\section{Typewriter}
+
+\filepath{components/Typewriter.tsx} --- Character-by-character typing animation effect used for dynamic text reveals.
+
+\section{Skeletons}
+
+\filepath{components/Skeletons.tsx} --- Loading skeleton placeholder components that render grey pulsing shapes matching the final content layout. Used during data loading states.
+
+\section{PersonaIcons}
+
+\filepath{components/PersonaIcons.tsx} --- Custom SVG icon set for each renter persona type:
+\begin{itemize}[leftmargin=2em]
+  \item Couple icon
+  \item Student icon
+  \item Professional icon
+  \item Family icon
+  \item Executive icon
+  \item Group icon
+\end{itemize}
+
+\section{HousingProfileSummary}
+
+\filepath{components/HousingProfileSummary.tsx} --- Compact summary card displaying the active search profile's key parameters (household type, budget, area, priorities).
+
+\section{ProofRequestPanel}
+
+\filepath{components/ProofRequestPanel.tsx} --- UI panel that displays a list of documents and proofs to request from the landlord/broker based on detected hidden cost scopes.
+
+\section{ModeSelector}
+
+\filepath{components/ModeSelector.tsx} --- Selection interface for choosing the analysis mode (Plan / Check / Compare / Visit).
+
+
+% ============================================================================
+% CHAPTER 20 — SERVICE LAYER
+% ============================================================================
+\chapter{Service Layer}
+
+\section{Overview}
+
+The service layer (\filepath{lib/services/}) contains 13 specialised service modules that encapsulate business logic.
+
+\begin{longtable}{p{6cm} p{7cm}}
+\toprule
+\textbf{Service} & \textbf{Purpose} \\
+\midrule
+\endhead
+\texttt{area-recommendation} & Computes area suitability rankings based on user profile. \\
+\midrule
+\texttt{checklist} & Generates inspection checklists tailored to listing parameters. \\
+\midrule
+\texttt{compare} & Produces side-by-side comparison data with rankings and badges. \\
+\midrule
+\texttt{cost} & Calculates first-month costs and generates financial warnings. \\
+\midrule
+\texttt{demo-scan} & Generates scan summary statistics for the animation. \\
+\midrule
+\texttt{hidden-cost-scope} & Detects and classifies all hidden cost scopes in a listing. \\
+\midrule
+\texttt{listing-parser} & Synchronous wrapper around the text parser for scoring use. \\
+\midrule
+\texttt{openrouter} & Interfaces with the OpenRouter AI API for enhanced text processing. \\
+\midrule
+\texttt{question} & Generates context-specific questions to ask landlords. \\
+\midrule
+\texttt{recommendation} & Computes listing recommendation scores and explanations. \\
+\midrule
+\texttt{report} & Assembles the full housing assessment report data structure. \\
+\midrule
+\texttt{scoring} & Orchestrates the multi-factor scoring algorithm. \\
+\midrule
+\texttt{search-profile} & Validates and normalises search profile inputs. \\
+\bottomrule
+\end{longtable}
+
+
+% ============================================================================
+% CHAPTER 21 — PORTAL NAVIGATION
+% ============================================================================
+\chapter{Portal Navigation}
+
+\section{Tab Structure}
+
+The portal (\filepath{app/portal/layout.tsx}) provides a persistent tab navigation bar with 6 tabs:
+
+\begin{longtable}{p{1cm} p{3.5cm} p{3cm} p{5cm}}
+\toprule
+\textbf{\#} & \textbf{Tab Label} & \textbf{Route} & \textbf{Component} \\
+\midrule
+\endhead
+1 & Plan Search & \texttt{/portal} & Portal main page with personas and scan. \\
+2 & Check Listing & \texttt{/portal/parser} & ListingChecker component. \\
+3 & Facebook Fetcher & \texttt{/portal/fb-fetch} & FacebookFetcher component. \\
+4 & Compare Homes & \texttt{/portal/compare} & ListingComparison component. \\
+5 & Prepare Visit & \texttt{/portal/visit} & VisitPlanner component. \\
+6 & Report & \texttt{/portal/report} & ReportPreview component. \\
+\bottomrule
+\end{longtable}
+
+\section{Navigation Features}
+
+\begin{itemize}[leftmargin=2em]
+  \item Active tab highlighting with primary colour background and shadow.
+  \item Horizontal scroll on mobile for tab overflow.
+  \item Comparison count badge dynamically updated (e.g., ``Compare Homes (2)'').
+  \item Lucide React icons for each tab.
+  \item Sticky positioning below the main navbar.
+  \item Glassmorphism backdrop with blur effect.
+  \item Page transition animation (fade-in) on tab switch.
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 22 — DESIGN SYSTEM
+% ============================================================================
+\chapter{Design System}
+
+\section{Colour Palette}
+
+\begin{longtable}{p{4cm} p{4cm} p{5cm}}
+\toprule
+\textbf{Token} & \textbf{Value} & \textbf{Usage} \\
+\midrule
+\endhead
+\texttt{--primary} & \texttt{\#C9952B} (Gold) & Brand accents, CTAs, highlights. \\
+\texttt{--bg} & \texttt{\#FAFAF8} & Main background. \\
+\texttt{--bg-alt} & \texttt{\#F5F3EE} & Alternate section backgrounds. \\
+\texttt{--text-main} & \texttt{\#1A1A2E} & Primary text colour. \\
+\texttt{--text-muted} & \texttt{\#6B7280} & Secondary/muted text. \\
+\texttt{--visit} & Green tones & ``Visit'' verdict indicators. \\
+\texttt{--maybe} & Amber tones & ``Maybe'' verdict indicators. \\
+\texttt{--call-first} & Orange tones & ``Call First'' verdict indicators. \\
+\texttt{--avoid} & Red tones & ``Avoid'' verdict indicators. \\
+\bottomrule
+\end{longtable}
+
+\section{Typography}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Inter} (\texttt{--font-inter}): Primary sans-serif for UI text, labels, and body copy.
+  \item \textbf{Cormorant Garamond} (\texttt{--font-cormorant}): Serif font for hero headings and cinematic text.
+\end{itemize}
+
+\section{Animation System}
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{animate-fade-in}: 0.25s ease-out opacity transition for page entries.
+  \item Framer Motion used for complex animations: scan radar, card reveals, page transitions, and micro-interactions.
+  \item CSS transitions (300ms duration) for colour changes, hover effects, and layout shifts.
+  \item Active scale effects (\texttt{active:scale-95}) on interactive elements for tactile feedback.
+\end{itemize}
+
+\section{Responsive Design}
+
+All components use Tailwind CSS responsive prefixes:
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{sm:} --- 640px+ (tablet portrait).
+  \item \texttt{md:} --- 768px+ (tablet landscape).
+  \item \texttt{lg:} --- 1024px+ (desktop).
+  \item \texttt{xl:} --- 1280px+ (wide desktop).
+\end{itemize}
+
+
+% ============================================================================
+% CHAPTER 23 — CONFIGURATION
+% ============================================================================
+\chapter{Configuration \& Environment}
+
+\section{Environment Variables}
+
+The application uses a \filepath{.env.local} file for sensitive configuration. Key variables include:
+
+\begin{itemize}[leftmargin=2em]
+  \item API keys for OpenRouter AI service.
+  \item Database connection strings (if applicable).
+  \item Feature flags for experimental features.
+\end{itemize}
+
+\section{TypeScript Configuration}
+
+\filepath{tsconfig.json} configures:
+\begin{itemize}[leftmargin=2em]
+  \item Path aliases: \texttt{@/*} maps to the project root.
+  \item Strict mode enabled for type safety.
+  \item ES2017+ target for modern JavaScript features.
+  \item JSX preserve mode for Next.js compilation.
+\end{itemize}
+
+\section{Next.js Configuration}
+
+\filepath{next.config.ts} configures:
+\begin{itemize}[leftmargin=2em]
+  \item Image optimisation settings.
+  \item Custom headers for API routes.
+  \item Build optimisation flags.
+\end{itemize}
+
+\section{ESLint Configuration}
+
+\filepath{eslint.config.mjs} extends \texttt{eslint-config-next} for Next.js-specific linting rules.
+
+
+% ============================================================================
+% CHAPTER 24 — RUNNING THE PROJECT
+% ============================================================================
+\chapter{Running the Project}
+
+\section{Prerequisites}
+
+\begin{itemize}[leftmargin=2em]
+  \item Node.js 18+ installed.
+  \item npm 9+ installed.
+  \item Git for version control.
+\end{itemize}
+
+\section{Installation}
+
+\begin{lstlisting}[language=bash, caption={Installation Commands}]
+# Clone the repository
+git clone <repository-url>
+cd Bashabondhu/basabondhu
+
+# Install dependencies
+npm install
+
+# Create environment file
+cp .env.example .env.local
+# Edit .env.local with your API keys
+\end{lstlisting}
+
+\section{Development}
+
+\begin{lstlisting}[language=bash, caption={Development Server}]
+# Start the development server
+npm run dev
+
+# The app will be available at http://localhost:3000
+\end{lstlisting}
+
+\section{Production Build}
+
+\begin{lstlisting}[language=bash, caption={Production Build}]
+# Build for production
+npm run build
+
+# Start the production server
+npm start
+\end{lstlisting}
+
+\section{Available Scripts}
+
+\begin{longtable}{p{4.5cm} p{8.5cm}}
+\toprule
+\textbf{Script} & \textbf{Description} \\
+\midrule
+\endhead
+\texttt{npm run dev} & Start the Next.js development server with hot reload. \\
+\texttt{npm run build} & Create an optimised production build. \\
+\texttt{npm start} & Start the production server. \\
+\texttt{npm run lint} & Run ESLint checks across the codebase. \\
+\texttt{npm run clean} & Delete the \texttt{.next} cache directory. \\
+\texttt{npm run clean-root-lock} & Remove the root-level \texttt{package-lock.json}. \\
+\bottomrule
+\end{longtable}
+
+
+% ============================================================================
+% CHAPTER 25 — GLOSSARY
+% ============================================================================
+\chapter{Glossary}
+
+\begin{longtable}{p{4cm} p{9cm}}
+\toprule
+\textbf{Term} & \textbf{Definition} \\
+\midrule
+\endhead
+BasaBondhu & ``House Friend'' in Bangla. The platform name. \\
+\midrule
+Banglish & A mix of Bangla and English commonly used in Dhaka social media. \\
+\midrule
+Service Charge & Monthly building maintenance fee covering security, cleaning, lift operation, and common area utilities. \\
+\midrule
+Advance & Upfront security deposit, typically 1--3 months of rent, paid before moving in. \\
+\midrule
+Line Gas & Government Titas gas pipeline connection (cheaper, reliable). \\
+\midrule
+Cylinder Gas & LPG cylinder gas (more expensive, requires regular refills). \\
+\midrule
+Broker Fee & One-time commission paid to a housing broker/agent, typically 50--100\% of one month's rent. \\
+\midrule
+Waterlogging & Street-level flooding common in low-lying Dhaka areas during monsoon season. \\
+\midrule
+Commute Anchor & A location the user commutes to daily (office, university, school). \\
+\midrule
+Deal Breaker & A hard disqualifier that automatically rejects a listing regardless of other scores. \\
+\midrule
+Hidden Cost Scope & A category of potentially hidden, missing, or unclear financial information in a listing. \\
+\midrule
+Verdict & The final recommendation for a listing: visit, maybe, call-first, or avoid. \\
+\midrule
+Harvester & The backend data pipeline that ingests, normalises, and publishes fresh listing data. \\
+\midrule
+Persona & A pre-built renter profile representing a common Dhaka house-hunter archetype. \\
+\bottomrule
+\end{longtable}
+
+
+% ============================================================================
+% APPENDIX
+% ============================================================================
+\appendix
+
+\chapter{Supported Dhaka Areas}
+
+The following 13 Dhaka metropolitan areas are supported with full profile data, commute matrices, and listing coverage:
+
+\begin{multicols}{2}
+\begin{enumerate}[leftmargin=2em]
+  \item Banasree
+  \item Badda
+  \item Merul Badda
+  \item Mohakhali
+  \item Tejgaon
+  \item Mohammadpur
+  \item Lalmatia
+  \item Mirpur
+  \item Uttara
+  \item Bashundhara
+  \item Dhanmondi
+  \item Banani
+  \item Gulshan
+\end{enumerate}
+\end{multicols}
+
+\chapter{Commute Compatibility Matrix}
+
+The following matrix shows inter-area commute compatibility scores (0--100 scale). Higher scores indicate better connectivity.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Commute Matrix (Selected Areas)}
+\begin{tabular}{l|c c c c c c}
+\toprule
+& \textbf{Banasree} & \textbf{Badda} & \textbf{Mohakhali} & \textbf{Mirpur} & \textbf{Uttara} & \textbf{Gulshan} \\
+\midrule
+Banasree & 100 & 80 & 60 & 30 & 30 & 70 \\
+Badda & 80 & 100 & 75 & 40 & 50 & 85 \\
+Mohakhali & 60 & 75 & 100 & 60 & 70 & 85 \\
+Mirpur & 30 & 40 & 60 & 100 & 65 & 55 \\
+Uttara & 30 & 50 & 70 & 65 & 100 & 60 \\
+Gulshan & 70 & 85 & 85 & 55 & 60 & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\chapter{Scoring Weight Distribution}
+
+\begin{table}[H]
+\centering
+\caption{Default Scoring Weights}
+\begin{tabular}{l c}
+\toprule
+\textbf{Factor} & \textbf{Default Weight} \\
+\midrule
+Budget Fit & 25\% \\
+Commute Fit & 20\% \\
+Household Fit & 15\% \\
+Hidden Cost Penalty & 15\% \\
+First Month Fit & 10\% \\
+Utility Clarity & 5\% \\
+Waterlogging Risk & 5\% \\
+Listing Trust & 5\% \\
+\midrule
+\textbf{Total} & \textbf{100\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+% ============================================================================
+\end{document}
