@@ -32,7 +32,7 @@ export default function Navbar() {
     }`}>
       <div className={`w-full h-16 flex items-center justify-between transition-all duration-300 ${
         pathname === "/portal/fb-fetch"
-          ? "px-4 sm:px-6 lg:px-8"
+          ? "px-2 sm:px-4 lg:px-6"
           : "px-6 sm:px-10 lg:px-16 xl:px-24"
       }`}>
         {/* Logo */}

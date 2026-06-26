@@ -23,7 +23,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Play,
-  ArrowLeft
+  ArrowLeft,
+  X
 } from "lucide-react";
 import { ParsedListing } from "@/lib/types";
 import Typewriter from "@/components/Typewriter";
@@ -165,7 +166,7 @@ const TOUR_STEPS = [
     desc: "Inspect the parsed results side-by-side. Cleaned financial specifications and missing fields are validated automatically.",
     targetId: "tour-output",
     stepName: "Parsed Details",
-    placement: "bottom"
+    placement: "top"
   },
   {
     title: "5. Add to Plan Checklist",
@@ -433,7 +434,6 @@ export default function FacebookFetcher() {
     if (!coords) return {};
     const step = TOUR_STEPS[currentStep];
     const cardWidth = 350;
-    const cardHeight = 240; // approximate height of the tooltip card
     
     let left = coords.left + (coords.width / 2) - (cardWidth / 2);
     
@@ -449,19 +449,22 @@ export default function FacebookFetcher() {
       if (left < 16) left = 16;
     }
     
-    let top = 0;
     if (step.placement === "top") {
-      top = coords.top - cardHeight - 16;
+      return {
+        position: "fixed" as const,
+        top: `${coords.top - 16}px`,
+        left: `${left}px`,
+        width: `${cardWidth}px`,
+        transform: "translateY(-100%)",
+      };
     } else {
-      top = coords.top + coords.height + 16;
+      return {
+        position: "fixed" as const,
+        top: `${coords.top + coords.height + 16}px`,
+        left: `${left}px`,
+        width: `${cardWidth}px`,
+      };
     }
-    
-    return {
-      position: "fixed" as const,
-      top: `${top}px`,
-      left: `${left}px`,
-      width: `${cardWidth}px`,
-    };
   };
 
   const handleAddPlanning = () => {
@@ -846,7 +849,8 @@ export default function FacebookFetcher() {
         <>
           {/* Spotlight Highlight Box Overlay */}
           <div 
-            className="fixed border-4 border-emerald-500 rounded-3xl shadow-[0_0_15px_rgba(16,185,129,0.5),0_0_0_9999px_rgba(15,23,42,0.75)] z-[999] pointer-events-none transition-all duration-300"
+            onClick={() => setShowTour(false)}
+            className="fixed border-4 border-emerald-500 rounded-3xl shadow-[0_0_15px_rgba(16,185,129,0.5),0_0_0_9999px_rgba(15,23,42,0.75)] z-[999] pointer-events-auto transition-all duration-300 cursor-pointer"
             style={{
               top: coords.top - 4,
               left: coords.left - 4,
@@ -860,6 +864,15 @@ export default function FacebookFetcher() {
             className="fixed bg-card border border-border-light rounded-3xl p-6 shadow-2xl z-[1000] pointer-events-auto transition-all duration-300 select-none animate-in fade-in zoom-in-95 duration-200"
             style={getTooltipStyle()}
           >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowTour(false)}
+              className="absolute top-4 right-4 text-text-muted hover:text-text-main transition-colors cursor-pointer z-10"
+              title="Close Tour"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
             {/* Tooltip Arrow */}
             <div 
               className={`absolute w-3 h-3 bg-card border-t border-l border-border-light rotate-45 left-1/2 -translate-x-1/2 transition-all ${

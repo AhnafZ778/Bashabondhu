@@ -43,7 +43,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       <div className="border-b border-black/[0.04] bg-white/80 backdrop-blur-md sticky top-16 z-40 transition-colors duration-300">
         <div className={`w-full transition-all duration-300 ${
           pathname === "/portal/fb-fetch"
-            ? "px-4 sm:px-6 lg:px-8"
+            ? "px-2 sm:px-4 lg:px-6"
             : "px-6 sm:px-10 lg:px-16 xl:px-24"
         }`}>
           <nav className="flex space-x-1 sm:space-x-2 py-3 overflow-x-auto" aria-label="Tabs">
@@ -74,7 +74,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       {/* Main Content Area */}
       <main className={`flex-1 w-full py-8 transition-all duration-300 ${
         pathname === "/portal/fb-fetch"
-          ? "px-4 sm:px-6 lg:px-8"
+          ? "px-2 sm:px-4 lg:px-6"
           : "px-6 sm:px-10 lg:px-16 xl:px-24"
       }`}>
         <ErrorBoundary fallbackTitle="This section encountered an error">
