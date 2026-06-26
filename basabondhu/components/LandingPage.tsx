@@ -385,23 +385,6 @@ export default function LandingPage() {
         <ScrollVideo />
       </div>
 
-      {/* ──────────────────────────────────────────────────
-          MODE SELECTOR — What do you want to do today?
-          ────────────────────────────────────────────────── */}
-      <section className="bg-[#0f0f0f] border-y border-white/5 py-20 px-6 sm:px-10 lg:px-16 xl:px-24 transition-colors duration-300">
-        <div className="mb-12">
-          <span className="px-3.5 py-1.5 bg-gold/10 border border-gold/20 text-gold text-xs uppercase font-black tracking-widest rounded-full animate-pulse">
-            Choose Your Path
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight mt-5">
-            What do you want to do today?
-          </h2>
-          <p className="text-base sm:text-lg text-zinc-400 mt-4 max-w-3xl leading-relaxed">
-            Each mode gives you a different kind of help — from planning your search to preparing for a flat visit.
-          </p>
-        </div>
-        <ModeSelector />
-      </section>
 
       {/* ──────────────────────────────────────────────────
           HERO — Full-cover background image with floating search card

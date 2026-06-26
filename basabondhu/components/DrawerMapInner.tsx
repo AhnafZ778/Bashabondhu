@@ -79,137 +79,58 @@ export default function DrawerMapInner({ listing }: DrawerMapInnerProps) {
   const targetIcon = useMemo(() => {
     return L.divIcon({
       html: `
-        <div style="transform-style: preserve-3d; height: 230px; width: 140px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; perspective: 1000px;">
-          <!-- Pulse rings flat on the surface -->
-          <div class="absolute bottom-0 w-14 h-14 rounded-full bg-amber-500/20 border border-amber-400/40 animate-ping" style="transform: rotateX(75deg); margin-bottom: -15px;"></div>
-          
-          <!-- 3D Cube for Target Apartment (Amber/Gold theme) -->
-          <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) rotateX(-20deg) rotateY(45deg); width: 44px; height: 44px; transform-style: preserve-3d; z-index: 3;">
-            <!-- Top Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(44px); background: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.8); box-shadow: inset 0 0 10px rgba(255,255,255,0.3);"></div>
-            <!-- Bottom Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(0); background: #78350f;"></div>
-            <!-- Front Face -->
-            <div style="position: absolute; inset: 0; transform-origin: bottom center; transform: rotateX(-90deg); background: #f59e0b; border: 1px solid rgba(251, 191, 36, 0.8);"></div>
-            <!-- Back Face -->
-            <div style="position: absolute; inset: 0; transform-origin: top center; transform: rotateX(90deg); background: #78350f; border: 1px solid rgba(251, 191, 36, 0.8);"></div>
-            <!-- Left Face -->
-            <div style="position: absolute; inset: 0; transform-origin: left center; transform: rotateY(90deg); background: #d97706; border: 1px solid rgba(251, 191, 36, 0.8);"></div>
-            <!-- Right Face -->
-            <div style="position: absolute; inset: 0; transform-origin: right center; transform: rotateY(-90deg); background: #b45309; border: 1px solid rgba(251, 191, 36, 0.8);"></div>
-          </div>
-          
-          <!-- Pop-out Standing Label (Queen Piece Card) -->
-          <div style="position: absolute; bottom: 44px; transform: scale(1); transform-origin: bottom center; background-color: rgba(9, 9, 11, 0.95); border: 2.5px solid #d4a853; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.75); padding: 8px; width: 100%; display: flex; flex-direction: column; align-items: center; backdrop-filter: blur(8px); z-index: 5;">
-            <img src="${listing.imageUrl}" style="width: 100%; height: 65px; object-fit: cover; border-radius: 8px;" />
-            <span style="font-size: 11px; font-weight: 900; color: #d4a853; margin-top: 6px; text-transform: uppercase; tracking-wider">Target Flat</span>
-            <span style="font-size: 14px; font-weight: 900; color: #ffffff; margin-top: 3px;">৳${listing.rent.toLocaleString()}</span>
-          </div>
+        <div style="background-color: rgba(9, 9, 11, 0.95); border: 2.5px solid #d4a853; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); padding: 8px; width: 140px; display: flex; flex-direction: column; align-items: center; backdrop-filter: blur(8px); z-index: 10;">
+          <img src="${listing.imageUrl}" style="width: 100%; height: 65px; object-fit: cover; border-radius: 8px;" />
+          <span style="font-size: 10px; font-weight: 900; color: #d4a853; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.05em;">Target Flat</span>
+          <span style="font-size: 13px; font-weight: 900; color: #ffffff; margin-top: 2px;">৳${listing.rent.toLocaleString()}</span>
         </div>
       `,
-      className: "3d-listing-card-marker",
-      iconSize: [140, 230],
-      iconAnchor: [70, 230],
-      popupAnchor: [0, -230]
+      className: "2d-target-marker",
+      iconSize: [140, 115],
+      iconAnchor: [70, 115],
+      popupAnchor: [0, -115]
     });
   }, [listing]);
 
   const schoolIcon = (name: string) => {
     return L.divIcon({
       html: `
-        <div style="transform-style: preserve-3d; height: 130px; width: 180px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; perspective: 1000px;">
-          <!-- 3D Cube for School (Indigo theme) -->
-          <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) rotateX(-20deg) rotateY(45deg); width: 32px; height: 32px; transform-style: preserve-3d; z-index: 3;">
-            <!-- Top Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(32px); background: #818cf8; border: 1px solid rgba(129, 140, 248, 0.8); box-shadow: inset 0 0 8px rgba(255,255,255,0.3);"></div>
-            <!-- Bottom Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(0); background: #312e81;"></div>
-            <!-- Front Face -->
-            <div style="position: absolute; inset: 0; transform-origin: bottom center; transform: rotateX(-90deg); background: #6366f1; border: 1px solid rgba(129, 140, 248, 0.8);"></div>
-            <!-- Back Face -->
-            <div style="position: absolute; inset: 0; transform-origin: top center; transform: rotateX(90deg); background: #312e81; border: 1px solid rgba(129, 140, 248, 0.8);"></div>
-            <!-- Left Face -->
-            <div style="position: absolute; inset: 0; transform-origin: left center; transform: rotateY(90deg); background: #4f46e5; border: 1px solid rgba(129, 140, 248, 0.8);"></div>
-            <!-- Right Face -->
-            <div style="position: absolute; inset: 0; transform-origin: right center; transform: rotateY(-90deg); background: #4338ca; border: 1px solid rgba(129, 140, 248, 0.8);"></div>
-          </div>
-          
-          <!-- Pop-out Standing Label -->
-          <div style="position: absolute; bottom: 32px; transform: scale(1); transform-origin: bottom center; background-color: rgba(30, 27, 75, 0.95); border: 1.5px solid #6366f1; border-radius: 10px; padding: 6px 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.55); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(6px); width: fit-content; max-width: 180px; z-index: 5;">
-            <span style="font-size: 16px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">🏫</span>
-            <span style="font-size: 14px; font-weight: 900; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-          </div>
+        <div style="background-color: rgba(30, 27, 75, 0.95); border: 1.5px solid #6366f1; border-radius: 10px; padding: 6px 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(6px); width: fit-content; max-width: 180px; z-index: 5; white-space: nowrap;">
+          <span style="font-size: 15px;">🏫</span>
+          <span style="font-size: 12px; font-weight: 800; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 130px;">${name}</span>
         </div>
       `,
-      className: "3d-school-marker",
-      iconSize: [180, 130],
-      iconAnchor: [90, 130]
+      className: "2d-school-marker",
+      iconSize: [180, 36],
+      iconAnchor: [90, 36]
     });
   };
 
   const hospitalIcon = (name: string) => {
     return L.divIcon({
       html: `
-        <div style="transform-style: preserve-3d; height: 130px; width: 180px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; perspective: 1000px;">
-          <!-- 3D Cube for Hospital (Red/Rose theme) -->
-          <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) rotateX(-20deg) rotateY(45deg); width: 32px; height: 32px; transform-style: preserve-3d; z-index: 3;">
-            <!-- Top Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(32px); background: #fca5a5; border: 1px solid rgba(252, 165, 165, 0.8); box-shadow: inset 0 0 8px rgba(255,255,255,0.3);"></div>
-            <!-- Bottom Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(0); background: #7f1d1d;"></div>
-            <!-- Front Face -->
-            <div style="position: absolute; inset: 0; transform-origin: bottom center; transform: rotateX(-90deg); background: #ef4444; border: 1px solid rgba(252, 165, 165, 0.8);"></div>
-            <!-- Back Face -->
-            <div style="position: absolute; inset: 0; transform-origin: top center; transform: rotateX(90deg); background: #7f1d1d; border: 1px solid rgba(252, 165, 165, 0.8);"></div>
-            <!-- Left Face -->
-            <div style="position: absolute; inset: 0; transform-origin: left center; transform: rotateY(90deg); background: #dc2626; border: 1px solid rgba(252, 165, 165, 0.8);"></div>
-            <!-- Right Face -->
-            <div style="position: absolute; inset: 0; transform-origin: right center; transform: rotateY(-90deg); background: #b91c1c; border: 1px solid rgba(252, 165, 165, 0.8);"></div>
-          </div>
-          
-          <!-- Pop-out Standing Label -->
-          <div style="position: absolute; bottom: 32px; transform: scale(1); transform-origin: bottom center; background-color: rgba(69, 10, 10, 0.95); border: 1.5px solid #ef4444; border-radius: 10px; padding: 6px 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.55); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(6px); width: fit-content; max-width: 180px; z-index: 5;">
-            <span style="font-size: 16px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">🏥</span>
-            <span style="font-size: 14px; font-weight: 900; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-          </div>
+        <div style="background-color: rgba(69, 10, 10, 0.95); border: 1.5px solid #ef4444; border-radius: 10px; padding: 6px 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(6px); width: fit-content; max-width: 180px; z-index: 5; white-space: nowrap;">
+          <span style="font-size: 15px;">🏥</span>
+          <span style="font-size: 12px; font-weight: 800; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 130px;">${name}</span>
         </div>
       `,
-      className: "3d-hospital-marker",
-      iconSize: [180, 130],
-      iconAnchor: [90, 130]
+      className: "2d-hospital-marker",
+      iconSize: [180, 36],
+      iconAnchor: [90, 36]
     });
   };
 
   const landmarkIcon = (name: string) => {
     return L.divIcon({
       html: `
-        <div style="transform-style: preserve-3d; height: 130px; width: 180px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; perspective: 1000px;">
-          <!-- 3D Cube for Landmark (Yellow/Gold theme) -->
-          <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) rotateX(-20deg) rotateY(45deg); width: 32px; height: 32px; transform-style: preserve-3d; z-index: 3;">
-            <!-- Top Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(32px); background: #fef08a; border: 1px solid rgba(254, 240, 138, 0.8); box-shadow: inset 0 0 8px rgba(255,255,255,0.3);"></div>
-            <!-- Bottom Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(0); background: #713f12;"></div>
-            <!-- Front Face -->
-            <div style="position: absolute; inset: 0; transform-origin: bottom center; transform: rotateX(-90deg); background: #eab308; border: 1px solid rgba(254, 240, 138, 0.8);"></div>
-            <!-- Back Face -->
-            <div style="position: absolute; inset: 0; transform-origin: top center; transform: rotateX(90deg); background: #713f12; border: 1px solid rgba(254, 240, 138, 0.8);"></div>
-            <!-- Left Face -->
-            <div style="position: absolute; inset: 0; transform-origin: left center; transform: rotateY(90deg); background: #ca8a04; border: 1px solid rgba(254, 240, 138, 0.8);"></div>
-            <!-- Right Face -->
-            <div style="position: absolute; inset: 0; transform-origin: right center; transform: rotateY(-90deg); background: #a16207; border: 1px solid rgba(254, 240, 138, 0.8);"></div>
-          </div>
-          
-          <!-- Pop-out Standing Label -->
-          <div style="position: absolute; bottom: 32px; transform: scale(1); transform-origin: bottom center; background-color: rgba(69, 39, 0, 0.95); border: 1.5px solid #eab308; border-radius: 10px; padding: 6px 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.55); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(6px); width: fit-content; max-width: 180px; z-index: 5;">
-            <span style="font-size: 16px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">⭐</span>
-            <span style="font-size: 14px; font-weight: 900; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-          </div>
+        <div style="background-color: rgba(69, 39, 0, 0.95); border: 1.5px solid #eab308; border-radius: 10px; padding: 6px 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(6px); width: fit-content; max-width: 180px; z-index: 5; white-space: nowrap;">
+          <span style="font-size: 15px;">⭐</span>
+          <span style="font-size: 12px; font-weight: 800; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 130px;">${name}</span>
         </div>
       `,
-      className: "3d-landmark-marker",
-      iconSize: [180, 130],
-      iconAnchor: [90, 130]
+      className: "2d-landmark-marker",
+      iconSize: [180, 36],
+      iconAnchor: [90, 36]
     });
   };
 
@@ -557,88 +478,50 @@ export default function DrawerMapInner({ listing }: DrawerMapInnerProps) {
   const aiProsCardIcon = useMemo(() => {
     const prosHtml = dynamicPros.map(pro => `
       <li style="margin-bottom: 4px; display: flex; align-items: flex-start; gap: 4px;">
-        <span style="color: #10b981; font-weight: 900; line-height: 1.1; font-size: 11px;">✓</span>
-        <span style="color: #e4e4e7; font-size: 10.5px; font-weight: 700; line-height: 1.25;">${pro}</span>
+        <span style="color: #10b981; font-weight: 900; line-height: 1.1; font-size: 10px;">✓</span>
+        <span style="color: #e4e4e7; font-size: 10px; font-weight: 700; line-height: 1.25;">${pro}</span>
       </li>
     `).join("");
 
     return L.divIcon({
       html: `
-        <div style="transform-style: preserve-3d; height: 190px; width: 190px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; perspective: 1000px;">
-          <!-- 3D Cube for AI Pros (Green theme) -->
-          <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) rotateX(-20deg) rotateY(45deg); width: 24px; height: 24px; transform-style: preserve-3d; z-index: 3;">
-            <!-- Top Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(24px); background: #34d399; border: 1px solid rgba(52, 211, 153, 0.8); box-shadow: inset 0 0 6px rgba(255,255,255,0.3);"></div>
-            <!-- Bottom Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(0); background: #064e3b;"></div>
-            <!-- Front Face -->
-            <div style="position: absolute; inset: 0; transform-origin: bottom center; transform: rotateX(-90deg); background: #10b981; border: 1px solid rgba(52, 211, 153, 0.8);"></div>
-            <!-- Back Face -->
-            <div style="position: absolute; inset: 0; transform-origin: top center; transform: rotateX(90deg); background: #064e3b; border: 1px solid rgba(52, 211, 153, 0.8);"></div>
-            <!-- Left Face -->
-            <div style="position: absolute; inset: 0; transform-origin: left center; transform: rotateY(90deg); background: #059669; border: 1px solid rgba(52, 211, 153, 0.8);"></div>
-            <!-- Right Face -->
-            <div style="position: absolute; inset: 0; transform-origin: right center; transform: rotateY(-90deg); background: #047857; border: 1px solid rgba(52, 211, 153, 0.8);"></div>
+        <div style="background-color: rgba(9, 9, 11, 0.95); border: 2px solid #10b981; border-radius: 10px; box-shadow: 0 6px 16px rgba(16,185,129,0.25); padding: 7px 11px; backdrop-filter: blur(6px); width: 190px; z-index: 10;">
+          <div style="display: flex; align-items: center; gap: 4px; border-bottom: 1px solid rgba(16,185,129,0.25); padding-bottom: 4px; margin-bottom: 6px;">
+            <span style="font-size: 9px; font-weight: 900; color: #10b981; text-transform: uppercase; letter-spacing: 0.05em;">AI Pros Match</span>
           </div>
-          
-          <!-- Standing Card (Facing camera, popping out from top of pawn) -->
-          <div style="position: absolute; bottom: 24px; transform: scale(1); transform-origin: bottom center; background-color: rgba(9, 9, 11, 0.95); border: 2px solid #10b981; border-radius: 10px; box-shadow: 0 8px 20px rgba(16,185,129,0.35); padding: 7px 11px; backdrop-filter: blur(6px); width: 100%; z-index: 5;">
-            <div style="display: flex; align-items: center; gap: 4px; border-b: 1px solid rgba(16,185,129,0.25); padding-bottom: 4px; margin-bottom: 6px;">
-              <span style="font-size: 10px; font-weight: 900; color: #10b981; text-transform: uppercase; letter-spacing: 0.05em;">AI Pros Match</span>
-            </div>
-            <ul style="margin: 0; padding: 0; list-style: none;">
-              ${prosHtml}
-            </ul>
-          </div>
+          <ul style="margin: 0; padding: 0; list-style: none;">
+            ${prosHtml}
+          </ul>
         </div>
       `,
-      className: "3d-ai-pros-marker",
-      iconSize: [190, 190],
-      iconAnchor: [95, 190]
+      className: "2d-ai-pros-marker",
+      iconSize: [190, 120],
+      iconAnchor: [95, 120]
     });
   }, [dynamicPros]);
 
   const aiConsCardIcon = useMemo(() => {
     const consHtml = dynamicCons.map(con => `
       <li style="margin-bottom: 4px; display: flex; align-items: flex-start; gap: 4px;">
-        <span style="color: #f43f5e; font-weight: 900; line-height: 1.1; font-size: 11px;">•</span>
-        <span style="color: #e4e4e7; font-size: 10.5px; font-weight: 700; line-height: 1.25;">${con}</span>
+        <span style="color: #f43f5e; font-weight: 900; line-height: 1.1; font-size: 10px;">•</span>
+        <span style="color: #e4e4e7; font-size: 10px; font-weight: 700; line-height: 1.25;">${con}</span>
       </li>
     `).join("");
 
     return L.divIcon({
       html: `
-        <div style="transform-style: preserve-3d; height: 190px; width: 190px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; perspective: 1000px;">
-          <!-- 3D Cube for AI Cons (Rose/Red theme) -->
-          <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) rotateX(-20deg) rotateY(45deg); width: 24px; height: 24px; transform-style: preserve-3d; z-index: 3;">
-            <!-- Top Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(24px); background: #fb7185; border: 1px solid rgba(251, 113, 133, 0.8); box-shadow: inset 0 0 8px rgba(255,255,255,0.3);"></div>
-            <!-- Bottom Face -->
-            <div style="position: absolute; inset: 0; transform: translateZ(0); background: #4c0519;"></div>
-            <!-- Front Face -->
-            <div style="position: absolute; inset: 0; transform-origin: bottom center; transform: rotateX(-90deg); background: #f43f5e; border: 1px solid rgba(251, 113, 133, 0.8);"></div>
-            <!-- Back Face -->
-            <div style="position: absolute; inset: 0; transform-origin: top center; transform: rotateX(90deg); background: #4c0519; border: 1px solid rgba(251, 113, 133, 0.8);"></div>
-            <!-- Left Face -->
-            <div style="position: absolute; inset: 0; transform-origin: left center; transform: rotateY(90deg); background: #e11d48; border: 1px solid rgba(251, 113, 133, 0.8);"></div>
-            <!-- Right Face -->
-            <div style="position: absolute; inset: 0; transform-origin: right center; transform: rotateY(-90deg); background: #be123c; border: 1px solid rgba(251, 113, 133, 0.8);"></div>
+        <div style="background-color: rgba(9, 9, 11, 0.95); border: 2px solid #f43f5e; border-radius: 10px; box-shadow: 0 6px 16px rgba(244,63,94,0.25); padding: 7px 11px; backdrop-filter: blur(6px); width: 190px; z-index: 10;">
+          <div style="display: flex; align-items: center; gap: 4px; border-bottom: 1px solid rgba(244,63,94,0.25); padding-bottom: 4px; margin-bottom: 6px;">
+            <span style="font-size: 9px; font-weight: 900; color: #f43f5e; text-transform: uppercase; letter-spacing: 0.05em;">AI Risk Alert</span>
           </div>
-          
-          <!-- Standing Card (Facing camera, popping out from top of pawn) -->
-          <div style="position: absolute; bottom: 24px; transform: scale(1); transform-origin: bottom center; background-color: rgba(9, 9, 11, 0.95); border: 2.5px solid #f43f5e; border-radius: 10px; box-shadow: 0 8px 20px rgba(244,63,94,0.35); padding: 7px 11px; backdrop-filter: blur(6px); width: 100%; z-index: 5;">
-            <div style="display: flex; align-items: center; gap: 4px; border-b: 1px solid rgba(244,63,94,0.25); padding-bottom: 4px; margin-bottom: 6px;">
-              <span style="font-size: 10px; font-weight: 900; color: #f43f5e; text-transform: uppercase; letter-spacing: 0.05em;">AI Risk Alert</span>
-            </div>
-            <ul style="margin: 0; padding: 0; list-style: none;">
-              ${consHtml}
-            </ul>
-          </div>
+          <ul style="margin: 0; padding: 0; list-style: none;">
+            ${consHtml}
+          </ul>
         </div>
       `,
-      className: "3d-ai-cons-marker",
-      iconSize: [190, 190],
-      iconAnchor: [95, 190]
+      className: "2d-ai-cons-marker",
+      iconSize: [190, 120],
+      iconAnchor: [95, 120]
     });
   }, [dynamicCons]);
 

@@ -170,10 +170,10 @@ const TOUR_STEPS = [
     placement: "top"
   },
   {
-    title: "5. Add to Plan Checklist",
-    desc: "Click 'Add your planning' to carry these metrics directly into the commute and budget matching checklist.",
-    targetId: "tour-planning",
-    stepName: "Checklist Matching",
+    title: "5. Start Scanning Similar Homes",
+    desc: "Click 'Start Scanning Similar homes now' to instantly search, rank, and match properties in this neighborhood based on the fetched criteria.",
+    targetId: "tour-scanning",
+    stepName: "Similarity Scan",
     placement: "top"
   }
 ];
@@ -181,6 +181,8 @@ const TOUR_STEPS = [
 export default function FacebookFetcher() {
   const router = useRouter();
   const {
+    planSearch,
+    setIsSimulating,
     fbUrl: url,
     setFbUrl: setUrl,
     fbCrawledText: crawledText,
@@ -357,7 +359,7 @@ export default function FacebookFetcher() {
         if (lowerUrl.includes("uttara") || lowerUrl.includes("18wsfhxoi3")) {
           area = "Uttara";
           textToParse = FB_EXAMPLES[0].text;
-        } else if (lowerUrl.includes("mohammadpur") || lowerUrl.includes("1bw8e4znhw")) {
+        } else if (lowerUrl.includes("mohammadpur") || lowerUrl.includes("1bw8e4znhw") || lowerUrl.includes("1d4w3wnewo")) {
           area = "Mohammadpur";
           textToParse = FB_EXAMPLES[1].text;
         } else if (lowerUrl.includes("banani") || lowerUrl.includes("1bs3hbnzay")) {
@@ -478,18 +480,56 @@ export default function FacebookFetcher() {
     }
   };
 
-  const handleAddPlanning = () => {
+  const handleStartScanning = () => {
     if (!parsed) return;
-    // Build query params
-    const query = new URLSearchParams({
-      area: parsed.area || "",
-      rent: parsed.rent?.toString() || "",
-      lift: parsed.lift ? "true" : "false",
-      generator: parsed.generator ? "true" : "false",
-      gasType: parsed.gasType || "",
-      tenantPreference: parsed.tenantPreference || ""
-    });
-    router.push(`/portal/wizard?${query.toString()}`);
+
+    // Convert tenantPreference to householdType
+    let householdType: "family" | "couple" | "bachelor" | "student" | "working-woman" = "family";
+    const pref = parsed.tenantPreference?.toLowerCase() || "";
+    if (pref.includes("bachelor")) {
+      householdType = "bachelor";
+    } else if (pref.includes("student")) {
+      householdType = "student";
+    } else if (pref.includes("female") || pref.includes("woman") || pref.includes("working-woman")) {
+      householdType = "working-woman";
+    } else if (pref.includes("couple")) {
+      householdType = "couple";
+    }
+
+    // Build priorities based on what was parsed
+    const priorities: ("commute" | "rent" | "safety" | "gas" | "lift" | "generator" | "no-waterlogging" | "family-friendly" | "bachelor-friendly")[] = ["commute"];
+    if (parsed.lift) priorities.push("lift");
+    if (parsed.generator) priorities.push("generator");
+    if (parsed.gasType?.toLowerCase().includes("line")) priorities.push("gas");
+    if (parsed.rent && parsed.rent <= 20000) priorities.push("rent");
+
+    // Standardize area
+    let matchedArea = parsed.area || "Banani";
+    const standardAreas = [
+      "Banani", "Gulshan", "Banasree", "Badda", "Merul Badda", "Mohakhali", "Tejgaon", 
+      "Mohammadpur", "Lalmatia", "Mirpur", "Uttara", "Bashundhara", "Dhanmondi"
+    ];
+    const found = standardAreas.find(a => a.toLowerCase() === matchedArea.toLowerCase());
+    if (found) {
+      matchedArea = found;
+    }
+
+    const newProfile = {
+      id: `fb-fetch-${Date.now()}`,
+      mode: "plan" as const,
+      rentingOrBuying: "renting" as const,
+      householdType,
+      lookingFor: "full-flat" as const,
+      budgetMonthly: parsed.rent || 30000,
+      maxFirstMonthCash: (parsed.rent || 30000) * (parsed.advanceMonths || 2) + 15000,
+      commuteAnchors: [{ label: matchedArea, area: matchedArea }],
+      priorities,
+      dealBreakers: []
+    };
+
+    planSearch(newProfile);
+    setIsSimulating(true);
+    router.push("/portal");
   };
 
   return (
@@ -544,7 +584,7 @@ export default function FacebookFetcher() {
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-text-main">
-                Judge & Tester Sandbox: QR Codes & Links
+                Samples for understanding how the fetcher works
               </h3>
               <p className="text-xs text-text-muted">
                 Scan these QR codes to inspect the source Facebook posts, or use the direct buttons below.
@@ -719,7 +759,7 @@ export default function FacebookFetcher() {
                   <Copy className="w-4 h-4 text-[#1877F2]" />
                   Original Crawled Caption
                 </h5>
-                <div className="text-xs sm:text-sm text-text-main leading-relaxed font-semibold bg-bg-alt border border-border-light/60 p-4 rounded-xl max-h-[350px] overflow-y-auto whitespace-pre-wrap select-all">
+                <div className="text-xs sm:text-sm text-text-main leading-relaxed font-semibold bg-bg-alt border border-border-light/60 p-4 rounded-xl whitespace-pre-wrap select-all">
                   {crawledText}
                 </div>
               </div>
@@ -832,12 +872,12 @@ export default function FacebookFetcher() {
             {/* Action Trigger Buttons */}
             <div className="pt-4 border-t border-black/[0.04] flex flex-col sm:flex-row gap-3">
               <button
-                id="tour-planning"
-                onClick={handleAddPlanning}
+                id="tour-scanning"
+                onClick={handleStartScanning}
                 className="flex-1 py-4.5 px-6 bg-[#C9952B] hover:bg-[#b08020] text-white font-black uppercase tracking-wider rounded-2xl shadow-lg shadow-gold/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 cursor-pointer text-sm font-black"
               >
                 <Sparkles className="w-4 h-4 text-white" />
-                Add your planning
+                Start Scanning Similar homes now
               </button>
               <button
                 onClick={() => {
