@@ -2,10 +2,13 @@
   "name": "bashabondhu-root",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "basabondhu"
+  ],
   "scripts": {
-    "dev": "npm run dev --prefix basabondhu",
-    "build": "npm run build --prefix basabondhu",
-    "start": "npm run start --prefix basabondhu",
-    "lint": "npm run lint --prefix basabondhu"
+    "dev": "npm run dev -w basabondhu",
+    "build": "npm run build -w basabondhu",
+    "start": "npm run start -w basabondhu",
+    "lint": "npm run lint -w basabondhu"
   }
 }
