@@ -3,10 +3,17 @@
 import React, { useState } from "react";
 import { useSearch } from "@/context/SearchContext";
 import { 
-  PhoneCall, Calendar, AlertTriangle, FileText, CheckCircle2, 
+  PhoneCall, Calendar, AlertTriangle, FileText, CheckCircle2,
   UserCheck, ShieldAlert, Building2, TrendingUp, Compass, Flame, Info,
-  Bold, Italic, Underline, RotateCcw, Edit3, Check
+  Bold, Italic, Underline, RotateCcw, Edit3, Check,
+  Square, CheckSquare, GripVertical, Plus
 } from "lucide-react";
+
+interface ChecklistItem {
+  id: string;
+  title: string;
+  desc: string;
+}
 
 export default function VisitPlanner() {
   const { profile, scoredListings } = useSearch();
@@ -17,6 +24,62 @@ export default function VisitPlanner() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedScripts, setEditedScripts] = useState<Record<string, string>>({});
   const [resetKeys, setResetKeys] = useState<Record<string, number>>({});
+
+  // Checklist states
+  const [utilitiesItems, setUtilitiesItems] = useState<ChecklistItem[]>([
+    {
+      id: "u_water",
+      title: "Water Quality & Flow",
+      desc: "Turn on kitchen/bath taps. Check iron content, color, and pressure. Ask how often the building water tanks are cleaned."
+    },
+    {
+      id: "u_meter",
+      title: "Electricity Meter Verification",
+      desc: "Locate the prepaid meter. Check for outstanding debts or tariffs, and check the load limits of the line."
+    },
+    {
+      id: "u_damp",
+      title: "Dampness & Wall Seepage",
+      desc: "Check structural corners, ceiling boundaries, and closets for mold, damp spots, or recent paint cover-ups."
+    },
+    {
+      id: "u_gas",
+      title: "Gas Pressure & Load",
+      desc: "Test the stove during cooking peak hours (8 AM - 10 AM, 1 PM - 3 PM) to verify pressure levels."
+    }
+  ]);
+
+  const [environmentItems, setEnvironmentItems] = useState<ChecklistItem[]>([
+    {
+      id: "n_waterlog",
+      title: "Waterlogging Potential",
+      desc: "Inspect the road right outside. Ask nearby grocery shopkeepers if the road sinks during heavy monsoons."
+    },
+    {
+      id: "n_ventilation",
+      title: "Natural Light & Orientation",
+      desc: "Verify south-facing corridors and window placements. Ensure the apartment is not blocked by adjacent high-rises."
+    },
+    {
+      id: "n_safety",
+      title: "Building Security & Fire Escapes",
+      desc: "Check if the staircase is wide enough for emergencies. Inquire about security guards' night rotation shifts."
+    },
+    {
+      id: "n_noise",
+      title: "Ambient Noise Evaluation",
+      desc: "Observe proximity to main roads, mosques (loudspeakers), school gates, or local commercial workshops."
+    }
+  ]);
+
+  // Drag and drop states
+  const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
+  const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
+
+  // New checklist item form states
+  const [addingSection, setAddingSection] = useState<"utilities" | "environment" | null>(null);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDesc, setNewDesc] = useState("");
 
   if (!profile) return null;
 
@@ -61,6 +124,65 @@ export default function VisitPlanner() {
       setResetKeys((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
       setEditingId(null);
     }
+  };
+
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedItemId(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    setDragOverItemId(id);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverItemId(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string, section: "utilities" | "environment") => {
+    e.preventDefault();
+    setDragOverItemId(null);
+    if (!draggedItemId || draggedItemId === targetId) return;
+
+    const items = section === "utilities" ? [...utilitiesItems] : [...environmentItems];
+    const draggedIndex = items.findIndex((item) => item.id === draggedItemId);
+    const targetIndex = items.findIndex((item) => item.id === targetId);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    // Reorder inside the array
+    const [removed] = items.splice(draggedIndex, 1);
+    items.splice(targetIndex, 0, removed);
+
+    if (section === "utilities") {
+      setUtilitiesItems(items);
+    } else {
+      setEnvironmentItems(items);
+    }
+    setDraggedItemId(null);
+  };
+
+  // Add custom checklist notes
+  const handleAddItem = (section: "utilities" | "environment") => {
+    if (!newTitle.trim()) return;
+
+    const newItem: ChecklistItem = {
+      id: `custom_${Date.now()}`,
+      title: newTitle.trim(),
+      desc: newDesc.trim()
+    };
+
+    if (section === "utilities") {
+      setUtilitiesItems((prev) => [...prev, newItem]);
+    } else {
+      setEnvironmentItems((prev) => [...prev, newItem]);
+    }
+
+    setAddingSection(null);
+    setNewTitle("");
+    setNewDesc("");
   };
 
   return (
@@ -262,56 +384,58 @@ export default function VisitPlanner() {
             <div className="max-w-2xl text-left">
               <h3 className="text-sm font-bold text-text-main uppercase tracking-wider mb-1">Physical House Inspection Guide</h3>
               <p className="text-xs text-text-muted">
-                Do not rent blindly. Take this checklist with you to verify physical parameters when visiting the building in person. Click items to check them off as you inspect.
+                Do not rent blindly. Take this checklist with you to verify physical parameters when visiting the building. Use the drag handles to reorder notes, or add your own custom checkpoints below.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Category 1 */}
+              {/* Category 1: Utilities */}
               <div className="bg-card border border-border-light rounded-3xl p-5 shadow-xs space-y-4">
                 <h4 className="text-xs font-black uppercase text-primary tracking-wider flex items-center gap-1.5 pb-2 border-b border-border-light">
                   <Flame className="w-3.5 h-3.5" /> Utilities & Hardware
                 </h4>
                 
                 <div className="space-y-3">
-                  {[
-                    {
-                      id: "u_water",
-                      title: "Water Quality & Flow",
-                      desc: "Turn on kitchen/bath taps. Check iron content, color, and pressure. Ask how often the building water tanks are cleaned."
-                    },
-                    {
-                      id: "u_meter",
-                      title: "Electricity Meter Verification",
-                      desc: "Locate the prepaid meter. Check for outstanding debts or tariffs, and check the load limits of the line."
-                    },
-                    {
-                      id: "u_damp",
-                      title: "Dampness & Wall Seepage",
-                      desc: "Check structural corners, ceiling boundaries, and closets for mold, damp spots, or recent paint cover-ups."
-                    },
-                    {
-                      id: "u_gas",
-                      title: "Gas Pressure & Load",
-                      desc: "Test the stove during cooking peak hours (8 AM - 10 AM, 1 PM - 3 PM) to verify pressure levels."
-                    }
-                  ].map((item) => {
+                  {utilitiesItems.map((item) => {
                     const isChecked = checkedItems.includes(item.id);
+                    const isDragOver = dragOverItemId === item.id;
                     return (
                       <div 
                         key={item.id}
-                        onClick={() => toggleCheck(item.id)}
-                        className={`flex items-start gap-3 p-3 rounded-2xl border transition-all duration-200 cursor-pointer ${
-                          isChecked 
-                            ? "bg-primary/5 border-primary/20" 
-                            : "bg-slate-50/50 hover:bg-slate-50 border-border-light"
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, item.id)}
+                        onDragOver={(e) => handleDragOver(e, item.id)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, item.id, "utilities")}
+                        className={`flex items-start gap-2.5 p-3 rounded-2xl border transition-all duration-200 select-none ${
+                          draggedItemId === item.id ? "opacity-30 scale-95" : ""
+                        } ${
+                          isDragOver 
+                            ? "border-primary bg-primary/5 scale-[1.01]" 
+                            : isChecked 
+                              ? "bg-primary/5 border-primary/20" 
+                              : "bg-slate-50/50 hover:bg-slate-50 border-border-light"
                         }`}
                       >
-                        <div className="mt-0.5">
-                          <CheckCircle2 className={`w-4 h-4 transition-colors ${isChecked ? "text-primary fill-primary/10" : "text-slate-300"}`} />
+                        {/* Drag Handle */}
+                        <div className="text-slate-300 hover:text-slate-500 mt-0.5 cursor-grab active:cursor-grabbing shrink-0">
+                          <GripVertical className="w-3.5 h-3.5" />
                         </div>
-                        <div>
-                          <span className={`text-[11px] font-bold block ${isChecked ? "text-primary line-through" : "text-text-main"}`}>
+
+                        {/* Square Checkbox */}
+                        <button 
+                          onClick={() => toggleCheck(item.id)}
+                          className="mt-0.5 focus:outline-none shrink-0 cursor-pointer"
+                        >
+                          {isChecked ? (
+                            <CheckSquare className="w-4 h-4 text-primary fill-primary/10 transition-colors" />
+                          ) : (
+                            <Square className="w-4 h-4 text-slate-300 hover:text-slate-400 transition-colors" />
+                          )}
+                        </button>
+
+                        <div className="flex-1 min-w-0">
+                          <span className={`text-[11px] font-bold block leading-snug cursor-pointer ${isChecked ? "text-primary line-through" : "text-text-main"}`} onClick={() => toggleCheck(item.id)}>
                             {item.title}
                           </span>
                           <p className="text-[10px] text-text-muted mt-0.5 leading-relaxed">{item.desc}</p>
@@ -320,53 +444,101 @@ export default function VisitPlanner() {
                     );
                   })}
                 </div>
+
+                {/* Inline addition Form */}
+                {addingSection === "utilities" ? (
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3">
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-black uppercase text-slate-500">Checkpoint Title</label>
+                      <input 
+                        type="text" 
+                        value={newTitle} 
+                        onChange={(e) => setNewTitle(e.target.value)} 
+                        placeholder="e.g. Check kitchen cabinets"
+                        className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:border-primary bg-white text-slate-800"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-black uppercase text-slate-500">Details</label>
+                      <textarea 
+                        value={newDesc} 
+                        onChange={(e) => setNewDesc(e.target.value)} 
+                        placeholder="e.g. Ensure no hinges are rusty..."
+                        className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:border-primary bg-white text-slate-800 h-14 resize-none"
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-end text-[10px]">
+                      <button 
+                        onClick={() => { setAddingSection(null); setNewTitle(""); setNewDesc(""); }}
+                        className="px-3 py-1 font-bold text-slate-500 hover:text-slate-700 bg-white border border-slate-200 rounded-lg cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={() => handleAddItem("utilities")}
+                        className="px-3 py-1 font-bold text-white bg-primary rounded-lg hover:bg-primary/95 cursor-pointer"
+                      >
+                        Add Note
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => setAddingSection("utilities")}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl border border-dashed border-slate-200 hover:border-primary/50 hover:bg-slate-50 text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-primary transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add custom check item
+                  </button>
+                )}
               </div>
 
-              {/* Category 2 */}
+              {/* Category 2: Environment */}
               <div className="bg-card border border-border-light rounded-3xl p-5 shadow-xs space-y-4">
                 <h4 className="text-xs font-black uppercase text-[#C9952B] tracking-wider flex items-center gap-1.5 pb-2 border-b border-border-light">
                   <Compass className="w-3.5 h-3.5" /> Neighborhood & Building Environment
                 </h4>
 
                 <div className="space-y-3">
-                  {[
-                    {
-                      id: "n_waterlog",
-                      title: "Waterlogging Potential",
-                      desc: "Inspect the road right outside. Ask nearby grocery shopkeepers if the road sinks during heavy monsoons."
-                    },
-                    {
-                      id: "n_ventilation",
-                      title: "Natural Light & Orientation",
-                      desc: "Verify south-facing corridors and window placements. Ensure the apartment is not blocked by adjacent high-rises."
-                    },
-                    {
-                      id: "n_safety",
-                      title: "Building Security & Fire Escapes",
-                      desc: "Check if the staircase is wide enough for emergencies. Inquire about security guards' night rotation shifts."
-                    },
-                    {
-                      id: "n_noise",
-                      title: "Ambient Noise Evaluation",
-                      desc: "Observe proximity to main roads, mosques (loudspeakers), school gates, or local commercial workshops."
-                    }
-                  ].map((item) => {
+                  {environmentItems.map((item) => {
                     const isChecked = checkedItems.includes(item.id);
+                    const isDragOver = dragOverItemId === item.id;
                     return (
                       <div 
                         key={item.id}
-                        onClick={() => toggleCheck(item.id)}
-                        className={`flex items-start gap-3 p-3 rounded-2xl border transition-all duration-200 cursor-pointer ${
-                          isChecked 
-                            ? "bg-[#C9952B]/5 border-[#C9952B]/20" 
-                            : "bg-slate-50/50 hover:bg-slate-50 border-border-light"
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, item.id)}
+                        onDragOver={(e) => handleDragOver(e, item.id)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, item.id, "environment")}
+                        className={`flex items-start gap-2.5 p-3 rounded-2xl border transition-all duration-200 select-none ${
+                          draggedItemId === item.id ? "opacity-30 scale-95" : ""
+                        } ${
+                          isDragOver 
+                            ? "border-[#C9952B] bg-[#C9952B]/5 scale-[1.01]" 
+                            : isChecked 
+                              ? "bg-[#C9952B]/5 border-[#C9952B]/20" 
+                              : "bg-slate-50/50 hover:bg-slate-50 border-border-light"
                         }`}
                       >
-                        <div className="mt-0.5">
-                          <CheckCircle2 className={`w-4 h-4 transition-colors ${isChecked ? "text-[#C9952B] fill-[#C9952B]/10" : "text-slate-300"}`} />
+                        {/* Drag Handle */}
+                        <div className="text-slate-300 hover:text-[#C9952B] mt-0.5 cursor-grab active:cursor-grabbing shrink-0">
+                          <GripVertical className="w-3.5 h-3.5" />
                         </div>
-                        <div>
-                          <span className={`text-[11px] font-bold block ${isChecked ? "text-[#C9952B] line-through" : "text-text-main"}`}>
+
+                        {/* Square Checkbox */}
+                        <button 
+                          onClick={() => toggleCheck(item.id)}
+                          className="mt-0.5 focus:outline-none shrink-0 cursor-pointer"
+                        >
+                          {isChecked ? (
+                            <CheckSquare className="w-4 h-4 text-[#C9952B] fill-[#C9952B]/10 transition-colors" />
+                          ) : (
+                            <Square className="w-4 h-4 text-slate-300 hover:text-slate-400 transition-colors" />
+                          )}
+                        </button>
+
+                        <div className="flex-1 min-w-0">
+                          <span className={`text-[11px] font-bold block leading-snug cursor-pointer ${isChecked ? "text-[#C9952B] line-through" : "text-text-main"}`} onClick={() => toggleCheck(item.id)}>
                             {item.title}
                           </span>
                           <p className="text-[10px] text-text-muted mt-0.5 leading-relaxed">{item.desc}</p>
@@ -375,6 +547,52 @@ export default function VisitPlanner() {
                     );
                   })}
                 </div>
+
+                {/* Inline addition Form */}
+                {addingSection === "environment" ? (
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3">
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-black uppercase text-slate-500">Checkpoint Title</label>
+                      <input 
+                        type="text" 
+                        value={newTitle} 
+                        onChange={(e) => setNewTitle(e.target.value)} 
+                        placeholder="e.g. Check parking spots"
+                        className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#C9952B] bg-white text-slate-800"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-black uppercase text-slate-500">Details</label>
+                      <textarea 
+                        value={newDesc} 
+                        onChange={(e) => setNewDesc(e.target.value)} 
+                        placeholder="e.g. Verify CCTV camera presence..."
+                        className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#C9952B] bg-white text-slate-800 h-14 resize-none"
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-end text-[10px]">
+                      <button 
+                        onClick={() => { setAddingSection(null); setNewTitle(""); setNewDesc(""); }}
+                        className="px-3 py-1 font-bold text-slate-500 hover:text-slate-700 bg-white border border-slate-200 rounded-lg cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={() => handleAddItem("environment")}
+                        className="px-3 py-1 font-bold text-white bg-[#C9952B] rounded-lg hover:bg-[#C9952B]/95 cursor-pointer"
+                      >
+                        Add Note
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => setAddingSection("environment")}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl border border-dashed border-slate-200 hover:border-[#C9952B]/50 hover:bg-slate-50 text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-[#C9952B] transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add custom check item
+                  </button>
+                )}
               </div>
             </div>
           </div>
