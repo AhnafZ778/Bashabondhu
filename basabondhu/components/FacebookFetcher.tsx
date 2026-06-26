@@ -9,17 +9,21 @@ import {
   MapPin, 
   Home, 
   Flame, 
-  ShieldAlert,
-  Coins,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  Activity,
-  Layers,
-  Copy,
-  Check,
-  QrCode,
-  ExternalLink
+  ShieldAlert, 
+  Coins, 
+  CheckCircle2, 
+  AlertCircle, 
+  HelpCircle, 
+  Activity, 
+  Layers, 
+  Copy, 
+  Check, 
+  QrCode, 
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  ArrowLeft
 } from "lucide-react";
 import { ParsedListing } from "@/lib/types";
 import Typewriter from "@/components/Typewriter";
@@ -134,17 +138,28 @@ const QR_CODES = [
   }
 ];
 
-const TOUR_STORY = `🕵️‍♂️ **THE DHAKA RENTAL QUEST**
-
-In Dhaka, finding a place to live is a chaotic scavenger hunt. Landlords post properties on Facebook with messy, unstructured captions—often hiding service charges, omitting gas utility types, or remaining vague about bachelor availability.
-
-But you have **BasaBondhu**! Our Social Crawler acts as your digital detective.
-
-📋 **STEPS TO EXECUTE THE TOUR:**
-1. **Autofill a Post**: Scan a sample QR Code below using your phone, or simply click **Autofill & Scan** on any card.
-2. **Launch AI Parser**: Click **Fetch & Extract**. BasaBondhu will parse the raw unstructured text using state-of-the-art NLP.
-3. **Verify the Structure**: Watch the parsed specifications, check the financial breakdown, and note any missing metrics flagged in yellow.
-4. **Commute Matching**: Click **Add Your Planning** to carry these parameters directly into your commute and budget matching checklist!`;
+const TOUR_STEPS = [
+  {
+    title: "1. Autofill or Paste a Post",
+    desc: "Scan one of our sandbox QR codes using your phone, click 'Autofill & Scan' on any listing card below, or paste a raw Facebook property URL in the input field.",
+    stepName: "Input Selection"
+  },
+  {
+    title: "2. Fetch & AI Extract",
+    desc: "Click 'Fetch & Extract'. BasaBondhu's Social Crawler contacts our proxy endpoint to grab metadata, then utilizes Gemini 2.5 to automatically structure details.",
+    stepName: "AI Extraction"
+  },
+  {
+    title: "3. Verify Structured Output",
+    desc: "Review the structured financial and specifications table. Omitted listings details (e.g. missing service charges or gas utility types) are flagged in yellow warnings.",
+    stepName: "Data Validation"
+  },
+  {
+    title: "4. Add to Your Search Plan",
+    desc: "Click 'Add Your Planning' to carry these parsed criteria directly into your commute and budget checklist to compare against other matched rentals.",
+    stepName: "Plan Matching"
+  }
+];
 
 export default function FacebookFetcher() {
   const router = useRouter();
@@ -157,12 +172,14 @@ export default function FacebookFetcher() {
   const [crawlLogs, setCrawlLogs] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  const [skipTour, setSkipTour] = useState(false);
-  const [tourKey, setTourKey] = useState(0);
+  
+  // Interactive Stepper Tour States
+  const [showTour, setShowTour] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
-  const handleReplayTour = () => {
-    setSkipTour(false);
-    setTourKey(prev => prev + 1);
+  const handleStartTour = () => {
+    setShowTour(true);
+    setCurrentStep(0);
   };
 
   const handleCopy = (text: string, index: number) => {
@@ -353,46 +370,130 @@ export default function FacebookFetcher() {
         <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-4">
           
           {/* Storytelling & Interactive Tour Guide Card */}
-          <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300 space-y-4 relative overflow-hidden bg-gradient-to-br from-card via-card to-emerald-500/[0.02]">
-            <div className="flex items-center justify-between border-b border-black/[0.04] pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-emerald-600" />
+          <div className="bg-card border border-border-light rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300 relative overflow-hidden bg-gradient-to-br from-card via-card to-emerald-500/[0.02] min-h-[380px] flex flex-col justify-between">
+            {!showTour ? (
+              // Onboarding Welcome / Intro view
+              <div className="flex-1 flex flex-col justify-between space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-emerald-600 animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-black text-text-main">
+                        BasaBondhu Companion
+                      </h3>
+                      <p className="text-[10px] sm:text-xs text-text-muted">
+                        Guided Scraper Walkthrough
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <h4 className="text-xl sm:text-2xl font-serif uppercase tracking-wider font-bold text-text-main">
+                      🕵️‍♂️ The Dhaka Rental Quest
+                    </h4>
+                    <p className="text-sm text-text-muted leading-relaxed font-semibold">
+                      In Dhaka, finding a place to live is a chaotic scavenger hunt. Landlords post properties on Facebook with messy, unstructured, and often incomplete captions.
+                    </p>
+                    <p className="text-xs text-text-muted leading-relaxed font-medium">
+                      Let BasaBondhu's Social Crawler act as your digital detective. Learn how to extract, analyze, and map Facebook listing details in seconds!
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-black text-text-main">
-                    BasaBondhu Companion
-                  </h3>
-                  <p className="text-[10px] sm:text-xs text-text-muted">
-                    Interactive Tour & Backstory
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setSkipTour(true)}
-                  className="text-[10px] font-black uppercase tracking-wider bg-bg hover:bg-zinc-100 text-text-muted border border-border-light px-2.5 py-1.5 rounded-md transition-colors cursor-pointer"
-                >
-                  Skip
-                </button>
-                <button
-                  onClick={handleReplayTour}
-                  className="text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 hover:bg-emerald-500/20 text-[#1877F2] border border-emerald-500/20 px-2.5 py-1.5 rounded-md transition-colors cursor-pointer"
-                >
-                  Replay
-                </button>
-              </div>
-            </div>
 
-            {/* ChatGPT Style Writing Simulation - Large Font */}
-            <div className="font-extrabold text-text-main text-base sm:text-lg leading-relaxed tracking-wide min-h-[180px]">
-              <Typewriter 
-                key={tourKey}
-                content={TOUR_STORY} 
-                speed={12} 
-                skip={skipTour}
-              />
-            </div>
+                <button
+                  onClick={handleStartTour}
+                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-wider rounded-2xl shadow-lg shadow-emerald-600/15 flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] cursor-pointer text-xs"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  Start Interactive Tour
+                </button>
+              </div>
+            ) : (
+              // Stepper Interactive View
+              <div className="flex-1 flex flex-col justify-between space-y-6 h-full">
+                {/* Step header & indicator */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b border-black/[0.04] pb-3">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
+                      {TOUR_STEPS[currentStep].stepName}
+                    </span>
+                    <span className="text-xs font-bold text-text-muted">
+                      Step {currentStep + 1} of {TOUR_STEPS.length}
+                    </span>
+                  </div>
+
+                  {/* Progress Line */}
+                  <div className="w-full h-1 bg-black/[0.04] rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-emerald-500 transition-all duration-300"
+                      style={{ width: `${((currentStep + 1) / TOUR_STEPS.length) * 100}%` }}
+                    />
+                  </div>
+
+                  {/* Card Step Body */}
+                  <div className="space-y-3 pt-2">
+                    <h4 className="text-lg sm:text-xl font-black text-text-main flex items-center gap-2 uppercase tracking-wide">
+                      {TOUR_STEPS[currentStep].title}
+                    </h4>
+                    <p className="text-sm text-text-muted leading-relaxed font-semibold">
+                      {TOUR_STEPS[currentStep].desc}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bottom Stepper Controls */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-3 border-t border-black/[0.04] pt-4">
+                    <button
+                      onClick={() => currentStep > 0 && setCurrentStep(prev => prev - 1)}
+                      disabled={currentStep === 0}
+                      className="px-4 py-3 bg-bg-alt hover:bg-zinc-100 disabled:opacity-40 disabled:hover:bg-bg-alt text-text-main font-bold rounded-xl border border-border-light flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer select-none"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Back
+                    </button>
+
+                    <div className="flex gap-1.5">
+                      {TOUR_STEPS.map((_, idx) => (
+                        <div 
+                          key={idx} 
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            idx === currentStep ? "bg-emerald-500 scale-125" : "bg-black/[0.08]"
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    {currentStep < TOUR_STEPS.length - 1 ? (
+                      <button
+                        onClick={() => setCurrentStep(prev => prev + 1)}
+                        className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer select-none"
+                      >
+                        Next
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setShowTour(false)}
+                        className="px-4 py-3 bg-[#1877F2] hover:bg-[#155fc2] text-white font-black rounded-xl flex items-center justify-center gap-1.5 text-xs active:scale-98 transition-all cursor-pointer select-none"
+                      >
+                        Finish
+                        <Check className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => setShowTour(false)}
+                    className="w-full text-center text-xs font-bold text-text-muted hover:text-text-main transition-colors cursor-pointer block pb-1 border-0 bg-transparent"
+                  >
+                    End Walkthrough / Back to Story
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           
         </div>
