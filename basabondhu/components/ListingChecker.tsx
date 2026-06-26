@@ -189,7 +189,7 @@ export default function ListingChecker() {
                   className="w-full py-3 px-4 bg-[#C9952B] text-white text-xs font-black tracking-wider uppercase rounded-xl hover:bg-[#b08020] active:scale-[0.98] transition-all shadow-md shadow-[#C9952B]/10 disabled:bg-bg-alt disabled:text-text-muted/40 disabled:shadow-none flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 fill-white text-white" />
-                  {isParsing ? "Analyzing..." : "Gemini AI Parse"}
+                  {isParsing ? "Analyzing..." : "Structure my information"}
                 </button>
               </div>
             )}
