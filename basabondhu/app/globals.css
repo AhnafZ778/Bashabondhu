@@ -55,7 +55,7 @@
   --animate-slide-in: slide-in 0.3s ease-out;
   --animate-slide-up: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   --animate-fade-in: fade-in 0.25s ease-out;
-  --animate-marquee-right: marquee-right 20s linear infinite;
+  --animate-marquee-right: marquee-right 30s linear infinite;
 
   @keyframes slide-in {
     from { transform: translateX(100%); }
@@ -73,8 +73,8 @@
   }
 
   @keyframes marquee-right {
-    0% { transform: translateX(-50%); }
-    100% { transform: translateX(0%); }
+    0% { transform: translate3d(-50%, 0, 0); }
+    100% { transform: translate3d(0%, 0, 0); }
   }
 
 }

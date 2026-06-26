@@ -395,12 +395,12 @@ export default function LandingPage() {
         
         <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 mb-8 text-center sm:text-left">
           <span className="px-3.5 py-1.5 bg-gold/10 border border-gold/20 text-gold text-[10px] sm:text-xs uppercase font-black tracking-widest rounded-full">
-            Our Partners & Sponsors
+            Organizers
           </span>
         </div>
 
         {/* Sliding Wrapper */}
-        <div className="flex w-[200%] animate-marquee-right">
+        <div className="flex w-[200%] animate-marquee-right [will-change:transform]">
           {/* First Set of Logos */}
           <div className="flex justify-around items-center min-w-full gap-8">
             <div className="flex flex-col items-center gap-3 bg-zinc-900/40 border border-white/5 backdrop-blur-md px-8 py-5 rounded-2xl w-64 hover:border-gold/30 hover:bg-zinc-900/60 transition-all duration-300 group">
