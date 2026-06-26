@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useSearch } from "@/context/SearchContext";
 import { calculateFirstMonthCost } from "@/lib/cost-calculator";
 import { GitCompare, Trash2, ShieldAlert, Sparkles, X } from "lucide-react";
 
 export default function ListingComparison() {
+  const router = useRouter();
   const { selectedForCompare, scoredListings, toggleCompare, clearCompare } = useSearch();
 
   // Find the selected listing data
@@ -296,17 +298,20 @@ export default function ListingComparison() {
                   const isFirst = visitRank === 1;
                   return (
                     <td key={l.id} className="py-3.5 px-4">
-                      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-extrabold text-xs ${
-                        isFirst 
-                          ? "bg-primary text-white shadow-sm shadow-primary/15" 
-                          : "bg-bg-alt text-text-main border border-border-light"
-                      }`}>
-                        <span>{isFirst ? "🏆" : `#${visitRank}`}</span>
+                      <button
+                        onClick={isFirst ? () => router.push("/portal/visit") : undefined}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-extrabold text-xs transition-all duration-200 ${
+                          isFirst 
+                            ? "bg-primary text-white shadow-sm shadow-primary/15 hover:bg-primary/90 hover:scale-105 active:scale-95 cursor-pointer" 
+                            : "bg-bg-alt text-text-main border border-border-light"
+                        }`}
+                      >
+                        <span>{isFirst ? "#1" : `#${visitRank}`}</span>
                         <span>{isFirst ? "Visit First" : `Visit ${visitRank}${visitRank === 2 ? "nd" : "rd"}`}</span>
-                      </div>
+                      </button>
                       {isFirst && (
                         <p className="text-[10px] text-primary font-semibold mt-1.5">
-                          Highest overall score — best bang for your time.
+                          Highest overall score — best bang for your time. Click to prepare your visit.
                         </p>
                       )}
                     </td>
